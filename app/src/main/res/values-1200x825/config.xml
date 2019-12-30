@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="IS_133">false</bool>
+    <integer name="device_inch">9</integer>  
+</resources>

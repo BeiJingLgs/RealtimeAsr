@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="Button_H2">50dp</dimen>
+    <dimen name="Margin_XXXL">88dp</dimen>
+    <dimen name="Margin_XXL">32dp</dimen>
+    <dimen name="Margin_XSSSSS">10dp</dimen>
+    <dimen name="Margin_L">19dp</dimen>
+    <dimen name="length_3dp">3dp</dimen>
+    <dimen name="dialog_titleH">51dp</dimen>
+    <dimen name="dialog_title_marginX">35dp</dimen>
+    <dimen name="dialog_title_font">28sp</dimen>
+    <dimen name="dialog_separator_H">2dp</dimen>
+    <dimen name="dialog_bar_H">57dp</dimen>
+    <dimen name="dialog_margin_large">82dp</dimen>
+    <dimen name="dialog_margin_mid">42dp</dimen>
+    <dimen name="dialog_margin_small">30dp</dimen>
+    <dimen name="dialog_margin_mini">16dp</dimen>
+    <dimen name="dialog_tip_marginX">46dp</dimen>
+    <dimen name="dialog_tip_font">24sp</dimen>
+    <dimen name="dialog_btn_font">20sp</dimen>
+    <dimen name="dialog_edit_font">24sp</dimen>
+    <dimen name="dialog_button_mini">82dp</dimen>
+    <dimen name="dialog_button_small">124dp</dimen>
+    <dimen name="dialog_button_mid">166dp</dimen>
+    <dimen name="dialog_button_large">330dp</dimen>
+	<dimen name="dialog_button_H">42dp</dimen>
+	<dimen name="margin_small">12dp</dimen>
+	<dimen name="margin_middle">30dp</dimen>
+	<dimen name="margin_mini">4dp</dimen>
+	<dimen name="margin_grid_item">2dp</dimen>
+	<dimen name="grid_text_font">24sp</dimen>
+	<dimen name="main_text_font">51sp</dimen>
+	<dimen name="link_text_font">28sp</dimen>
+	<dimen name="dialog_button_height">100dp</dimen>
+    <dimen name="content_height">245dp</dimen>
+        
+    
+    <dimen name="mydialog_title_font">24sp</dimen>
+    <dimen name="mydialog_message_font">24sp</dimen>
+    <dimen name="mydialog_button_font">24sp</dimen>
+    <dimen name="mydialog_margin_message">30dp</dimen>
+    <dimen name="mydialog_margin_stubview">10dp</dimen>
+    <dimen name="mydialog_margin_small">16dp</dimen>
+    <dimen name="mydialog_button_width">140dp</dimen>
+    <dimen name="mydialog_button_margin">42dp</dimen>
+    <dimen name="mydialog_button_height">66dp</dimen>
+    <dimen name="mydialog_width">818dp</dimen>
+    <dimen name="mydialog_title_height">42dp</dimen>   
+    
+	<dimen name="popup_menu_item_height">72dp</dimen>
+	<dimen name="popup_menu_item_width">280dp</dimen>
+	<dimen name="popup_menu_margin_x">14dp</dimen>
+	
+	<dimen name="popup_context_menu_item_height">72dp</dimen>
+	<dimen name="popup_context_menu_item_width">280dp</dimen>
+	<dimen name="popup_context_menu_margin_x">14dp</dimen>
+	<dimen name="Second_Title_Font_Size">24sp</dimen>
+	
+	<dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    
+    <dimen name="edit_height">535dp</dimen>
+    <dimen name="edit_padding">6dp</dimen>
+    <dimen name="edit_font">30sp</dimen>
+    
+    <dimen name="edit_height2">1400dp</dimen>
+    
+    <dimen name="toolbar_height">55dp</dimen>
+	<dimen name="toolbar_bin_width">50dp</dimen>
+	
+	<dimen name="imageH">60dp</dimen>
+	<dimen name="imageW">60dp</dimen>
+    
+    <dimen name="margin_xl">50dp</dimen>
+    <dimen name="margin_l">0dp</dimen>
+    <dimen name="margin_m">15dp</dimen>
+    <dimen name="margin_s">5dp</dimen>
+    <dimen name="margin_h">15dp</dimen>
+    <dimen name="margin_xm">35dp</dimen>
+    <dimen name="margin_other">15dp</dimen>
+    
+    <dimen name="textSizeXXL">32sp</dimen>
+    <dimen name="textSizeXL">28sp</dimen>
+    <dimen name="textSizeL">24sp</dimen>
+	<dimen name="textSizeM">20sp</dimen>
+	<dimen name="textSizeS">14sp</dimen>
+	
+	<dimen name="linePaddingS">0.5dp</dimen>
+    <dimen name="linePaddingM">0.7dp</dimen>
+    <dimen name="linePaddingL">1dp</dimen>
+    <dimen name="linePaddingXL">1.3dp</dimen>
+    <dimen name="linePaddingXXL">1.5dp</dimen>
+    <dimen name="First_Title_Font_Size">32sp</dimen>
+    <dimen name="dialog_margin4">15dp</dimen>
+    <dimen name="Third_Title_Font_Size">26sp</dimen>
+    <dimen name="flippager_H">100dp</dimen>
+    <dimen name="flippager_btn_size">84dp</dimen>
+    <dimen name="flippager_margin">20dp</dimen>
+    <dimen name="dialog_wide_button_width">140dp</dimen>
+    <dimen name="dialog_high_button_height">80dp</dimen>
+    <dimen name="bar_item_image_height">56dp</dimen>
+    <dimen name="bar_more_width_port">200dp</dimen>
+    <!-- 普通标准 -->
+    <dimen name="Common_Text_Font_Size">22sp</dimen>
+    <dimen name="Margin_XXS">8dp</dimen>
+    <dimen name="Margin_S">13dp</dimen>
+    <dimen name="Margin_XS">15dp</dimen>
+    <dimen name="margin_M">20dp</dimen>
+    <dimen name="marginTop">80dp</dimen>
+</resources>

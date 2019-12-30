@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mydialog_edge"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mydialog_title_height"
+        android:background="@drawable/mydialog_title"
+        android:gravity="center_horizontal"
+        android:text="TextView"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/mydialog_title_font" />
+
+    <ProgressBar
+        android:id="@+id/down_progressbar"
+        android:layout_marginTop="@dimen/space_20"
+        android:layout_marginBottom="@dimen/space_20"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_margin="@dimen/mydialog_margin_message"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:textSize="@dimen/mydialog_message_font"
+        />
+    <TextView
+        android:id="@+id/down_progress_tv"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/mydialog_message_font"
+        android:layout_marginBottom="@dimen/space_20"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_gravity="center_horizontal"
+        android:textSize="@dimen/mydialog_message_font"
+        android:layout_marginBottom="@dimen/space_20"
+        android:layout_width="@dimen/mydialog_button_width"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"/>
+
+</LinearLayout>

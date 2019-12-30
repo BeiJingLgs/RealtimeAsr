@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dialog_titleH">90dp</dimen>
+    <dimen name="dialog_title_marginX">61dp</dimen>
+    <dimen name="dialog_title_font">42sp</dimen>
+    <dimen name="dialog_separator_H">4dp</dimen>
+    <dimen name="dialog_bar_H">101dp</dimen>
+    <dimen name="dialog_margin_large">167dp</dimen>
+    <dimen name="dialog_margin_mid">73dp</dimen>
+    <dimen name="dialog_margin_small">54dp</dimen>
+    <dimen name="dialog_margin_mini">28dp</dimen>
+    <dimen name="dialog_tip_marginX">82dp</dimen>
+    <dimen name="dialog_tip_font">36sp</dimen>
+    <dimen name="dialog_btn_font">30sp</dimen>
+    <dimen name="dialog_edit_font">36sp</dimen>
+    <dimen name="dialog_button_mini">167dp</dimen>
+    <dimen name="dialog_button_small">219dp</dimen>
+    <dimen name="dialog_button_mid">291dp</dimen>
+    <dimen name="dialog_button_large">583dp</dimen>
+	<dimen name="dialog_button_H">73dp</dimen>
+	<dimen name="margin_small">21dp</dimen>
+	<dimen name="margin_middle">54dp</dimen>
+	<dimen name="margin_mini">7dp</dimen>
+	<dimen name="margin_grid_item">4dp</dimen>
+	<dimen name="grid_text_font">36sp</dimen>
+	<dimen name="main_text_font">77sp</dimen>
+	<dimen name="link_text_font">43sp</dimen>
+	<dimen name="dialog_button_height">118dp</dimen>
+        
+    
+    <dimen name="mydialog_title_font">36sp</dimen>
+    <dimen name="mydialog_message_font">36sp</dimen>
+    <dimen name="mydialog_button_font">36sp</dimen>
+    <dimen name="mydialog_margin_message">54dp</dimen>
+    <dimen name="mydialog_margin_stubview">18dp</dimen>
+    <dimen name="mydialog_margin_small">29dp</dimen>
+    <dimen name="mydialog_button_width">247dp</dimen>
+    <dimen name="mydialog_button_margin">73dp</dimen>
+    <dimen name="mydialog_button_height">118dp</dimen>
+    <dimen name="mydialog_width">1443dp</dimen>
+    <dimen name="mydialog_title_height">73dp</dimen>   
+    
+	<dimen name="popup_menu_item_height">127dp</dimen>
+	<dimen name="popup_menu_item_width">497dp</dimen>
+	<dimen name="popup_menu_margin_x">25dp</dimen>
+	
+	<dimen name="popup_context_menu_item_height">127dp</dimen>
+	<dimen name="popup_context_menu_item_width">495dp</dimen>
+	<dimen name="popup_context_menu_margin_x">29dp</dimen>
+	<dimen name="Second_Title_Font_Size">36sp</dimen>
+	
+	<dimen name="activity_horizontal_margin">29dp</dimen>
+    <dimen name="activity_vertical_margin">29dp</dimen>
+    
+    <!-- 
+    <dimen name="edit_height">1065dp</dimen>
+    <dimen name="edit_padding">9dp</dimen>
+     -->
+	<dimen name="edit_height">600dp</dimen>
+    <dimen name="edit_padding">690dp</dimen>
+    <dimen name="edit_font">45sp</dimen>
+    
+    <dimen name="toolbar_height">55dp</dimen>
+	<dimen name="toolbar_bin_width">50dp</dimen>
+	
+	   <dimen name="margin_xl">50dp</dimen>
+    <dimen name="margin_l">0dp</dimen>
+    <dimen name="margin_m">15dp</dimen>
+    <dimen name="margin_s">5dp</dimen>
+    <dimen name="margin_h">15dp</dimen>
+    <dimen name="margin_other">15dp</dimen>
+    
+    <dimen name="textSizeXL">24sp</dimen>
+    <dimen name="textSizeL">20sp</dimen>
+	<dimen name="textSizeM">16sp</dimen>
+	<dimen name="textSizeS">14sp</dimen>
+	<dimen name="textSizeXXL">32sp</dimen>
+	
+	<dimen name="LinepaddingXL">24sp</dimen>
+    <dimen name="LinepaddingL">20sp</dimen>
+	<dimen name="LinepaddingM">16sp</dimen>
+	<dimen name="LinepaddingS">14sp</dimen>
+	
+	<dimen name="linePaddingS">0.5dp</dimen>
+    <dimen name="linePaddingM">0.7dp</dimen>
+    <dimen name="linePaddingL">1dp</dimen>
+    <dimen name="linePaddingXL">1.3dp</dimen>
+    <dimen name="linePaddingXXL">1.5dp</dimen>
+</resources>

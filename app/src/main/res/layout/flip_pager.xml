@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flip_pager"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/flippager_H"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/tvprogress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="1/1"
+        android:textColor="#000000"
+        android:textSize="@dimen/Second_Title_Font_Size" />
+
+    <Button
+        android:id="@+id/ivpre_page"
+        android:layout_width="@dimen/flippager_btn_size"
+        android:layout_height="@dimen/flippager_btn_size"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/flippager_margin"
+        android:layout_toLeftOf="@id/tvprogress"
+        android:stateListAnimator="@null"
+        android:background="@drawable/pre_page"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <Button
+        android:id="@+id/ivnext_page"
+        android:layout_width="@dimen/flippager_btn_size"
+        android:layout_height="@dimen/flippager_btn_size"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/flippager_margin"
+        android:stateListAnimator="@null"
+        android:layout_toRightOf="@id/tvprogress"
+        android:background="@drawable/next_page"
+        android:clickable="true"
+        android:focusable="true" />
+
+    
+    <Button
+        android:id="@+id/select_all"
+        android:layout_width="@dimen/dialog_wide_button_width"
+        android:layout_height="@dimen/bar_item_image_height"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:stateListAnimator="@null"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/button_w_edge"
+        android:layout_toLeftOf="@+id/delete_btn"
+        android:text="全选/全不选"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/Common_Text_Font_Size"
+        android:visibility="gone" />
+    
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="@dimen/dialog_wide_button_width"
+        android:layout_height="@dimen/bar_item_image_height"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:stateListAnimator="@null"
+        android:background="@drawable/button_w_edge"
+        android:text="删除"
+        android:layout_marginBottom="5dp"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/Common_Text_Font_Size"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/Margin_XXL"
+        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginBottom="@dimen/Margin_XS"
+        android:background="@drawable/ic_navigation_home_normal"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/btnReturn"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_marginLeft="@dimen/Margin_XXXL"
+        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginBottom="@dimen/Margin_XS"
+        android:layout_toRightOf="@+id/btnHome"
+        android:background="@drawable/ic_navigation_return_normal" />
+
+    <Button
+        android:id="@+id/btnNewFile"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/Button_H2"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginRight="@dimen/Margin_XSSSSS"
+        android:layout_marginBottom="@dimen/Margin_XS"
+        android:layout_toLeftOf="@id/option_menus"
+        android:background="@drawable/button_w_edge"
+        android:paddingLeft="@dimen/margin_other"
+        android:paddingRight="@dimen/margin_other"
+        android:stateListAnimator="@null"
+        android:text="@string/new_file"
+        android:textColor="@color/black"
+        android:textSize="@dimen/textSizeL" />
+
+    <ImageButton
+        android:id="@+id/option_menus"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/Margin_L"
+        android:background="@color/personal_item_default"
+        android:paddingLeft="@dimen/margin_other"
+        android:paddingRight="@dimen/margin_other"
+        android:src="@drawable/youcecaidan" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/Separate_Line_H"
+        android:layout_below="@+id/btnReturn"
+        android:layout_marginTop="@dimen/length_3dp"
+        android:background="@color/black" />
+
+</RelativeLayout>

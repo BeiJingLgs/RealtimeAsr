@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    
+    <TextView 
+        android:id="@+id/sentence_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_margin="@dimen/Margin_S"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/Margin_XS"
+        android:paddingRight="@dimen/Margin_XS"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="@drawable/button_w_edge"
+        android:textSize="@dimen/textSizeM"
+        />
+    
+
+    
+    <EditText
+        android:id="@+id/sentence_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:layout_below="@+id/sentence_time"
+        android:textColor="@android:color/black"
+        android:background="@drawable/edit_edge"
+        android:layout_marginLeft="@dimen/Margin_S"
+        android:layout_marginRight="@dimen/Margin_S"
+        android:layout_marginBottom="@dimen/Margin_S"
+        android:layout_marginTop="-13dp"
+        android:paddingLeft="@dimen/Margin_XS"
+        android:paddingRight="@dimen/Margin_XS"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:textSize="26sp"
+        />
+
+</RelativeLayout>

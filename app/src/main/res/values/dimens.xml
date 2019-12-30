@@ -1,0 +1,52 @@
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_Bottom">16dp</dimen>
+    <dimen name="Button_H">68dp</dimen>
+    <dimen name="Button_H2">50dp</dimen>
+    <dimen name="Margin_Left">0dp</dimen>
+    <dimen name="Margin_XXXL">88dp</dimen>
+    <dimen name="Margin_XXL">32dp</dimen>
+    <dimen name="Margin_XL">26dp</dimen>
+    <dimen name="Margin_L">19dp</dimen>
+    <dimen name="Margin_S">15dp</dimen>
+    <dimen name="Margin_XS">8dp</dimen>
+    <dimen name="Margin_XSSSSS">10dp</dimen>
+    <dimen name="Margin_XXS">19dp</dimen>
+    <dimen name="mydialog_title_height">50dp</dimen>
+    <dimen name="ImageView_H">150dp</dimen>
+    <dimen name="Text_Height">39dp</dimen>
+    <dimen name="First_Title_Font_Size">28sp</dimen>
+    <dimen name="Second_Title_Font_Size">24sp</dimen>
+    <dimen name="Third_Title_Font_Size">22sp</dimen>
+    <dimen name="Separate_Line_H">1dp</dimen>
+    <dimen name="length_3dp">3dp</dimen>
+    <dimen name="content_height">440dp</dimen>
+    <dimen name="ImageView_H2">80dp</dimen>
+    <dimen name="ImageView_W2">60dp</dimen>
+    <dimen name="Margin_Bottom">100dp</dimen>
+    <dimen name="Margin_Bottom2">116dp</dimen>
+    <dimen name="TextView_H">100dp</dimen>
+    <dimen name="Margin_M">20dp</dimen>
+    <dimen name="Page_Width">70dp</dimen>
+    <dimen name="TextView_H2">60dp</dimen>
+    <dimen name="padding_s">5dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <dimen name="dialog_margin4">15dp</dimen>
+    <dimen name="flippager_margin">20dp</dimen>
+    <dimen name="dialog_wide_button_width">110dp</dimen>
+    <dimen name="dialog_high_button_height">80dp</dimen>
+    <dimen name="bar_item_image_height">56dp</dimen>
+    <dimen name="bar_more_width_port">200dp</dimen>
+    <!-- 普通标准 -->
+    <dimen name="Common_Text_Font_Size">22sp</dimen>
+    <dimen name="flippager_H">100dp</dimen>
+    <dimen name="textSizeL">20sp</dimen>
+    <dimen name="margin_other">15dp</dimen>
+    <dimen name="flippager_btn_size">84dp</dimen>
+    <dimen name="textSizeM">16sp</dimen>
+    <dimen name="marginTop">80dp</dimen>
+    <dimen name="space_20">20dp</dimen>
+</resources>
