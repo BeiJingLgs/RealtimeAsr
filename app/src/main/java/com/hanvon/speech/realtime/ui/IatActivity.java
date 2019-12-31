@@ -9,18 +9,20 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,7 +113,7 @@ public class IatActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO  初始化
-        EPDHelper.getInstance().setWindowRefreshMode(getWindow(),EPDHelper.Mode.GU16_RECT);
+        EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
@@ -186,6 +188,7 @@ public class IatActivity extends Activity implements OnClickListener {
         }, 200);
 
     }
+
     public class LocalReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
@@ -224,9 +227,9 @@ public class IatActivity extends Activity implements OnClickListener {
 
     private void updateEditList() {
         for (int i = 0; i < mTempResultList.size(); i++)
-            for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++){
+            for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++) {
                 if (TextUtils.equals(mTotalResultList.get(j).getSn(), mTempResultList.get(i).getSn())) {
-                    if (TextUtils.isEmpty( mTempResultList.get(i).getResult())) {
+                    if (TextUtils.isEmpty(mTempResultList.get(i).getResult())) {
                         mTotalResultList.remove(j);
                     }
                     break;
@@ -353,26 +356,36 @@ public class IatActivity extends Activity implements OnClickListener {
                 nextResultPage();
                 break;
             case R.id.option_menus:
-                PopupMenu popupMenu=new PopupMenu(this,v);//1.实例化PopupMenu
-                getMenuInflater().inflate(R.menu.option_menu,popupMenu.getMenu());//2.加载Menu资源
-                //3.为弹出菜单设置点击监听
-                popupMenu.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()){
-                        case R.id.popup_rubber:
-                            rubberEnableFlag = !rubberEnableFlag;
-                            myNoteView.setRubberMode(rubberEnableFlag);
-                            return true;
-                        case R.id.popup_delete:
-                            myNoteView.clear(false);
-                            return true;
-                        case R.id.popup_savePic:
-                            myNoteView.saveBitmap();
-                            return true;
-                        default:
-                            return false;
-                    }
-                });
-                popupMenu.show();//4.显示弹出菜单
+//                PopupMenu popupMenu=new PopupMenu(this,v);//1.实例化PopupMenu
+//                getMenuInflater().inflate(R.menu.option_menu,popupMenu.getMenu());//2.加载Menu资源
+//                //3.为弹出菜单设置点击监听
+//                popupMenu.setOnMenuItemClickListener(item -> {
+//                    switch (item.getItemId()){
+//                        case R.id.popup_rubber:
+//                            rubberEnableFlag = !rubberEnableFlag;
+//                            myNoteView.setRubberMode(rubberEnableFlag);
+//                            return true;
+//                        case R.id.popup_delete:
+//                            myNoteView.clear(false);
+//                            return true;
+//                        case R.id.popup_savePic:
+//                            myNoteView.saveBitmap();
+//                            return true;
+//                        default:
+//                            return false;
+//                    }
+//                });
+//                popupMenu.show();//4.显示弹出菜单
+                PopupWindow popupWindow = showPopupWindow();
+                Log.i("tag", "onClick: "+popupWindow.isShowing());
+                if (popupWindow != null) {
+                    popupWindow.setFocusable(true);
+                }
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                } else {
+                    popupWindow.showAsDropDown(mMenus);
+                }
                 break;
             default:
                 break;
@@ -403,6 +416,43 @@ public class IatActivity extends Activity implements OnClickListener {
             mEditNextPageBtn.setBackgroundResource(R.drawable.next_page_grey);
         }
     }
+
+    private PopupWindow showPopupWindow() {
+        final PopupWindow popupWindow = new PopupWindow(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_menu, null);
+        TextView menuItem1 = view.findViewById(R.id.popup_savePic);
+        menuItem1.setOnClickListener(view13 -> {
+            if (popupWindow != null) {
+                myNoteView.saveBitmap();
+                popupWindow.dismiss();
+            }
+        });
+        TextView menuItem2 = view.findViewById(R.id.popup_delete);
+        menuItem2.setOnClickListener(view12 -> {
+            if (popupWindow != null) {
+                myNoteView.clear(false);
+                popupWindow.dismiss();
+            }
+        });
+        TextView menuItem3 = view.findViewById(R.id.popup_rubber);
+        menuItem3.setOnClickListener(view1 -> {
+            if (popupWindow != null) {
+                rubberEnableFlag = !rubberEnableFlag;
+                myNoteView.setRubberMode(rubberEnableFlag);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindow.setContentView(view);
+        popupWindow.setWidth(240);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
+        popupWindow.setTouchable(true);
+        popupWindow.setOutsideTouchable(true);
+        return  popupWindow;
+
+
+    }
+
 
     private void freshSentenceList(int currentPage) {
         if (mTempResultList == null) {

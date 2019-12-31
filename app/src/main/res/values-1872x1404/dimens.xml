@@ -26,6 +26,7 @@
 	<dimen name="dialog_button_H">42dp</dimen>
 	<dimen name="margin_small">12dp</dimen>
 	<dimen name="margin_middle">30dp</dimen>
+    <dimen name="padding_s">5dp</dimen>
 	<dimen name="margin_mini">4dp</dimen>
 	<dimen name="margin_grid_item">2dp</dimen>
 	<dimen name="grid_text_font">24sp</dimen>
