@@ -11,17 +11,37 @@
         android:layout_weight="6"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/fileName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/Margin_S"
-            android:layout_marginTop="@dimen/Margin_XXS"
-            android:layout_marginRight="@dimen/Margin_S"
-            android:layout_marginBottom="@dimen/Margin_XXS"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/textSizeM"
-            android:textStyle="bold" />
+            android:layout_width="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/fileName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:layout_marginLeft="@dimen/Margin_S"
+                android:layout_marginTop="@dimen/Margin_XXS"
+                android:layout_marginRight="@dimen/Margin_S"
+                android:layout_marginBottom="@dimen/Margin_XXS"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/textSizeM"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ic_sd_img"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="@dimen/Margin_S"
+                android:layout_marginTop="@dimen/Margin_XXS"
+                android:layout_marginRight="@dimen/Margin_S"
+                android:visibility="gone"
+                android:src="@drawable/ic_navigation_sdcard_normal"
+                android:layout_marginBottom="@dimen/Margin_XXS"/>
+            </LinearLayout>
+
 
         <TextView
             android:id="@+id/fileContent"

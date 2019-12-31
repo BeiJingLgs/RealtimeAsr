@@ -10,6 +10,7 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.util.DocumentsUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,15 +121,16 @@ public class Recordutil {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
+                //BufferedOutputStream os = null;
                 OutputStream os = null;
-                //try {
-                    //os = new FileOutputStream(file);
-                    //logger.info("file.getPath(): " + file.getPath());
-                    os = DocumentsUtils.getOutputStream(HvApplication.getContext(), new File(file.getPath()));
-               /* } catch (FileNotFoundException e) {
+                try {
+                    //os = new BufferedOutputStream(new FileOutputStream(file));
+                    os = new FileOutputStream(file);
+                    logger.info("file.getPath(): " + file.getPath());
+                    //os = DocumentsUtils.getOutputStream(HvApplication.getContext(), new File(file.getPath()));
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 if (null != os) {
                     while (isRecording) {

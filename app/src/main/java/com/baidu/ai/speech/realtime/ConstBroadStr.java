@@ -6,7 +6,8 @@ import android.os.Environment;
 import java.text.SimpleDateFormat;
 
 public class ConstBroadStr {
-    // 音频文件路径
+    // 音频文件路径 /storage/sdcard0/Audio/hello.txt
+    // public static final String AUDIO_ROOT_PATH = "/storage/sdcard0/Audio/";Environment.getExternalStorageDirectory() + File.separator
     public static final String AUDIO_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio/";
     public static final String AUDIO_PATH = "/reverseme.pcm";
     /**

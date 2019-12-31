@@ -86,6 +86,23 @@
             android:visibility="gone"
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeM" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/time_tv"
+            android:layout_margin="@dimen/Margin_XS"
+            android:layout_toRightOf="@+id/iat_play"
+            android:button="@drawable/check_box"
+            android:stateListAnimator="@null"
+            android:text="录音存放Sd卡"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeM"
+            android:padding="@dimen/Margin_XS"
+            android:focusableInTouchMode="false" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/Separate_Line_H"

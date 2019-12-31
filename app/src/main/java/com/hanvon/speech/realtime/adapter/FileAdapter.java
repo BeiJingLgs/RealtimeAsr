@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.baidu.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,12 +96,14 @@ public class FileAdapter extends BaseAdapter {
             viewHolder.content = (TextView) convertView.findViewById(R.id.fileContent);
             viewHolder.time = (TextView) convertView.findViewById(R.id.fileModify);
             viewHolder.checkbox = convertView.findViewById(R.id.checkbox);
+            viewHolder.sdImg = convertView.findViewById(R.id.ic_sd_img);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.title.setText(cateList.get(position).getTitle());
         viewHolder.content.setText(cateList.get(position).getContent());
+
         viewHolder.time.setText(cateList.get(position).getCreatetime() +
         " " + context.getResources().getString(R.string.file_create) +
         " " + cateList.get(position).getModifytime() +
@@ -108,6 +112,10 @@ public class FileAdapter extends BaseAdapter {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {
             viewHolder.checkbox.setVisibility(View.GONE);
+        }
+
+        if (hvFileCommonUtils.hasSdcard(context)) {
+            viewHolder.sdImg.setVisibility(View.VISIBLE);
         }
 
         boolean res = false;
@@ -124,6 +132,7 @@ public class FileAdapter extends BaseAdapter {
         public TextView title;
         public TextView content;
         public TextView time;
+        public ImageView sdImg;
         public CheckBox checkbox;
     }
 }

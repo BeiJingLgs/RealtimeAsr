@@ -20,8 +20,11 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.RadioGroup;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -49,6 +52,7 @@ import com.hanvon.speech.realtime.model.IatThread;
 import com.hanvon.speech.realtime.model.Recordutil;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.EPDHelper;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.MyNoteView;
 
@@ -89,6 +93,7 @@ public class IatActivity extends Activity implements OnClickListener {
     private TextView mTimeTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
+    public CheckBox mCheckbox;
 
     private FileBean mFileBean;
     private ListView mEditListView;
@@ -144,6 +149,8 @@ public class IatActivity extends Activity implements OnClickListener {
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         myNoteView = view.findViewById(R.id.MyNoteView);
+        mCheckbox = findViewById(R.id.checkbox);
+
         mEditBtn.setOnClickListener(this);
         mBackBtn.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
@@ -158,6 +165,10 @@ public class IatActivity extends Activity implements OnClickListener {
         myNoteView.setReflushDrityEnable(true);
         myNoteView.setRubberMode(rubberEnableFlag);
         myNoteView.setBackground(bitmap);
+
+        if (hvFileCommonUtils.hasSdcard(this)) {
+            mCheckbox.setVisibility(View.VISIBLE);
+        }
     }
 
 
