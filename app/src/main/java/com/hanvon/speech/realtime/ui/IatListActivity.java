@@ -1,18 +1,19 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
@@ -22,40 +23,43 @@ import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.FileUtils;
+import com.hanvon.speech.realtime.util.MethodUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-public class IatListActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    private Button mBackBtn, mHomeBtn, mFileNewtn, mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;;
+
+public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
     public static final int READ_DIALOG_REQUEST = 11;
     private ArrayList<FileBean> mTotalFileList, mTempBookList;
     private FileAdapter mFileAdapter;
     private ListView mFileList;
     private static String TAG;
-
     private int nPageCount = 0; // 当前分类的页总数
     private int nPageIsx = 0; // 当前显示的页idx
     protected static int PAGE_CATEGORY = 8;// 每页显示几个
     private TextView mPagetTv;
     private static Logger logger = Logger.getLogger("IatListActivity");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_iat_list);
-        initView();
         init();
         initPermission();
     }
 
-    private void initView() {
-        mBackBtn = (Button) findViewById(R.id.btnReturn);
-        mHomeBtn = (Button) findViewById(R.id.btnHome);
-        mFileNewtn = (Button) findViewById(R.id.btnNewFile);
-        mFileNewtn.setVisibility(View.VISIBLE);
+    @Override
+    int provideContentViewId() {
+        return R.layout.activity_iat_list;
+    }
+
+    public void initView(Bundle savedInstanceState,View view) {
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -64,14 +68,10 @@ public class IatListActivity extends Activity implements View.OnClickListener, A
         mDeleteBtn = findViewById(R.id.delete_btn);
         View emptyView = findViewById(R.id.emptyList);
         mFileList.setEmptyView(emptyView);
-
         mNextBtn.setOnClickListener(this);
         mPreBtn.setOnClickListener(this);
         mFileList.setOnItemClickListener(this);
         mFileList.setOnItemLongClickListener(this);
-        mBackBtn.setOnClickListener(this);
-        mHomeBtn.setOnClickListener(this);
-        mFileNewtn.setOnClickListener(this);
         mSelectAllBtn.setOnClickListener(this);
         mDeleteBtn.setOnClickListener(this);
     }
@@ -173,37 +173,8 @@ public class IatListActivity extends Activity implements View.OnClickListener, A
                 onBackPressed();
                 break;
             case R.id.btnHome:
-                Intent home = new Intent(Intent.ACTION_MAIN);
-                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                home.addCategory("android.intent.category.HOME_HW");
-                startActivity(home);
+                new MethodUtils(this).getHome();
                 break;
-            case R.id.btnNewFile:
-               /* ThreadPoolUtil.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-
-                            IatUtils.record2String();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });*/
-                Intent intent = new Intent(this, IatActivity.class);
-                long time = System.currentTimeMillis();
-                DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
-                String title = TimeUtil.getCurrentTime();
-                String create = TimeUtil.getTime(time);
-                String modify = TimeUtil.getTime(time);
-                String content = "";
-                intent.putExtra("isNew", true);
-                FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()));
-                databaseUtils.insert(fileBean);
-                TranslateBean.getInstance().setFileBean(fileBean);
-                startActivityForResult(intent, READ_DIALOG_REQUEST);
-                break;
-
             case R.id.ivpre_page:
                 if ((nPageIsx - 1) >= 0) {
                     nPageIsx--;
@@ -238,15 +209,72 @@ public class IatListActivity extends Activity implements View.OnClickListener, A
                 freshPage();
                 setCheckGone();
                 break;
+            case R.id.option_menus:
+                PopupWindow popupWindow = showPopupWindow();
+                Log.i("tag", "onClick: " + popupWindow.isShowing());
+                if (popupWindow != null) {
+                    popupWindow.setFocusable(true);
+                }
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                } else {
+                    popupWindow.showAsDropDown(mMenus);
+                }
+                break;
             default:
                 break;
         }
     }
 
+    private void newFile() {
+        Intent intent = new Intent(this, IatActivity.class);
+        long time = System.currentTimeMillis();
+        DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
+        String title = TimeUtil.getCurrentTime();
+        String create = TimeUtil.getTime(time);
+        String modify = TimeUtil.getTime(time);
+        String content = "";
+        intent.putExtra("isNew", true);
+        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()));
+        databaseUtils.insert(fileBean);
+        TranslateBean.getInstance().setFileBean(fileBean);
+        startActivityForResult(intent, READ_DIALOG_REQUEST);
+    }
+
+
+    private PopupWindow showPopupWindow() {
+        final PopupWindow popupWindow = new PopupWindow(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.main_menu, null);
+        TextView menuItem1 = view.findViewById(R.id.popup_build);
+        menuItem1.setOnClickListener(view13 -> {
+            if (popupWindow != null) {
+                newFile();
+                popupWindow.dismiss();
+            }
+        });
+        TextView menuItem2 = view.findViewById(R.id.popup_me);
+        menuItem2.setOnClickListener(view12 -> {
+            if (popupWindow != null) {
+                Intent intent=new Intent(this,MeActivity.class);
+                startActivity(intent);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindow.setContentView(view);
+        popupWindow.setWidth(240);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
+        popupWindow.setTouchable(true);
+        popupWindow.setOutsideTouchable(true);
+        return popupWindow;
+
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        logger.info("onActivityResult: " );
+        logger.info("onActivityResult: ");
         freshPage();
     }
 
@@ -263,9 +291,6 @@ public class IatListActivity extends Activity implements View.OnClickListener, A
         }
 
     }
-
-
-
 
 
     /**

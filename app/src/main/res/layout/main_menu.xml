@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/button_w_edge"
+    android:padding="@dimen/padding_s">
+
+    <TextView
+        android:id="@+id/popup_build"
+        style="@style/menu_item"
+        android:text="新  建" />
+    <View
+        style="@style/view_line"/>
+    <TextView
+        android:id="@+id/popup_me"
+        style="@style/menu_item"
+        android:text="我  的" />
+
+
+</LinearLayout>

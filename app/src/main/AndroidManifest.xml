@@ -29,6 +29,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.hanvon.speech.realtime.ui.IatActivity" />
+        <activity android:name="com.hanvon.speech.realtime.ui.MeActivity"/>
+        <activity android:name="com.hanvon.speech.realtime.ui.LoginActivity"/>
+        <activity android:name="com.hanvon.speech.realtime.ui.RegisterActivity"/>
     </application>
 
 </manifest>

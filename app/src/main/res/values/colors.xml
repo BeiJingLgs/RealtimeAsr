@@ -220,7 +220,7 @@
     <color name="f">#f7f7f7</color>
     <color name="new_red">#ff5a55</color>
     <color name="book_store_title_default">#98c1bc</color>
-
+    <color name="bai">#FFFFFF</color>
     <!-- reader -->
     <color name="list_dmn_devider">#C2C2C2</color>
     <color name="read_note_content_color">#653a10</color>

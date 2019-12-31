@@ -1,7 +1,6 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,15 +15,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.PopupMenu;
-import android.widget.RadioGroup;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -52,7 +45,7 @@ import com.hanvon.speech.realtime.model.IatThread;
 import com.hanvon.speech.realtime.model.Recordutil;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.EPDHelper;
-import com.hanvon.speech.realtime.util.hvFileCommonUtils;
+import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.MyNoteView;
 
@@ -67,7 +60,7 @@ import java.util.logging.Logger;
 
 import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 
-public class IatActivity extends Activity implements OnClickListener {
+public class IatActivity extends BaseActivity  {
 
     // ============== 以下参数请勿修改 ================
 
@@ -89,11 +82,10 @@ public class IatActivity extends Activity implements OnClickListener {
     private Toast mToast;
     private SharedPreferences mSharedPreferences;
     private SequenceAdapter mSequenceAdapter;
-    private Button mBackBtn, mTextBegin, mHomeBtn, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
+    private Button  mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
     private TextView mTimeTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
-    public CheckBox mCheckbox;
 
     private FileBean mFileBean;
     private ListView mEditListView;
@@ -110,9 +102,9 @@ public class IatActivity extends Activity implements OnClickListener {
     private ArrayList<Result> mTotalResultList, mTempResultList;
     private Thread mThread = null;
     private byte[] data = null;
-    private ImageButton mMenus;
     private MyNoteView myNoteView;
     private Bitmap bitmap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,17 +114,18 @@ public class IatActivity extends Activity implements OnClickListener {
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main);
-        initView(this.getWindow().getDecorView());
         initLayout();
         init();
     }
 
-    private void initView(View view) {
-        mMenus = findViewById(R.id.option_menus);
-        mBackBtn = (Button) findViewById(R.id.btnReturn);
-        mHomeBtn = (Button) findViewById(R.id.btnHome);
+    @Override
+    int provideContentViewId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initView(Bundle savedInstanceState,View view) {
+
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -149,26 +142,17 @@ public class IatActivity extends Activity implements OnClickListener {
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         myNoteView = view.findViewById(R.id.MyNoteView);
-        mCheckbox = findViewById(R.id.checkbox);
-
         mEditBtn.setOnClickListener(this);
-        mBackBtn.setOnClickListener(this);
-        mHomeBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
         mAudioPlayBtn.setOnClickListener(this);
         mEditPrePageBtn.setOnClickListener(this);
         mEditNextPageBtn.setOnClickListener(this);
         mResultPreBtn.setOnClickListener(this);
         mResultNextBtn.setOnClickListener(this);
-        mMenus.setOnClickListener(this);
         myNoteView.setZOrderOnTop(true);
         myNoteView.setReflushDrityEnable(true);
         myNoteView.setRubberMode(rubberEnableFlag);
         myNoteView.setBackground(bitmap);
-
-        if (hvFileCommonUtils.hasSdcard(this)) {
-            mCheckbox.setVisibility(View.VISIBLE);
-        }
     }
 
 
@@ -278,10 +262,7 @@ public class IatActivity extends Activity implements OnClickListener {
                 onBackPressed();
                 break;
             case R.id.btnHome:
-                Intent home = new Intent(Intent.ACTION_MAIN);
-                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                home.addCategory("android.intent.category.HOME_HW");
-                startActivity(home);
+               new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
                 Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
