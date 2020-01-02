@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -46,6 +48,7 @@ import com.hanvon.speech.realtime.model.Recordutil;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.EPDHelper;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.MyNoteView;
 
@@ -86,6 +89,7 @@ public class IatActivity extends BaseActivity  {
     private TextView mTimeTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
+    public CheckBox mCheckbox;
 
     private FileBean mFileBean;
     private ListView mEditListView;
@@ -142,6 +146,8 @@ public class IatActivity extends BaseActivity  {
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         myNoteView = view.findViewById(R.id.MyNoteView);
+        mCheckbox = findViewById(R.id.checkbox);
+
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
         mAudioPlayBtn.setOnClickListener(this);
@@ -153,6 +159,10 @@ public class IatActivity extends BaseActivity  {
         myNoteView.setReflushDrityEnable(true);
         myNoteView.setRubberMode(rubberEnableFlag);
         myNoteView.setBackground(bitmap);
+
+        if (hvFileCommonUtils.hasSdcard(this)) {
+            mCheckbox.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -323,7 +333,7 @@ public class IatActivity extends BaseActivity  {
                     audioStop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                 } else {
-                    data = Recordutil.getPCMData(ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() +
+                    data = Recordutil.getPCMData(ConstBroadStr.GetAudioRootPath() + mFileBean.getCreatemillis() +
                             ConstBroadStr.AUDIO_PATH);
                     audioPlay();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));

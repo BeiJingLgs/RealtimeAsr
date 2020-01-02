@@ -204,7 +204,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 mNameSet = mFileAdapter.getmSelectStates().keySet();
                 for (String s : mNameSet) {
                     databaseUtils1.deleteBymillis(s);
-                    FileUtils.deleteDirectory(ConstBroadStr.AUDIO_ROOT_PATH + s);
+                    FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath() + s);
                 }
                 freshPage();
                 setCheckGone();

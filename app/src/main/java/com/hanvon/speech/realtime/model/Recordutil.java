@@ -98,13 +98,13 @@ public class Recordutil {
                 ConstBroadStr.CHANNEL_CONFIG, ConstBroadStr.AUDIO_FORMAT, minBufferSize);
 
         final byte data[] = new byte[minBufferSize];
-        File direc = new File(ConstBroadStr.AUDIO_ROOT_PATH + path.trim());
+        File direc = new File(ConstBroadStr.GetAudioRootPath() + path.trim());
         if(direc.exists()){
             //创建文件夹
             direc.mkdirs();
         }
 
-        final File file = new File(ConstBroadStr.AUDIO_ROOT_PATH + path.trim() +
+        final File file = new File(ConstBroadStr.GetAudioRootPath() + path.trim() +
                 ConstBroadStr.AUDIO_PATH);
         if (!file.mkdirs()) {
         }

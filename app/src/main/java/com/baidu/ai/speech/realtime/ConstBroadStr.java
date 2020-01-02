@@ -3,13 +3,24 @@ package com.baidu.ai.speech.realtime;
 import android.media.AudioFormat;
 import android.os.Environment;
 
+import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
+
 import java.text.SimpleDateFormat;
 
 public class ConstBroadStr {
     // 音频文件路径 /storage/sdcard0/Audio/hello.txt
-    // public static final String AUDIO_ROOT_PATH = "/storage/sdcard0/Audio/";Environment.getExternalStorageDirectory() + File.separator
     public static final String AUDIO_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio/";
     public static final String AUDIO_PATH = "/reverseme.pcm";
+
+    public static String GetAudioRootPath() {
+        if (hvFileCommonUtils.hasSdcard(HvApplication.getContext())) {
+            return hvFileCommonUtils.getSdcardPath(HvApplication.getContext()) + "/Audio/";
+        } else {
+            return AUDIO_ROOT_PATH;
+        }
+    }
+
     /**
      * 采样率，现在能够保证在所有设备上使用的采样率是44100Hz, 但是其他的采样率（22050, 16000, 11025）在一些设备上也可以使用。
      */
