@@ -35,10 +35,10 @@ public class MeActivity extends BaseActivity {
                  Intent intent=new Intent(this,LoginActivity.class);
                  startActivity(intent);
                  break;
-             case R.id.btnHome:
+             case R.id.btn_Home:
                  new MethodUtils(this).getHome();
                  break;
-             case R.id.btnReturn:
+             case R.id.btn_Return:
                  finish();
                  break;
          }

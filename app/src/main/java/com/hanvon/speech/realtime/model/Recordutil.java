@@ -3,20 +3,13 @@ package com.hanvon.speech.realtime.model;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
-import android.util.Log;
 import android.widget.Button;
-
 import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.hanvon.speech.realtime.util.DocumentsUtils;
-
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 

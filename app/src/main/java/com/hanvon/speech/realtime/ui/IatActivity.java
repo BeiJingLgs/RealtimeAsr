@@ -52,7 +52,6 @@ import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.MyNoteView;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,6 +59,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 
@@ -268,39 +269,43 @@ public class IatActivity extends BaseActivity  {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnReturn:
+            case R.id.btn_Return:
                 onBackPressed();
                 break;
-            case R.id.btnHome:
+            case R.id.btn_Home:
                new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
+                //录音有问题
                 Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
-                /*new Thread(() -> {
-                    // IO 操作都在新线程
-                    try {
-                        if (isRunning) {
-                            logger.info("点击停止");
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_begin);
-                                mAudioPlayBtn.setEnabled(true);
-                                mEditBtn.setEnabled(true);
-                            });
-                            close(false);
-                        } else {
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_end);
-                                mAudioPlayBtn.setEnabled(false);
-                                mEditBtn.setEnabled(false);
-                            });
-                            start();
-                            pollCheckStop();
-
-                        }
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
-                    }
-                }).start();*/
+                /**
+                 * 转写
+                 */
+//                new Thread(() -> {
+//                    // IO 操作都在新线程
+//                    try {
+//                        if (isRunning) {
+//                            logger.info("点击停止");
+//                            runOnUiThread(() -> {
+//                                mTextBegin.setText(R.string.text_begin);
+//                                mAudioPlayBtn.setEnabled(true);
+//                                mEditBtn.setEnabled(true);
+//                            });
+//                            close(false);
+//                        } else {
+//                            runOnUiThread(() -> {
+//                                mTextBegin.setText(R.string.text_end);
+//                                mAudioPlayBtn.setEnabled(false);
+//                                mEditBtn.setEnabled(false);
+//                            });
+//                            start();
+//                            pollCheckStop();
+//
+//                        }
+//                    } catch (IOException e) {
+//                        logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
+//                    }
+//                }).start();
 
                 /*ThreadPoolUtil.execute(new Runnable() {
                     @Override
@@ -357,7 +362,7 @@ public class IatActivity extends BaseActivity  {
             case R.id.result_ivnext_page:
                 nextResultPage();
                 break;
-            case R.id.option_menus:
+            case R.id.btn_option_menus:
 //                PopupMenu popupMenu=new PopupMenu(this,v);//1.实例化PopupMenu
 //                getMenuInflater().inflate(R.menu.option_menu,popupMenu.getMenu());//2.加载Menu资源
 //                //3.为弹出菜单设置点击监听

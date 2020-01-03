@@ -169,10 +169,10 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnReturn:
+            case R.id.btn_Return:
                 onBackPressed();
                 break;
-            case R.id.btnHome:
+            case R.id.btn_Home:
                 new MethodUtils(this).getHome();
                 break;
             case R.id.ivpre_page:
@@ -209,7 +209,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 freshPage();
                 setCheckGone();
                 break;
-            case R.id.option_menus:
+            case R.id.btn_option_menus:
                 PopupWindow popupWindow = showPopupWindow();
                 Log.i("tag", "onClick: " + popupWindow.isShowing());
                 if (popupWindow != null) {

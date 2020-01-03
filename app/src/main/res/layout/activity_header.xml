@@ -5,7 +5,7 @@
 
 
     <Button
-        android:id="@+id/btnHome"
+        android:id="@+id/btn_Home"
         android:layout_width="@dimen/Button_H"
         android:layout_height="@dimen/Button_H"
         android:layout_alignParentLeft="true"
@@ -16,17 +16,17 @@
         android:visibility="visible" />
 
     <Button
-        android:id="@+id/btnReturn"
+        android:id="@+id/btn_Return"
         android:layout_width="@dimen/Button_H"
         android:layout_height="@dimen/Button_H"
         android:layout_marginLeft="@dimen/Margin_XXXL"
         android:layout_marginTop="@dimen/Margin_XS"
         android:layout_marginBottom="@dimen/Margin_XS"
-        android:layout_toRightOf="@+id/btnHome"
+        android:layout_toRightOf="@+id/btn_Home"
         android:background="@drawable/ic_navigation_return_normal" />
 
     <ImageButton
-        android:id="@+id/option_menus"
+        android:id="@+id/btn_option_menus"
         android:layout_width="@dimen/Button_H"
         android:layout_height="@dimen/Button_H"
         android:layout_alignParentRight="true"
@@ -40,7 +40,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/Separate_Line_H"
-        android:layout_below="@+id/btnReturn"
+        android:layout_below="@+id/btn_Return"
         android:layout_marginTop="@dimen/length_3dp"
         android:background="@color/black" />
 

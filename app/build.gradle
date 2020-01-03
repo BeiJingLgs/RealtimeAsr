@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.mob.sdk'
 
 android {
     compileSdkVersion 29
@@ -19,12 +19,21 @@ android {
     }
     buildTypes {
         release {
+            //在这里添加：
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
-
+MobSDK {
+    appKey "2dad57ff647ae"
+    appSecret "cfce1cea9cf792ec5c77ce0c512fc099"
+    SMSSDK {}
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
