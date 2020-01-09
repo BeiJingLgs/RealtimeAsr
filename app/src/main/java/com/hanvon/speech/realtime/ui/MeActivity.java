@@ -11,10 +11,6 @@ public class MeActivity extends BaseActivity {
 
     private TextView login_or_register;
 
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-    }
 
     @Override
     int provideContentViewId() {

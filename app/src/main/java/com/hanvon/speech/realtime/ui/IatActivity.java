@@ -10,8 +10,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +37,7 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.MiniMain;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.MainActivity;
 import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.baidu.ai.speech.realtime.full.connection.Runner;
 import com.baidu.ai.speech.realtime.full.download.Result;
@@ -52,11 +57,18 @@ import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.MyNoteView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,7 +76,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 
-public class IatActivity extends BaseActivity  {
+public class IatActivity extends BaseActivity {
 
     // ============== 以下参数请勿修改 ================
 
@@ -86,7 +98,7 @@ public class IatActivity extends BaseActivity  {
     private Toast mToast;
     private SharedPreferences mSharedPreferences;
     private SequenceAdapter mSequenceAdapter;
-    private Button  mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
+    private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
     private TextView mTimeTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
@@ -110,18 +122,43 @@ public class IatActivity extends BaseActivity  {
     private MyNoteView myNoteView;
     private Bitmap bitmap;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //TODO  初始化
-        EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
-        BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
-        bfoOptions.inScaled = false;
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
-        initLayout();
-        init();
-    }
+    /*默认数据*/
+    private int mSampleRateInHZ = 16000; //采样率
+    private int mAudioFormat = AudioFormat.ENCODING_PCM_16BIT;  //位数
+    private int mChannelConfig = AudioFormat.CHANNEL_IN_MONO;   //声道
+    private AudioRecord mAudioRecord;
+    private int mRecorderBufferSize;
+    private byte[] mAudioData;
+    private boolean isRecording = false;
+    private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>());
+    private String tmpFile;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            switch (message.what) {
+                case 1:
+                    mTextBegin.setText(R.string.text_end);
+                    mAudioPlayBtn.setEnabled(false);
+                    mEditBtn.setEnabled(false);
+                    try {
+                        start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    pollCheckStop();
+                    break;
+                case 2:
+                    mTextBegin.setText(R.string.text_begin);
+                    mAudioPlayBtn.setEnabled(true);
+                    mEditBtn.setEnabled(true);
+                    close(false);
+                    break;
+            }
+        }
+    };
 
     @Override
     int provideContentViewId() {
@@ -129,8 +166,15 @@ public class IatActivity extends BaseActivity  {
     }
 
     @Override
-    public void initView(Bundle savedInstanceState,View view) {
-
+    public void initView(Bundle savedInstanceState, View view) {
+        //TODO  初始化
+        EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
+        BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
+        bfoOptions.inScaled = false;
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back1, bfoOptions);
+        initLayout();
+        init();
+        initData();
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -148,7 +192,6 @@ public class IatActivity extends BaseActivity  {
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         myNoteView = view.findViewById(R.id.MyNoteView);
         mCheckbox = findViewById(R.id.checkbox);
-
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
         mAudioPlayBtn.setOnClickListener(this);
@@ -166,13 +209,17 @@ public class IatActivity extends BaseActivity  {
         }
     }
 
+    private void initData() {
+        mRecorderBufferSize = AudioRecord.getMinBufferSize(mSampleRateInHZ, mChannelConfig, mAudioFormat);
+        mAudioData = new byte[320];
+        mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, mSampleRateInHZ, mChannelConfig, mAudioFormat, mRecorderBufferSize);
+    }
 
     private void init() {
         mHandler = new Handler();
         mTotalResultList = new ArrayList<>();
         mTempResultList = new ArrayList<>();
         localReceiver = new LocalReceiver();
-
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(localReceiver, new IntentFilter(ConstBroadStr.UPDATERECOG));
         mFileBean = TranslateBean.getInstance().getFileBean();
@@ -273,14 +320,28 @@ public class IatActivity extends BaseActivity  {
                 onBackPressed();
                 break;
             case R.id.btn_Home:
-               new MethodUtils(this).getHome();
+                new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
                 //录音有问题
-                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
-                /**
-                 * 转写
-                 */
+//                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
+                if (mTextBegin.getText().toString().equals("开始录制")) {
+                    startLu();
+                    handler.sendEmptyMessage(1);
+                } else {
+
+                    if (!isRecording) {
+                        Toast.makeText(IatActivity.this, "已结束", Toast.LENGTH_LONG).show();
+                    }
+                    isRecording = false;
+                    mAudioRecord.stop();
+                    handler.sendEmptyMessage(2);
+                }
+
+
+//                /**
+//                 * 转写
+//                 */
 //                new Thread(() -> {
 //                    // IO 操作都在新线程
 //                    try {
@@ -338,8 +399,7 @@ public class IatActivity extends BaseActivity  {
                     audioStop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                 } else {
-                    data = Recordutil.getPCMData(ConstBroadStr.GetAudioRootPath() + mFileBean.getCreatemillis() +
-                            ConstBroadStr.AUDIO_PATH);
+                    data = Recordutil.getPCMData(tmpFile);
                     audioPlay();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
                 }
@@ -363,28 +423,8 @@ public class IatActivity extends BaseActivity  {
                 nextResultPage();
                 break;
             case R.id.btn_option_menus:
-//                PopupMenu popupMenu=new PopupMenu(this,v);//1.实例化PopupMenu
-//                getMenuInflater().inflate(R.menu.option_menu,popupMenu.getMenu());//2.加载Menu资源
-//                //3.为弹出菜单设置点击监听
-//                popupMenu.setOnMenuItemClickListener(item -> {
-//                    switch (item.getItemId()){
-//                        case R.id.popup_rubber:
-//                            rubberEnableFlag = !rubberEnableFlag;
-//                            myNoteView.setRubberMode(rubberEnableFlag);
-//                            return true;
-//                        case R.id.popup_delete:
-//                            myNoteView.clear(false);
-//                            return true;
-//                        case R.id.popup_savePic:
-//                            myNoteView.saveBitmap();
-//                            return true;
-//                        default:
-//                            return false;
-//                    }
-//                });
-//                popupMenu.show();//4.显示弹出菜单
                 PopupWindow popupWindow = showPopupWindow();
-                Log.i("tag", "onClick: "+popupWindow.isShowing());
+                Log.i("tag", "onClick: " + popupWindow.isShowing());
                 if (popupWindow != null) {
                     popupWindow.setFocusable(true);
                 }
@@ -407,6 +447,57 @@ public class IatActivity extends BaseActivity  {
         nPageCount = getTotalqlPageCount(mTotalResultList.size());
         initPage();
         freshSentenceList(nPageIsx);
+    }
+
+
+    public void startLu() {
+        if (isRecording) {
+            return;
+        }
+        String tmpName = System.currentTimeMillis() + "_" + mSampleRateInHZ + "";
+        tmpFile = createFile(tmpName + ".pcm");
+        final String tmpOutFile = createFile(tmpName + ".wav");
+
+        isRecording = true;
+        mAudioRecord.startRecording();
+        mExecutor.execute(() -> {
+            try {
+                FileOutputStream outputStream = new FileOutputStream(tmpFile);
+                while (isRecording) {
+                    int readSize = mAudioRecord.read(mAudioData, 0, mAudioData.length);
+                    Log.i("tag", "run: ------>" + readSize);
+                    outputStream.write(mAudioData);
+                }
+                outputStream.close();
+                new MethodUtils(IatActivity.this).pcmToWave(tmpFile, tmpOutFile, mRecorderBufferSize);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private String createFile(String name) {
+        String dirPath = MethodUtils.getStoragePath(IatActivity.this, "共享存储") + "/AudioRecord/";
+        File file = new File(dirPath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String filePath = dirPath + name;
+        File objFile = new File(filePath);
+//        if (!objFile.exists()) {
+//            objFile.mkdirs();
+//        }
+//        if (!objFile.exists()) {
+//            try {
+//                objFile.createNewFile();
+//                return objFile;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        return filePath;
     }
 
     private int getTotalqlPageCount(int size) {
@@ -455,7 +546,7 @@ public class IatActivity extends BaseActivity  {
         popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
         popupWindow.setTouchable(true);
         popupWindow.setOutsideTouchable(true);
-        return  popupWindow;
+        return popupWindow;
 
 
     }
@@ -583,8 +674,8 @@ public class IatActivity extends BaseActivity  {
 
                     });
 
-                }
-                if (!isRunning) {
+                    if (!isRunning) {
+                    }
                     cancel();
                     timer.cancel();
                     close(true);

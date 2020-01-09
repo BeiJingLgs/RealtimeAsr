@@ -47,12 +47,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     private TextView mPagetTv;
     private static Logger logger = Logger.getLogger("IatListActivity");
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        init();
-        initPermission();
-    }
 
     @Override
     int provideContentViewId() {
@@ -60,6 +54,8 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     public void initView(Bundle savedInstanceState,View view) {
+        init();
+        initPermission();
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
