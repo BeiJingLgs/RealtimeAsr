@@ -6,8 +6,6 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-
     <!-- 可选权限说明-->
     <uses-permission
         android:name="android.permission.INTERNET" />

@@ -28,7 +28,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     void initView(Bundle savedInstanceState, View view) {
-        mMenus.setVisibility(View.GONE);
+        mHomeBtn.setVisibility(View.GONE);
         btn_Reg = findViewById(R.id.btn_reg);
         user_phone = findViewById(R.id.user_phone);
         user_password = findViewById(R.id.user_password);

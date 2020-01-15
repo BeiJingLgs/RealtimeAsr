@@ -71,7 +71,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     void initView(Bundle savedInstanceState, View view) {
         registerSDK();
-        mMenus.setVisibility(View.GONE);
+        mHomeBtn.setVisibility(View.GONE);
         reg_phone = findViewById(R.id.reg_phone);
         get_mob = findViewById(R.id.get_mob);
         set_mob = findViewById(R.id.set_mob);

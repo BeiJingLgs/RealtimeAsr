@@ -14,6 +14,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -133,32 +134,12 @@ public class IatActivity extends BaseActivity {
     private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>());
     private String tmpFile;
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            switch (message.what) {
-                case 1:
-                    mTextBegin.setText(R.string.text_end);
-                    mAudioPlayBtn.setEnabled(false);
-                    mEditBtn.setEnabled(false);
-                    try {
-                        start();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    pollCheckStop();
-                    break;
-                case 2:
-                    mTextBegin.setText(R.string.text_begin);
-                    mAudioPlayBtn.setEnabled(true);
-                    mEditBtn.setEnabled(true);
-                    close(false);
-                    break;
-            }
-        }
-    };
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initData();
+        init();
+    }
 
     @Override
     int provideContentViewId() {
@@ -171,10 +152,7 @@ public class IatActivity extends BaseActivity {
         EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back1, bfoOptions);
-        initLayout();
-        init();
-        initData();
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -272,12 +250,6 @@ public class IatActivity extends BaseActivity {
         }
     };
 
-    @SuppressLint("ShowToast")
-    private void initLayout() {
-        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-
-    }
-
     private void updateEditList() {
         for (int i = 0; i < mTempResultList.size(); i++)
             for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++) {
@@ -325,17 +297,15 @@ public class IatActivity extends BaseActivity {
             case R.id.text_begin:
                 //录音有问题
 //                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
-                if (mTextBegin.getText().toString().equals("开始录制")) {
+                if (!isRecording) {
                     startLu();
-                    handler.sendEmptyMessage(1);
+                    Toast.makeText(IatActivity.this,"在开始录制",Toast.LENGTH_LONG).show();
                 } else {
-
-                    if (!isRecording) {
+                    if (isRecording) {
                         Toast.makeText(IatActivity.this, "已结束", Toast.LENGTH_LONG).show();
                     }
                     isRecording = false;
                     mAudioRecord.stop();
-                    handler.sendEmptyMessage(2);
                 }
 
 
@@ -479,7 +449,8 @@ public class IatActivity extends BaseActivity {
     }
 
     private String createFile(String name) {
-        String dirPath = MethodUtils.getStoragePath(IatActivity.this, "共享存储") + "/AudioRecord/";
+//        String dirPath = MethodUtils.getStoragePath(IatActivity.this, "共享存储") + "/AudioRecord/";
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AudioRecord2222/";
         File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();

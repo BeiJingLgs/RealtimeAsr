@@ -19,7 +19,7 @@ public class MeActivity extends BaseActivity {
 
     @Override
     void initView(Bundle savedInstanceState, View view) {
-        mMenus.setVisibility(View.GONE);
+        mHomeBtn.setVisibility(View.GONE);
         login_or_register = findViewById(R.id.login_or_register);
         login_or_register.setOnClickListener(this);
     }

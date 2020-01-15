@@ -88,7 +88,7 @@ public class MethodUtils {
         long totalAudioLen = 0;
         long longSampleRate = mSampleRateInHZ;
         long totalDataLen = totalAudioLen + 36;
-        int channels = 2;//你录制是单声道就是1 双声道就是2（如果错了声音可能会急促等）
+        int channels = 1;//你录制是单声道就是1 双声道就是2（如果错了声音可能会急促等）
         long byteRate = 16 * longSampleRate * channels / 8;
 
         byte[] data = new byte[mRecorderBufferSize];
