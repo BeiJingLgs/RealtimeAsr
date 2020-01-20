@@ -19,6 +19,8 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
+import com.hanvon.speech.realtime.api.Handwriting;
+import com.hanvon.speech.realtime.bean.DeviceLogin;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
@@ -32,10 +34,14 @@ import java.util.logging.Logger;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
+    private Button mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
     public static final int READ_DIALOG_REQUEST = 11;
     private ArrayList<FileBean> mTotalFileList, mTempBookList;
     private FileAdapter mFileAdapter;
@@ -46,11 +52,19 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     protected static int PAGE_CATEGORY = 8;// 每页显示几个
     private TextView mPagetTv;
     private static Logger logger = Logger.getLogger("IatListActivity");
+     private  String  psth="9414518010000023";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
 //        initPermission();
+        //接口请求成功
+        Handwriting.getAppServiceApi().DeviceLogin(psth)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(deviceLogin -> {
+                    String code = deviceLogin.getCode();
+                });
     }
 
     @Override
@@ -58,7 +72,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         return R.layout.activity_iat_list;
     }
 
-    public void initView(Bundle savedInstanceState,View view) {
+    public void initView(Bundle savedInstanceState, View view) {
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -254,7 +268,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         TextView menuItem2 = view.findViewById(R.id.popup_me);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                Intent intent=new Intent(this,MeActivity.class);
+                Intent intent = new Intent(this, MeActivity.class);
                 startActivity(intent);
                 popupWindow.dismiss();
             }

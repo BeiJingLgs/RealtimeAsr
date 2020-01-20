@@ -298,16 +298,33 @@ public class IatActivity extends BaseActivity {
                 //录音有问题
 //                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
                 if (!isRecording) {
-                    startLu();
                     Toast.makeText(IatActivity.this,"在开始录制",Toast.LENGTH_LONG).show();
+                    Log.i("tag","tag1111111111111111");
+                    /**
+                     * 问题所在： 录音与转写不能同时进行
+                     */
+                    startLu();
+                    new Thread(() -> {
+                        try {
+                            start();
+                            pollCheckStop();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+
                 } else {
                     if (isRecording) {
                         Toast.makeText(IatActivity.this, "已结束", Toast.LENGTH_LONG).show();
                     }
                     isRecording = false;
                     mAudioRecord.stop();
+                    Log.i("tag","tag2222222222222222");
+                    new Thread(() -> {
+                        close(false);
+                    }).start();
                 }
-
 
 //                /**
 //                 * 转写
@@ -323,6 +340,7 @@ public class IatActivity extends BaseActivity {
 //                                mEditBtn.setEnabled(true);
 //                            });
 //                            close(false);
+//                            Log.i("tag","tag33333333333333");
 //                        } else {
 //                            runOnUiThread(() -> {
 //                                mTextBegin.setText(R.string.text_end);
@@ -331,7 +349,7 @@ public class IatActivity extends BaseActivity {
 //                            });
 //                            start();
 //                            pollCheckStop();
-//
+//                            Log.i("tag","tag44444444444444");
 //                        }
 //                    } catch (IOException e) {
 //                        logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
@@ -615,17 +633,21 @@ public class IatActivity extends BaseActivity {
         if (mode == Constants.MINI_DEMO_MODE || mode == Runner.MODE_FILE_STREAM
                 || mode == Runner.MODE_SIMULATE_REAL_TIME_STREAM) {
             is = getAssets().open(Constants.ASSET_PCM_FILENAME);
+            Log.i("tag","tagqqqqqqqqqq");
             // pcm 文件流
         } else if (mode == Runner.MODE_REAL_TIME_STREAM) {
             is = MyMicrophoneInputStream.getInstance();
             // 麦克风
+            Log.i("tag","tagaaaaaaaaaaaaaa");
         }
         if (mode == Constants.MINI_DEMO_MODE) {
             miniRunner = new MiniMain(is); // 精简版
             miniRunner.run();
+            Log.i("tag","tagzzzzzzzzzzzz");
         } else {
             fullRunner = new Runner(is, mode); // 完整版
             fullRunner.run();
+            Log.i("tag","tagxxxxxxxxxxxx");
         }
     }
 
