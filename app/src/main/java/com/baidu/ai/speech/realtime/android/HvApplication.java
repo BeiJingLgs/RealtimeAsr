@@ -7,6 +7,7 @@ public class HvApplication extends Application {
 
     private static Context mContext;
     public static String TOKEN;
+    public static String SESSION;
     @Override
     public void onCreate() {
         super.onCreate();

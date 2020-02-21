@@ -82,7 +82,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void failureData(String error) {
                         Log.e("AA", "error: " + error + "错");
-                        customDialog.dismiss();
+                        //customDialog.dismiss();
                     }
                 });
                 break;
@@ -103,7 +103,7 @@ public class LoginActivity extends BaseActivity {
     private void showProgrssDialog() {
         customDialog = new CustomDialog(this);
         //customDialog.setTitle("提醒");
-        customDialog.setMessage("你确定要删除吗?");
+        customDialog.setMessage(getResources().getString(R.string.loading));
         customDialog.setCancel("cancel", new CustomDialog.IOnCancelListener() {
             @Override
             public void onCancel(CustomDialog dialog) {

@@ -9,87 +9,103 @@
         layout="@layout/activity_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/register_layout"
         android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/reg_phone"
-            android:layout_width="600dp"
-            android:layout_height="100dp"
-            android:background="@drawable/button_w_edge"
-            android:drawableLeft="@drawable/wode"
-            android:drawablePadding="20dp"
-            android:hint="手  机  号"
-            android:inputType="number"
-            android:textSize="@dimen/link_text_font"
-            android:paddingLeft="30dp" />
-
-        <LinearLayout
-            android:layout_width="600dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="50dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/set_mob"
-                android:layout_width="300dp"
-                android:layout_height="100dp"
-                android:background="@drawable/button_w_edge"
-                android:drawableLeft="@drawable/duanxin"
-                android:drawablePadding="20dp"
-                android:hint="验 证 码"
-                android:textSize="@dimen/link_text_font"
-                android:paddingLeft="30dp" />
-
-            <TextView
-                android:id="@+id/get_mob"
-                android:layout_width="180dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="center"
-                android:text="获取验证码"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/reg_phone"
+                android:layout_width="600dp"
+                android:layout_height="100dp"
+                android:background="@drawable/button_w_edge"
+                android:drawableLeft="@drawable/wode"
+                android:drawablePadding="20dp"
+                android:hint="@string/phoneNumber"
+                android:inputType="number"
+                android:textSize="@dimen/link_text_font"
+                android:paddingLeft="30dp" />
+
+            <LinearLayout
+                android:layout_width="600dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/set_mob"
+                    android:layout_width="300dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/button_w_edge"
+                    android:drawableLeft="@drawable/duanxin"
+                    android:drawablePadding="20dp"
+                    android:hint="@string/VCode"
+                    android:textSize="@dimen/link_text_font"
+                    android:paddingLeft="30dp" />
+
+                <TextView
+                    android:id="@+id/get_mob"
+                    android:layout_width="180dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:gravity="center"
+                    android:text="@string/getVCode"
+                    android:textColor="@color/black"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/button_w_edge"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/reg_password"
+                    android:layout_width="520dp"
+                    android:layout_height="100dp"
+                    android:background="@null"
+                    android:drawableLeft="@drawable/mima"
+                    android:drawablePadding="20dp"
+                    android:hint="@string/password"
+                    android:textSize="@dimen/link_text_font"
+                    android:inputType="textPassword"
+                    android:paddingLeft="30dp" />
+                <ImageButton
+                    android:id="@+id/reg_sys_pass"
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:background="@color/bai"
+                    android:src="@drawable/yanjing" />
+            </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:id="@+id/user_register"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="50dp"
             android:background="@drawable/button_w_edge"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/reg_password"
-                android:layout_width="520dp"
-                android:layout_height="100dp"
-                android:background="@null"
-                android:drawableLeft="@drawable/mima"
-                android:drawablePadding="20dp"
-                android:hint="密  码"
-                android:textSize="@dimen/link_text_font"
-                android:inputType="textPassword"
-                android:paddingLeft="30dp" />
-            <ImageButton
-                android:id="@+id/reg_sys_pass"
-                android:layout_width="76dp"
-                android:layout_height="match_parent"
-                android:layout_margin="3dp"
-                android:background="@color/bai"
-                android:src="@drawable/yanjing" />
-        </LinearLayout>
+            android:text="@string/register"
+            android:textSize="30sp" />
     </LinearLayout>
-    <Button
-        android:id="@+id/user_register"
-        android:layout_width="200dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/button_w_edge"
-        android:text="注  册"
-        android:textSize="30sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/find_password_layout"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
 
 </LinearLayout>

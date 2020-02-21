@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
-public class MyNoteView extends NoteView {
+public class HandWriteNoteView extends NoteView {
 
     private static final String TAG = "MyNoteView";
     private Context mContext;
@@ -29,19 +29,19 @@ public class MyNoteView extends NoteView {
     private boolean moveOutSideFlag = false;
     Bitmap lastPic;
 
-    public MyNoteView(Context context) {
+    public HandWriteNoteView(Context context) {
         this(context, null);
     }
 
-    public MyNoteView(Context context, AttributeSet attrs) {
+    public HandWriteNoteView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MyNoteView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public HandWriteNoteView(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public MyNoteView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public HandWriteNoteView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         mContext = context;
     }

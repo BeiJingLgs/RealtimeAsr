@@ -97,7 +97,7 @@
             android:layout_toRightOf="@+id/iat_play"
             android:button="@drawable/check_box"
             android:stateListAnimator="@null"
-            android:text="录音存放Sd卡"
+            android:text="@string/saveSd"
             android:visibility="gone"
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeM"
@@ -140,7 +140,7 @@
             android:layout_marginTop="@dimen/margin_s"
             android:paddingLeft="@dimen/margin_s"
             android:paddingRight="@dimen/margin_s"
-            android:hint="内容"
+            android:hint="@string/content"
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeM" />
 
@@ -204,7 +204,7 @@
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>
-    <com.hanvon.speech.realtime.view.MyNoteView
+    <com.hanvon.speech.realtime.view.HandWriteNoteView
         android:id="@+id/MyNoteView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

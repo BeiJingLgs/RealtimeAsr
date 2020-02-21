@@ -116,8 +116,8 @@ public class FileAdapter extends BaseAdapter {
             viewHolder.checkbox.setVisibility(View.GONE);
         }
 
-        Log.e("TAG", "hvFileCommonUtils.hasSdcard(context): " + hvFileCommonUtils.hasSdcard(context));
-        Log.e("TAG", "TextUtils.equals(cateList.get(position).mSd, sd): " + TextUtils.equals(cateList.get(position).mSd, "sd"));
+        //Log.e("TAG", "hvFileCommonUtils.hasSdcard(context): " + hvFileCommonUtils.hasSdcard(context));
+        //Log.e("TAG", "TextUtils.equals(cateList.get(position).mSd, sd): " + TextUtils.equals(cateList.get(position).mSd, "sd"));
         if (hvFileCommonUtils.hasSdcard(context) && TextUtils.equals(cateList.get(position).mSd, "sd")) {
             viewHolder.sdImg.setVisibility(View.VISIBLE);
         } else {

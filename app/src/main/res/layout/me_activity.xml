@@ -16,7 +16,7 @@
         android:drawablePadding="10dp"
         android:layout_below="@+id/activity_header"
         android:drawableLeft="@drawable/wodedangxuan"
-        android:text="点击登陆/注册"
+        android:text="@string/loginregister"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
@@ -32,7 +32,7 @@
         android:layout_height="130dp"
         android:drawablePadding="10dp"
         android:layout_below="@+id/view_line2"
-        android:text="剩余时长"
+        android:text="@string/remainTime"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
@@ -48,7 +48,7 @@
         android:layout_height="130dp"
         android:drawablePadding="10dp"
         android:layout_below="@+id/view_line3"
-        android:text="购买记录"
+        android:text="@string/purchaserecord"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
@@ -64,7 +64,7 @@
         android:layout_height="130dp"
         android:drawablePadding="10dp"
         android:layout_below="@+id/view_line4"
-        android:text="绑定设备"
+        android:text="@string/binddevice"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
@@ -80,7 +80,7 @@
         android:layout_height="130dp"
         android:drawablePadding="10dp"
         android:layout_below="@+id/view_line5"
-        android:text="检查升级"
+        android:text="@string/checkupdate"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
@@ -94,7 +94,7 @@
         android:id="@+id/view_line7"
         android:layout_above="@+id/btn_logout"/>
     <Button
-        android:text="退出登录"
+        android:text="@string/logout"
         android:id="@+id/btn_logout"
         android:textColor="@color/dark"
         android:layout_width="match_parent"

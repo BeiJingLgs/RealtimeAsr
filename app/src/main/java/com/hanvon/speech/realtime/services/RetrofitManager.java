@@ -70,6 +70,8 @@ public class RetrofitManager {
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(new ReceivedCookiesInterceptor()) //首次请求
+                .addInterceptor(new AddCookiesInterceptor()) //首次请求
                 .retryOnConnectionFailure(true);
         OkHttpClient client = builder.build();
 
@@ -78,6 +80,7 @@ public class RetrofitManager {
                 //添加Rxjava工厂
                 .client(getOkHttpClient())//获取后的okhttp头部
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+
                 .baseUrl("http://edu.hwebook.cn:8008/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
@@ -91,8 +94,11 @@ public class RetrofitManager {
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request()
                                 .newBuilder()
-                                .removeHeader("User-Agent")//移除旧的
-                                .addHeader("User-Agent", WebSettings.getDefaultUserAgent(getApplicationContext()))//添加真正的头部
+                                //.removeHeader("User-Agent")//移除旧的
+                                .header("Authorization", "auth-token")
+                                .header("Accept", "application/json")
+                               // .addHeader("User-Agent",
+                               //         "Mozilla/5.0 ( Windows; U; Windows NT 5.1; en-US; rv:0.9.4 ")//添加真正的头部
                                 .build();
                         return chain.proceed(request);
                     }
@@ -170,6 +176,20 @@ public class RetrofitManager {
                 .subscribe(getObsetver(callBack));
     }
 
+    public void getDevicePacks(ICallBack callBack) {
+        iApiService.getDevicePacks()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    public void getUserPacks(ICallBack callBack) {
+        iApiService.getUserPacks()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
     //拿结果
     private Observer getObsetver(final ICallBack callBack) {
         //Rxjava
@@ -194,6 +214,7 @@ public class RetrofitManager {
                 //请求完成，会走onNext
                 //这里面的请求完成，不代表服务器告诉我们请求成功
                 //200 404 503这些都代表请求完成，有结果，中间没报错，但是结果不一定是200
+               // responseBody.
                 try {
                     String string = responseBody.string();
                     if (callBack != null) {

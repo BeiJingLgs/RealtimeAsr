@@ -1,7 +1,5 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,7 +39,6 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.MiniMain;
 import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.baidu.ai.speech.realtime.full.connection.Runner;
 import com.baidu.ai.speech.realtime.full.download.Result;
@@ -54,14 +51,13 @@ import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.model.IatThread;
 import com.hanvon.speech.realtime.model.TranslateBean;
-import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.EPDHelper;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.WifiOpenHelper;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
-import com.hanvon.speech.realtime.view.MyNoteView;
+import com.hanvon.speech.realtime.view.HandWriteNoteView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,8 +126,8 @@ public class IatActivity extends BaseActivity {
     private ArrayList<Result> mTotalResultList, mTempResultList;
     private Thread mThread = null;
     private byte[] data = null;
-    private MyNoteView myNoteView;
-    private Bitmap bitmap;
+    private HandWriteNoteView mNoteView;
+    private Bitmap mBitmap;
 
     /*默认数据*/
     private int mSampleRateInHZ = 16000; //采样率
@@ -165,7 +161,7 @@ public class IatActivity extends BaseActivity {
         EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -181,7 +177,7 @@ public class IatActivity extends BaseActivity {
         mResultLayout = findViewById(R.id.result_layout);
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
-        myNoteView = view.findViewById(R.id.MyNoteView);
+        mNoteView = view.findViewById(R.id.MyNoteView);
         mCheckbox = findViewById(R.id.checkbox);
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
@@ -190,10 +186,10 @@ public class IatActivity extends BaseActivity {
         mEditNextPageBtn.setOnClickListener(this);
         mResultPreBtn.setOnClickListener(this);
         mResultNextBtn.setOnClickListener(this);
-        myNoteView.setZOrderOnTop(true);
-        myNoteView.setReflushDrityEnable(true);
-        myNoteView.setRubberMode(rubberEnableFlag);
-        myNoteView.setBackground(bitmap);
+        mNoteView.setZOrderOnTop(true);
+        mNoteView.setReflushDrityEnable(true);
+        mNoteView.setRubberMode(rubberEnableFlag);
+        mNoteView.setBackground(mBitmap);
         //mSeekBar.setElevation();
 
     }
@@ -278,7 +274,7 @@ public class IatActivity extends BaseActivity {
                     }
 
                 } else if (EVENT_AVAILABLEE_MEMO == message.what) {
-                    Toast.makeText(IatActivity.this,"请注意：内存不足",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getResources().getString(R.string.insufficientmemory),Toast.LENGTH_LONG).show();
                 } else if (EVENT_PLAY_STOP == message.what) {
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
 
@@ -314,7 +310,7 @@ public class IatActivity extends BaseActivity {
                                       boolean fromUser) {
             logger.info("===onProgressChanged: ");
 
-            mTimeTv.setText("当前进度: " + progress + "%");
+            mTimeTv.setText(getResources().getString(R.string.progress) + progress + "%");
         }
     };
 
@@ -372,7 +368,7 @@ public class IatActivity extends BaseActivity {
                 break;
             case R.id.text_begin:
                 if (WifiUtils.getWifiConnectState(this) == NetworkInfo.State.DISCONNECTED) {
-                    Toast.makeText(IatActivity.this,"请检查网络连接",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
                     WifiOpenHelper wifi = new WifiOpenHelper(this);
                     wifi.openWifi();
                     this.startActivity(new Intent(
@@ -380,17 +376,17 @@ public class IatActivity extends BaseActivity {
                     return;
                 }
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-                    Toast.makeText(IatActivity.this,"正在播放音频，录制失败",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getResources().getString(R.string.playingAudio),Toast.LENGTH_LONG).show();
                     return;
                 }
                 //录音有问题
 //                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
                 if (!isRecording) {
                     startLu();
-                    Toast.makeText(IatActivity.this,"在开始录制",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
                 } else {
                     if (isRecording) {
-                        Toast.makeText(IatActivity.this, "已结束", Toast.LENGTH_LONG).show();
+                        Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
                     }
                     isRecording = false;
                     mAudioRecord.stop();
@@ -426,18 +422,7 @@ public class IatActivity extends BaseActivity {
                 freEditSentenceshPage();
                 break;
             case R.id.iat_play:
-                RetrofitManager.getInstance().getPacks(new RetrofitManager.ICallBack() {
-                    @Override
-                    public void successData(String result) {
-                        Log.e("AA", "onResponse: " + result + "返回值");
-                    }
 
-                    @Override
-                    public void failureData(String error) {
-                        Log.e("AA", "error: " + error + "错");
-
-                    }
-                });
                 /*if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
                     Toast.makeText(IatActivity.this,"正在录制音频，播放失败",Toast.LENGTH_LONG).show();
                     return;
@@ -564,14 +549,14 @@ public class IatActivity extends BaseActivity {
         TextView menuItem1 = view.findViewById(R.id.popup_savePic);
         menuItem1.setOnClickListener(view13 -> {
             if (popupWindow != null) {
-                myNoteView.saveBitmap(ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" );
+                mNoteView.saveBitmap(ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" );
                 popupWindow.dismiss();
             }
         });
         TextView menuItem2 = view.findViewById(R.id.popup_delete);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                myNoteView.clear(false);
+                mNoteView.clear(false);
                 popupWindow.dismiss();
             }
         });
@@ -579,7 +564,7 @@ public class IatActivity extends BaseActivity {
         menuItem3.setOnClickListener(view1 -> {
             if (popupWindow != null) {
                 rubberEnableFlag = !rubberEnableFlag;
-                myNoteView.setRubberMode(rubberEnableFlag);
+                mNoteView.setRubberMode(rubberEnableFlag);
                 popupWindow.dismiss();
             }
         });

@@ -52,7 +52,7 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/button_w_edge"
         android:layout_toLeftOf="@+id/delete_btn"
-        android:text="全选/全不选"
+        android:text="@string/allselect"
         android:textColor="@android:color/black"
         android:textSize="@dimen/Common_Text_Font_Size"
         android:visibility="gone" />
@@ -66,7 +66,7 @@
         android:layout_marginRight="20dp"
         android:stateListAnimator="@null"
         android:background="@drawable/button_w_edge"
-        android:text="删除"
+        android:text="@string/delete"
         android:layout_marginBottom="5dp"
         android:textColor="@android:color/black"
         android:textSize="@dimen/Common_Text_Font_Size"

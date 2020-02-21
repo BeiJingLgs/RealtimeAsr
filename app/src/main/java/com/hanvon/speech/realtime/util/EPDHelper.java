@@ -2,7 +2,7 @@ package com.hanvon.speech.realtime.util;
 
 import android.view.Window;
 
-import com.hanvon.speech.realtime.view.MyNoteView;
+import com.hanvon.speech.realtime.view.HandWriteNoteView;
 
 public class EPDHelper {
 
@@ -41,7 +41,7 @@ public class EPDHelper {
         window.setRefreshMode(m.value());
     }
 
-    public void setSurfaceViewRefreshMode(MyNoteView surfaceview, Mode m) {
+    public void setSurfaceViewRefreshMode(HandWriteNoteView surfaceview, Mode m) {
         System.out.println("SurfaceView mode" + m);
         surfaceview.setRefreshMode(m.value());
     }

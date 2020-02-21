@@ -9,13 +9,13 @@
     <TextView
         android:id="@+id/popup_build"
         style="@style/menu_item"
-        android:text="新  建" />
+        android:text="@string/newbuild" />
     <View
         style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_me"
         style="@style/menu_item"
-        android:text="我  的" />
+        android:text="@string/mine" />
 
 
 </LinearLayout>

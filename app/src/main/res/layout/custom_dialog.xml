@@ -54,7 +54,7 @@
             android:layout_width="@dimen/mydialog_button_width"
             android:layout_height="@dimen/mydialog_button_height"
             android:background="@drawable/mydialog_edge"
-            android:text="取消"
+            android:text="@string/cancel"
             android:textSize="@dimen/mydialog_button_font"
             android:visibility="gone" />
     </RelativeLayout>

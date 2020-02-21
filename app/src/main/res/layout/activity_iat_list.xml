@@ -38,7 +38,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:padding="15dp"
-        android:text="当前还没有文件，快来创建吧！！"
+        android:text="@string/nofile"
         android:textColor="@color/black"
         android:visibility="gone"
         android:textSize="24sp"/>
@@ -59,7 +59,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/activity_header"
         android:gravity="center"
-        android:text="当前列表为空"
+        android:text="@string/listEmpty"
         android:textColor="@android:color/black"
         android:textSize="@dimen/Second_Title_Font_Size"
         android:visibility="gone" />

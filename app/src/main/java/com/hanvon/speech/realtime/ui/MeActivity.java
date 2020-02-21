@@ -47,7 +47,7 @@ public class MeActivity extends BaseActivity {
             mLogOutBtn.setVisibility(View.GONE);
         } else {
             mLogOutBtn.setVisibility(View.VISIBLE);
-            login_or_register.setText("已经登陆");
+            login_or_register.setText(getResources().getString(R.string.hasLogined));
         }
     }
 
@@ -65,10 +65,46 @@ public class MeActivity extends BaseActivity {
                  finish();
                  break;
              case R.id.last_time:
+                 RetrofitManager.getInstance().getPacks(new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Log.e("AA", "onResponse: " + result + "返回值");
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error + "错");
+
+                     }
+                 });
                  break;
              case R.id.shop_list:
+                 RetrofitManager.getInstance().getDevicePacks(new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Log.e("AA", "onResponse: " + result + "返回值");
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error + "错");
+
+                     }
+                 });
                  break;
              case R.id.bind_deviceList:
+                 RetrofitManager.getInstance().getUserPacks(new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Log.e("AA", "onResponse: " + result + "返回值");
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error);
+
+                     }
+                 });
                  break;
              case R.id.update_check:
                  break;
@@ -77,6 +113,8 @@ public class MeActivity extends BaseActivity {
                      @Override
                      public void successData(String result) {
                          Log.e("AA", "onResponse: " + result + "返回值");
+                         login_or_register.setText("未登陆");
+                         mLogOutBtn.setVisibility(View.GONE);
                      }
 
                      @Override

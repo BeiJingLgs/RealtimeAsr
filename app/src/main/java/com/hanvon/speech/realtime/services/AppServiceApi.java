@@ -84,11 +84,11 @@ public interface AppServiceApi {
     @GET("API/Pack/GetPacks")
     Observable<ResponseBody> getPacks();
 
-    @GET("........")
-    Observable<VerificationResult> getDevicePacks(@Path("token") String token );
+    @GET("API/Pack/GetDevicePacks")
+    Observable<ResponseBody> getDevicePacks();
 
-    @GET("........")
-    Observable<VerificationResult> getUserPacks(@Path("token") String token );
+    @GET("API/Pack/GetUserPacks")
+    Observable<ResponseBody> getUserPacks();
 
     @GET("........")
     Observable<VerificationResult> getUseRecord(@Path("token") String token, @Path("curpage") int curpage,
