@@ -1,6 +1,8 @@
 package com.hanvon.speech.realtime.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,8 +116,12 @@ public class FileAdapter extends BaseAdapter {
             viewHolder.checkbox.setVisibility(View.GONE);
         }
 
-        if (hvFileCommonUtils.hasSdcard(context)) {
+        Log.e("TAG", "hvFileCommonUtils.hasSdcard(context): " + hvFileCommonUtils.hasSdcard(context));
+        Log.e("TAG", "TextUtils.equals(cateList.get(position).mSd, sd): " + TextUtils.equals(cateList.get(position).mSd, "sd"));
+        if (hvFileCommonUtils.hasSdcard(context) && TextUtils.equals(cateList.get(position).mSd, "sd")) {
             viewHolder.sdImg.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.sdImg.setVisibility(View.GONE);
         }
 
         boolean res = false;

@@ -24,7 +24,7 @@ public class hvReflectUtils {
     }
     
     public static String getStoragePath(Context context,String keyword) {
-    	String targetpath = "";
+		String targetpath = "MEDIA_UNKNOW";
     	StorageManager mStorageManager = (StorageManager) context
     			.getSystemService(Context.STORAGE_SERVICE);
     	Class<?> storageVolumeClazz = null;

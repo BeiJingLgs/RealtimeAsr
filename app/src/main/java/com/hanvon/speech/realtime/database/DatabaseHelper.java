@@ -21,6 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "content text, " +
             "createtime text," +
             "modifytime text," +
+            "sdcard text," +
             "createmillis long)";
  
     //删除表

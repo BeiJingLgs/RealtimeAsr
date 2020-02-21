@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 public class Recordutil {
+    public static final int BUFFER_DATA = 1024 * 1024 * 20;
+    public static int BUFFER_SIZE = 0;
     private static Logger logger = Logger.getLogger("Recordutil");
     private static Recordutil instance = new Recordutil();
 
@@ -51,8 +53,9 @@ public class Recordutil {
         byte[] data_pack = null;
         if (inStream != null){
             long size = file.length();
+           // BUFFER_SIZE = (int)(((size % BUFFER_DATA)) == 0 ? (size / BUFFER_DATA) : (size / BUFFER_DATA) + 1);
 
-            data_pack = new byte[(int) size];
+            data_pack = new byte[(int)size];
             try {
                 inStream.read(data_pack);
             } catch (IOException e) {
@@ -85,66 +88,6 @@ public class Recordutil {
     private byte[] audioData;
     private FileInputStream fileInputStream;
 
-    public void startRecord(String path) {
-        final int minBufferSize = AudioRecord.getMinBufferSize(ConstBroadStr.SAMPLE_RATE_INHZ, ConstBroadStr.CHANNEL_CONFIG, ConstBroadStr.AUDIO_FORMAT);
-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, ConstBroadStr.SAMPLE_RATE_INHZ,
-                ConstBroadStr.CHANNEL_CONFIG, ConstBroadStr.AUDIO_FORMAT, minBufferSize);
 
-        final byte data[] = new byte[minBufferSize];
-        File direc = new File(ConstBroadStr.GetAudioRootPath() + path.trim());
-        if(direc.exists()){
-            //创建文件夹
-            direc.mkdirs();
-        }
-
-        final File file = new File(ConstBroadStr.GetAudioRootPath() + path.trim() +
-                ConstBroadStr.AUDIO_PATH);
-        if (!file.mkdirs()) {
-        }
-        if (file.exists()) {
-            file.delete();
-        }
-        boolean is = file.exists();
-        logger.info("file.exists(): " + file.exists());
-        audioRecord.startRecording();
-        isRecording = true;
-
-        // TODO: 2018/3/10 pcm数据无法直接播放，保存为WAV格式。
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //BufferedOutputStream os = null;
-                OutputStream os = null;
-                try {
-                    //os = new BufferedOutputStream(new FileOutputStream(file));
-                    os = new FileOutputStream(file);
-                    logger.info("file.getPath(): " + file.getPath());
-                    //os = DocumentsUtils.getOutputStream(HvApplication.getContext(), new File(file.getPath()));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                if (null != os) {
-                    while (isRecording) {
-                        int read = audioRecord.read(data, 0, minBufferSize);
-                        // 如果读取音频数据没有出现错误，就将数据写入到文件
-                        if (AudioRecord.ERROR_INVALID_OPERATION != read) {
-                            try {
-                                os.write(data);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    try {
-                        os.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
 
 }

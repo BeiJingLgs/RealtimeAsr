@@ -28,6 +28,7 @@
             android:id="@+id/seekBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="20dip"
             android:layout_toRightOf="@+id/time_tv" />
 
         <Button
@@ -176,6 +177,10 @@
             android:background="@drawable/arrow_left_gray"
             android:clickable="true"
             android:focusable="true" />
+       <!-- <ScrollView
+            android:layout_width="990dp"
+            android:layout_height="1000dp"
+            android:scrollbars="none">-->
 
         <ListView
             android:id="@+id/sentence_list"
@@ -188,7 +193,7 @@
             android:stateListAnimator="@null"
             android:paddingLeft="@dimen/dialog_margin4"
             android:paddingRight="@dimen/dialog_margin4" />
-
+       <!-- </ScrollView>-->
         <Button
             android:id="@+id/ivnext_page"
             android:layout_width="wrap_content"
@@ -203,6 +208,7 @@
         android:id="@+id/MyNoteView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="gone"
         android:layout_weight="1"
         />
 </LinearLayout>

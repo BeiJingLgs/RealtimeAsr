@@ -174,10 +174,11 @@ public class MyNoteView extends NoteView {
         return dirtyRect;*/
     }
 
-    public void saveBitmap() {
+    public void saveBitmap(String path) {
         super.setForeground(lastPic);
-        saveBitmap("handwrite.png",super.getHandwrittenBitmap());
-        saveBitmap("backgroud.png",super.getBackgroundBitmap());
+        //path = path.trim();
+        saveBitmap( "handwrite.png",super.getHandwrittenBitmap());
+        saveBitmap( "backgroud.png",super.getBackgroundBitmap());
         saveBitmap("blend.png",super.getBlendBitmap());
     }
 

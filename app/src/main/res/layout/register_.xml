@@ -25,6 +25,7 @@
             android:drawablePadding="20dp"
             android:hint="手  机  号"
             android:inputType="number"
+            android:textSize="@dimen/link_text_font"
             android:paddingLeft="30dp" />
 
         <LinearLayout
@@ -41,6 +42,7 @@
                 android:drawableLeft="@drawable/duanxin"
                 android:drawablePadding="20dp"
                 android:hint="验 证 码"
+                android:textSize="@dimen/link_text_font"
                 android:paddingLeft="30dp" />
 
             <TextView
@@ -68,6 +70,7 @@
                 android:drawableLeft="@drawable/mima"
                 android:drawablePadding="20dp"
                 android:hint="密  码"
+                android:textSize="@dimen/link_text_font"
                 android:inputType="textPassword"
                 android:paddingLeft="30dp" />
             <ImageButton

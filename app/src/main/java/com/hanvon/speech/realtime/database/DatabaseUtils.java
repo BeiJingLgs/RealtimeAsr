@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 import com.hanvon.speech.realtime.bean.FileBean;
@@ -59,8 +60,6 @@ public class DatabaseUtils {
 
 
 
- 
-
     /**
      * 查询所有
      *
@@ -82,7 +81,8 @@ public class DatabaseUtils {
             note.json = cursor.getString(2);
             note.createtime = cursor.getString(4);
             note.modifytime = cursor.getString(5);
-            note.createmillis = cursor.getString(6);
+            note.mSd = cursor.getString(6);
+            note.createmillis = cursor.getString(7);
             notes.add(note);
         }
         cursor.close();
@@ -102,7 +102,8 @@ public class DatabaseUtils {
             contentValues.put("content", userBean.content);
             contentValues.put("json", userBean.json);
             contentValues.put("modifytime", userBean.modifytime);
-            dbHelper.getWritableDatabase().update("note",contentValues
+            contentValues.put("sdcard", userBean.mSd + "");
+            dbHelper.getWritableDatabase().update("note", contentValues
                     , "createmillis=?"
                     , new String[]{userBean.createmillis + ""});
         } catch (Exception ignored) {

@@ -6,10 +6,11 @@ import android.content.Context;
 public class HvApplication extends Application {
 
     private static Context mContext;
+    public static String TOKEN;
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = this;
+        mContext = getApplicationContext();
     }
 
     @Override

@@ -34,6 +34,7 @@
           android:inputType="number"
           android:paddingLeft="30dp"
           android:hint="手  机  号"
+          android:textSize="@dimen/link_text_font"
           android:background="@drawable/button_w_edge"/>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -49,6 +50,7 @@
                 android:drawablePadding="20dp"
                 android:paddingLeft="30dp"
                 android:inputType="textPassword"
+                android:textSize="@dimen/link_text_font"
                 android:background="@null"
                 android:hint="密  码"
                 />

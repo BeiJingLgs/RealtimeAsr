@@ -1,24 +1,25 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.telecom.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.ai.speech.realtime.R;
-import com.google.gson.Gson;
-import com.hanvon.speech.realtime.bean.MobMessage;
+import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.DaoTimer;
 import com.hanvon.speech.realtime.util.MethodUtils;
 
-import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
@@ -59,9 +60,9 @@ public class RegisterActivity extends BaseActivity {
         }
     };
     private EditText set_mob;
-    private EditText reg_phone;
-    private DaoTimer timer;
-
+    private EditText reg_phone, mPassWordEd;
+    //private DaoTimer timer;
+    private TimeCount time;
 
     @Override
     int provideContentViewId() {
@@ -72,13 +73,17 @@ public class RegisterActivity extends BaseActivity {
     void initView(Bundle savedInstanceState, View view) {
         registerSDK();
         mHomeBtn.setVisibility(View.GONE);
+        mMenus.setVisibility(View.GONE);
+
         reg_phone = findViewById(R.id.reg_phone);
         get_mob = findViewById(R.id.get_mob);
         set_mob = findViewById(R.id.set_mob);
+        mPassWordEd = findViewById(R.id.reg_password);
         user_register = findViewById(R.id.user_register);
         get_mob.setOnClickListener(this);
         user_register.setOnClickListener(this);
-        timer = new DaoTimer(DaoTimer.MAX_S, DaoTimer.COUNT_S, get_mob, this);
+        time = new TimeCount(60000, 1000);
+        //timer = new DaoTimer(DaoTimer.MAX_S, DaoTimer.COUNT_S, get_mob, this);
     }
 
     @Override
@@ -92,13 +97,42 @@ public class RegisterActivity extends BaseActivity {
                 break;
 
             case R.id.get_mob:
-                // 请求验证码，其中country表示国家代码，如“86”；phone表示手机号码，如“13800138000”
-                SMSSDK.getVerificationCode("86", reg_phone.getText().toString());
-                timer.start();
+                time.start();
+                RetrofitManager.getInstance().getVerificationCode(reg_phone.getText().toString(), new RetrofitManager.ICallBack() {
+                    @Override
+                    public void successData(String result) {
+                        //Log.e("AA", "onResponse: " + result + "返回值");
+                       // time.start();
+                    }
+
+                    @Override
+                    public void failureData(String error) {
+                        //Log.e("AA", "error: " + error + "错");
+                        get_mob.setText("重新获取验证码");
+                        get_mob.setClickable(true);
+                        time.onFinish();
+                    }
+                });
                 break;
             case R.id.user_register:
-                // 提交验证码，其中的code表示验证码，如“1357”
-                SMSSDK.submitVerificationCode("86", reg_phone.getText().toString(), set_mob.getText().toString());
+                HashMap<String,String> map = new HashMap<>();
+                map.put("phone", reg_phone.getText().toString());
+                map.put("password", mPassWordEd.getText().toString());
+                map.put("smscode", set_mob.getText().toString());
+                RetrofitManager.getInstance().registerByPhone(map, new RetrofitManager.ICallBack() {
+                    @Override
+                    public void successData(String result) {
+                        //Log.e("AA", "onResponse: " + result + "返回值");
+                        MethodUtils.hideSoftInput(RegisterActivity.this);
+                        finish();
+                    }
+
+                    @Override
+                    public void failureData(String error) {
+                        //Log.e("AA", "error: " + error + "错");
+
+                    }
+                });
                 break;
 
         }
@@ -128,5 +162,28 @@ public class RegisterActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eh);
+    }
+
+
+    class TimeCount extends CountDownTimer {
+
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            get_mob.setBackgroundColor(Color.parseColor("#B6B6D8"));
+            get_mob.setClickable(false);
+            get_mob.setText("("+millisUntilFinished / 1000 +") 秒后可重新发送");
+        }
+
+        @Override
+        public void onFinish() {
+            get_mob.setText("重新获取验证码");
+            get_mob.setClickable(true);
+            //get_mob.setBackgroundColor(Color.parseColor("#4EB84A"));
+
+        }
     }
 }

@@ -84,6 +84,6 @@ public class IatAudioTrack {
 				mChannel,
 				mSampBit);
 
-		return minBufSize * 2;
+		return minBufSize * 20;
 	}
 }

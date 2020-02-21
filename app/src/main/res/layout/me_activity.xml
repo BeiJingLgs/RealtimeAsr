@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,16 +10,97 @@
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/login_or_register"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="130dp"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:drawablePadding="10dp"
+        android:layout_below="@+id/activity_header"
         android:drawableLeft="@drawable/wodedangxuan"
         android:text="点击登陆/注册"
         android:gravity="left|center_vertical"
         android:textSize="30sp"
         android:textColor="@color/black"/>
     <View
-        style="@style/view_line2"/>
+        style="@style/view_line2"
+        android:id="@+id/view_line2"
+        android:layout_below="@+id/login_or_register"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/last_time"
+        android:layout_marginLeft="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:drawablePadding="10dp"
+        android:layout_below="@+id/view_line2"
+        android:text="剩余时长"
+        android:gravity="left|center_vertical"
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line3"
+        android:layout_below="@+id/last_time"/>
+
+    <TextView
+        android:id="@+id/shop_list"
+        android:layout_marginLeft="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:drawablePadding="10dp"
+        android:layout_below="@+id/view_line3"
+        android:text="购买记录"
+        android:gravity="left|center_vertical"
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line4"
+        android:layout_below="@+id/shop_list"/>
+
+    <TextView
+        android:id="@+id/bind_deviceList"
+        android:layout_marginLeft="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:drawablePadding="10dp"
+        android:layout_below="@+id/view_line4"
+        android:text="绑定设备"
+        android:gravity="left|center_vertical"
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line5"
+        android:layout_below="@+id/bind_deviceList"/>
+
+    <TextView
+        android:id="@+id/update_check"
+        android:layout_marginLeft="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:drawablePadding="10dp"
+        android:layout_below="@+id/view_line5"
+        android:text="检查升级"
+        android:gravity="left|center_vertical"
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line6"
+        android:layout_below="@+id/update_check"/>
+
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line7"
+        android:layout_above="@+id/btn_logout"/>
+    <Button
+        android:text="退出登录"
+        android:id="@+id/btn_logout"
+        android:textColor="@color/dark"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom ="true"
+        android:background="@color/white"
+        android:textSize="@dimen/Second_Title_Font_Size"
+/>
+</RelativeLayout>

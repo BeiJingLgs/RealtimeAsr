@@ -1,8 +1,10 @@
 package com.hanvon.speech.realtime.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.storage.StorageManager;
+import android.view.inputmethod.InputMethodManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -182,5 +184,10 @@ public class MethodUtils {
     }
 
 
-
+    public static void hideSoftInput(Activity activity){
+        InputMethodManager im = (InputMethodManager)activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+        if (im != null){
+            im.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
+    }
 }

@@ -16,6 +16,16 @@ public class FileBean implements Serializable{
     public String modifytime;
 
     public boolean mSelect;
+
+    public String getmSd() {
+        return mSd;
+    }
+
+    public void setmSd(String mSd) {
+        this.mSd = mSd;
+    }
+
+    public String mSd;
     public boolean ismSelect() {
         return mSelect;
     }
@@ -41,13 +51,14 @@ public class FileBean implements Serializable{
 
 
 
-    public FileBean(String title, String content, String json, String createtime, String modifytime, String createmillis) {
+    public FileBean(String title, String content, String json, String createtime, String modifytime, String createmillis, String mSd) {
         this.title = title;
         this.content = content;
         this.json = json;
         this.createtime = createtime;
         this.modifytime = modifytime;
         this.createmillis = createmillis;
+        this.mSd = mSd;
     }
 
     public void setTitle(String title) {
@@ -81,5 +92,20 @@ public class FileBean implements Serializable{
     }
     public String getJson() {
         return json;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return createmillis.length();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FileBean))
+            return  false;
+        if (obj == this)
+            return true;
+        return this.createmillis == ((FileBean)obj).createmillis;
     }
 }

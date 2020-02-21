@@ -12,4 +12,8 @@ public interface Const {
 
     /* 可以改为wss:// */
     String URI = "ws://vop.baidu.com/realtime_asr";
+
+
+    public static String TEST_URI = "http://edu.hwebook.cn:8008/";
+    public static String CUSURI = "http://api.hwebook.cn/";
 }

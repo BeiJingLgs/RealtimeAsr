@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +20,12 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
-import com.hanvon.speech.realtime.api.Handwriting;
-import com.hanvon.speech.realtime.bean.DeviceLogin;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,14 +34,10 @@ import java.util.logging.Logger;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 
 public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    private Button mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
+    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
     public static final int READ_DIALOG_REQUEST = 11;
     private ArrayList<FileBean> mTotalFileList, mTempBookList;
     private FileAdapter mFileAdapter;
@@ -52,19 +48,11 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     protected static int PAGE_CATEGORY = 8;// 每页显示几个
     private TextView mPagetTv;
     private static Logger logger = Logger.getLogger("IatListActivity");
-     private  String  psth="9414518010000023";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-//        initPermission();
-        //接口请求成功
-        Handwriting.getAppServiceApi().DeviceLogin(psth)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(deviceLogin -> {
-                    String code = deviceLogin.getCode();
-                });
+
     }
 
     @Override
@@ -72,7 +60,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         return R.layout.activity_iat_list;
     }
 
-    public void initView(Bundle savedInstanceState, View view) {
+    public void initView(Bundle savedInstanceState,View view) {
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -133,6 +121,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 for (int i = currentPage * PAGE_CATEGORY; i < mTotalFileList.size()
                         && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
                     mTempBookList.add(mTotalFileList.get(i));
+
                 }
             }
         }
@@ -141,6 +130,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
             mFileAdapter = new FileAdapter(mTempBookList, this);
             mFileList.setAdapter(mFileAdapter);
         } else {
+            //Log.e("tag", "getCreatemillis: " + mTotalFileList.get(0).getCreatemillis());
             mFileAdapter.notifyDataSetChanged();
         }
         mPagetTv.setText((currentPage + 1) + "/" + nPageCount);
@@ -217,7 +207,15 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 mNameSet = mFileAdapter.getmSelectStates().keySet();
                 for (String s : mNameSet) {
                     databaseUtils1.deleteBymillis(s);
-                    FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath() + s);
+                    for (FileBean fileBean : mTotalFileList) {
+                        if (fileBean.getCreatemillis() == s) {
+                            //FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
+                            //        TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s + ".pcm");
+                            FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
+                                            TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
+                            break;
+                        }
+                    }
                 }
                 freshPage();
                 setCheckGone();
@@ -248,7 +246,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         String modify = TimeUtil.getTime(time);
         String content = "";
         intent.putExtra("isNew", true);
-        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()));
+        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "");
         databaseUtils.insert(fileBean);
         TranslateBean.getInstance().setFileBean(fileBean);
         startActivityForResult(intent, READ_DIALOG_REQUEST);
@@ -268,7 +266,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         TextView menuItem2 = view.findViewById(R.id.popup_me);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                Intent intent = new Intent(this, MeActivity.class);
+                Intent intent=new Intent(this,MeActivity.class);
                 startActivity(intent);
                 popupWindow.dismiss();
             }
@@ -306,14 +304,15 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
 
-    /**
+   /* *//**
      * android 6.0 以上需要动态申请权限
-     */
+     *//*
     private void initPermission() {
         String[] permissions = {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.INTERNET,
+                Manifest.permission.WRITE_MEDIA_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
         };
         ArrayList<String> toApplyList = new ArrayList<>();
@@ -334,7 +333,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // 此处为android 6.0以上动态授权的回调，用户自行实现。
-    }
+    }*/
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

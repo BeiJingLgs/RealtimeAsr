@@ -1,5 +1,6 @@
 package com.baidu.ai.speech.realtime;
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.os.Environment;
 
@@ -8,14 +9,16 @@ import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.text.SimpleDateFormat;
 
+import static com.baidu.ai.speech.realtime.android.HvApplication.getContext;
+
 public class ConstBroadStr {
     // 音频文件路径 /storage/sdcard0/Audio/hello.txt
     public static final String AUDIO_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio/";
     public static final String AUDIO_PATH = "/reverseme.pcm";
 
-    public static String GetAudioRootPath() {
-        if (hvFileCommonUtils.hasSdcard(HvApplication.getContext())) {
-            return hvFileCommonUtils.getSdcardPath(HvApplication.getContext()) + "/Audio/";
+    public static String GetAudioRootPath(Context context, boolean isSd) {
+        if (hvFileCommonUtils.hasSdcard(context) && isSd) {
+            return hvFileCommonUtils.getSdcardPath(context) + "/Audio/";
         } else {
             return AUDIO_ROOT_PATH;
         }

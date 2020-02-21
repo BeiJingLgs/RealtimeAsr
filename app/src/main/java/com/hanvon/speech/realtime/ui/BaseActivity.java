@@ -34,8 +34,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.INTERNET,
                                     Manifest.permission.RECORD_AUDIO,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.ACCESS_NETWORK_STATE,
+                                    Manifest.permission.WRITE_MEDIA_STORAGE,
                                     Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS},
                             1);
         }

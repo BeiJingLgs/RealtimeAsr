@@ -314,12 +314,12 @@ public class hvFileCommonUtils {
   	}
   	
   	public static String getSdcardPath(Context context){
-  		String path = hvReflectUtils.getStoragePath(context, "SD 卡");
+		String path = hvReflectUtils.getStoragePath(context, "SD");
   		return path;
   	}	
   	
   	public static String getUDiskPath(Context context){
-  		String path = hvReflectUtils.getStoragePath(context, "U 盘");
+		String path = hvReflectUtils.getStoragePath(context, "U");
   		return path;
   	}
   	
@@ -328,9 +328,40 @@ public class hvFileCommonUtils {
 		String status = getExtSdStorageState(context);
 		if (status.equals(Environment.MEDIA_MOUNTED)){
 			StatFs stat = new StatFs(getSdcardPath(context));
-			return stat.getAvailableBytes();
+			return stat.getAvailableBytes() / (1024 * 1024);
 		}
 		return 0;
     }
+
+    /**
+			* 获取手机内部空间总大小
+     *
+			 * @return 大小，字节为单位
+     */
+	static public long getTotalInternalMemorySize() {
+		//获取内部存储根目录
+		File path = Environment.getDataDirectory();
+		//系统的空间描述类
+		StatFs stat = new StatFs(path.getPath());
+		//每个区块占字节数
+		long blockSize = stat.getBlockSize();
+		//区块总数
+		long totalBlocks = stat.getBlockCount();
+		return totalBlocks * blockSize / (1024 * 1024);
+	}
+
+	/**
+	 * 获取手机内部可用空间大小
+	 *
+	 * @return 大小，字节为单位
+	 */
+	static public long getAvailableInternalMemorySize() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		//获取可用区块数量
+		long availableBlocks = stat.getAvailableBlocks();
+		return availableBlocks * blockSize / (1024 * 1024);
+	}
 	
 }
