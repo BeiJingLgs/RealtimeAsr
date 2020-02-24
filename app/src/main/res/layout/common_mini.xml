@@ -12,8 +12,8 @@
         android:id="@+id/txtResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="18sp" />
+        android:padding="@dimen/Margin_XS"
+        android:textSize="@dimen/textSizeXS" />
     </ScrollView>
     <View
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:id="@+id/txtLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp" />
+            android:textSize="@dimen/textSizeXXS" />
     </ScrollView>
 
 

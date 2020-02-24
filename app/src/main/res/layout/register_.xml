@@ -19,84 +19,84 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="@dimen/bar_more_width_port"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/reg_phone"
-                android:layout_width="600dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/edit_w"
+                android:layout_height="@dimen/flippager_H"
                 android:background="@drawable/button_w_edge"
                 android:drawableLeft="@drawable/wode"
-                android:drawablePadding="20dp"
+                android:drawablePadding="@dimen/flippager_margin"
                 android:hint="@string/phoneNumber"
                 android:inputType="number"
                 android:textSize="@dimen/link_text_font"
                 android:paddingLeft="30dp" />
 
             <LinearLayout
-                android:layout_width="600dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="@dimen/edit_w"
+                android:layout_height="@dimen/dialog_button_height"
+                android:layout_marginTop="@dimen/toolbar_bin_width"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/set_mob"
-                    android:layout_width="300dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/edit_w4"
+                    android:layout_height="@dimen/flippager_H"
                     android:background="@drawable/button_w_edge"
                     android:drawableLeft="@drawable/duanxin"
-                    android:drawablePadding="20dp"
+                    android:drawablePadding="@dimen/flippager_margin"
                     android:hint="@string/VCode"
                     android:textSize="@dimen/link_text_font"
-                    android:paddingLeft="30dp" />
+                    android:paddingLeft="@dimen/mydialog_margin_message" />
 
                 <TextView
                     android:id="@+id/get_mob"
-                    android:layout_width="180dp"
-                    android:layout_height="80dp"
+                    android:layout_width="@dimen/edit_w5"
+                    android:layout_height="@dimen/dialog_high_button_height"
                     android:layout_gravity="center_vertical|right"
                     android:gravity="center"
                     android:text="@string/getVCode"
                     android:textColor="@color/black"
-                    android:textSize="30sp" />
+                    android:textSize="@dimen/edit_font" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="@dimen/toolbar_bin_width"
                 android:background="@drawable/button_w_edge"
                 android:orientation="horizontal">
                 <EditText
                     android:id="@+id/reg_password"
-                    android:layout_width="520dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/edit_w2"
+                    android:layout_height="@dimen/dialog_button_height"
                     android:background="@null"
                     android:drawableLeft="@drawable/mima"
                     android:drawablePadding="20dp"
                     android:hint="@string/password"
                     android:textSize="@dimen/link_text_font"
                     android:inputType="textPassword"
-                    android:paddingLeft="30dp" />
+                    android:paddingLeft="@dimen/margin_middle" />
                 <ImageButton
                     android:id="@+id/reg_sys_pass"
-                    android:layout_width="76dp"
+                    android:layout_width="@dimen/image_w"
                     android:layout_height="match_parent"
-                    android:layout_margin="3dp"
+                    android:layout_margin="@dimen/PaddingXXL"
                     android:background="@color/bai"
                     android:src="@drawable/yanjing" />
             </LinearLayout>
         </LinearLayout>
         <Button
             android:id="@+id/user_register"
-            android:layout_width="200dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/bar_more_width_port"
+            android:layout_height="@dimen/PaddingXXL"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="@dimen/margin_xl"
             android:background="@drawable/button_w_edge"
             android:text="@string/register"
-            android:textSize="30sp" />
+            android:textSize="@dimen/edit_font" />
     </LinearLayout>
 
     <LinearLayout

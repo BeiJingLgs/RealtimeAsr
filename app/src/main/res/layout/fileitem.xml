@@ -46,7 +46,7 @@
         <TextView
             android:id="@+id/fileContent"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/Button_H2"
             android:layout_marginLeft="@dimen/Margin_S"
             android:maxLines="1"
             android:ellipsize="end"
@@ -69,7 +69,7 @@
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="0dp"
-        android:layout_height="140dp"
+        android:layout_height="@dimen/mydialog_button_width"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/Margin_L"
         android:layout_weight="0.6"

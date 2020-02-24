@@ -10,15 +10,15 @@
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/login_or_register"
-        android:layout_marginLeft="130dp"
+        android:layout_marginLeft="@dimen/register_ed_w"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:drawablePadding="10dp"
+        android:layout_height="@dimen/bar_more_width_port"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/activity_header"
         android:drawableLeft="@drawable/wodedangxuan"
         android:text="@string/loginregister"
         android:gravity="left|center_vertical"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
@@ -29,12 +29,12 @@
         android:id="@+id/last_time"
         android:layout_marginLeft="80dp"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:drawablePadding="10dp"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line2"
         android:text="@string/remainTime"
         android:gravity="left|center_vertical"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
@@ -43,14 +43,14 @@
 
     <TextView
         android:id="@+id/shop_list"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:drawablePadding="10dp"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line3"
         android:text="@string/purchaserecord"
         android:gravity="left|center_vertical"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
@@ -59,14 +59,14 @@
 
     <TextView
         android:id="@+id/bind_deviceList"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:drawablePadding="10dp"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line4"
         android:text="@string/binddevice"
         android:gravity="left|center_vertical"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
@@ -75,14 +75,14 @@
 
     <TextView
         android:id="@+id/update_check"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:drawablePadding="10dp"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line5"
         android:text="@string/checkupdate"
         android:gravity="left|center_vertical"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
@@ -98,7 +98,7 @@
         android:id="@+id/btn_logout"
         android:textColor="@color/dark"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="@dimen/dialog_button_height"
         android:layout_alignParentBottom ="true"
         android:background="@color/white"
         android:textSize="@dimen/Second_Title_Font_Size"

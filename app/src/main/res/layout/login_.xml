@@ -11,45 +11,45 @@
 
         <TextView
             android:id="@+id/btn_reg"
-            android:layout_margin="50dp"
+            android:layout_margin="@dimen/margin_xl"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="@dimen/edit_font"
             android:layout_gravity="top|right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_w_edge"
-            android:padding="10dp"
+            android:padding="@dimen/Margin_XSSSSS"
             android:text="@string/register"/>
         <LinearLayout
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/margin_M"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <EditText
                 android:id="@+id/user_phone"
-                android:layout_width="600dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/edit_w"
+                android:layout_height="@dimen/flippager_H"
                 android:drawableLeft="@drawable/wode"
-                android:drawablePadding="20dp"
+                android:drawablePadding="@dimen/flippager_margin"
                 android:inputType="number"
-                android:paddingLeft="30dp"
+                android:paddingLeft="@dimen/dialog_margin_small"
                 android:hint="@string/phoneNumber"
                 android:textSize="@dimen/link_text_font"
                 android:background="@drawable/button_w_edge"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="@dimen/toolbar_bin_width"
                 android:background="@drawable/button_w_edge"
                 android:orientation="horizontal">
                 <EditText
                     android:id="@+id/user_password"
-                    android:layout_width="520dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/edit_w2"
+                    android:layout_height="@dimen/dialog_button_height"
                     android:drawableLeft="@drawable/mima"
-                    android:drawablePadding="20dp"
-                    android:paddingLeft="30dp"
+                    android:drawablePadding="@dimen/flippager_margin"
+                    android:paddingLeft="@dimen/dialog_margin_small"
                     android:inputType="textPassword"
                     android:textSize="@dimen/link_text_font"
                     android:background="@null"
@@ -57,8 +57,8 @@
                     />
                 <ImageButton
                     android:id="@+id/sys_pass"
-                    android:layout_margin="3dp"
-                    android:layout_width="76dp"
+                    android:layout_margin="@dimen/PaddingXXL"
+                    android:layout_width="@dimen/image_w"
                     android:layout_height="match_parent"
                     android:background="@color/bai"
                     android:src="@drawable/yanjing"/>
@@ -68,22 +68,22 @@
         </LinearLayout>
     <TextView
         android:id="@+id/findpasswordBtn"
-        android:layout_marginLeft="650dp"
+        android:layout_marginLeft="@dimen/edit_w3"
         android:textColor="@color/black"
-        android:textSize="30sp"
+        android:textSize="@dimen/edit_font"
         android:layout_gravity="top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="@dimen/Margin_XSSSSS"
         android:text="@string/findPassword"/>
 
         <Button
             android:id="@+id/btn_login"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="@dimen/margin_xl"
             android:layout_gravity="center_horizontal"
-            android:layout_width="200dp"
-            android:layout_height="80dp"
-            android:textSize="30sp"
+            android:layout_width="@dimen/bar_more_width_port"
+            android:layout_height="@dimen/marginTop"
+            android:textSize="@dimen/edit_font"
             android:text="@string/login"
             android:background="@drawable/button_w_edge"/>
 

@@ -21,14 +21,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
             android:text=""
-            android:textSize="16sp"
+            android:textSize="@dimen/Text_Font_Size_S"
             android:textStyle="bold" />
 
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dip"
+            android:layout_margin="@dimen/margin_M"
             android:layout_toRightOf="@+id/time_tv" />
 
         <Button
@@ -121,8 +121,8 @@
 
         <Button
             android:id="@+id/result_ivpre_page"
-            android:layout_width="30dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/dialog_margin_small"
+            android:layout_height="@dimen/Button_H2"
             android:layout_marginTop="@dimen/marginTop"
             android:layout_marginLeft="@dimen/margin_s"
             android:stateListAnimator="@null"
@@ -132,7 +132,7 @@
 
         <com.hanvon.speech.realtime.view.HVTextView
             android:id="@+id/iatContent_tv"
-            android:layout_width="970dp"
+            android:layout_width="@dimen/content_tv_h"
             android:layout_height="@dimen/content_height"
             android:layout_marginLeft="@dimen/margin_s"
             android:layout_marginRight="@dimen/margin_s"
@@ -170,22 +170,19 @@
 
         <Button
             android:id="@+id/ivpre_page"
-            android:layout_width="30dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/dialog_margin_small"
+            android:layout_height="@dimen/Button_H2"
             android:layout_marginTop="@dimen/bar_more_width_port"
             android:stateListAnimator="@null"
             android:background="@drawable/arrow_left_gray"
             android:clickable="true"
             android:focusable="true" />
-       <!-- <ScrollView
-            android:layout_width="990dp"
-            android:layout_height="1000dp"
-            android:scrollbars="none">-->
+
 
         <ListView
             android:id="@+id/sentence_list"
-            android:layout_width="990dp"
-            android:layout_height="1000dp"
+            android:layout_width="@dimen/listview_w"
+            android:layout_height="@dimen/listview_h"
             android:layout_below="@+id/iat_layout"
             android:layout_marginTop="@dimen/Margin_XXS"
             android:divider="@drawable/list_divider_line"
