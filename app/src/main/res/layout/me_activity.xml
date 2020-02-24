@@ -84,10 +84,27 @@
         android:gravity="left|center_vertical"
         android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
+
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line8"
+        android:layout_below="@+id/update_check"/>
+
+    <TextView
+        android:id="@+id/usage_record"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
+        android:layout_below="@+id/view_line8"
+        android:text="@string/usageRecord"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/edit_font"
+        android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
         android:id="@+id/view_line6"
-        android:layout_below="@+id/update_check"/>
+        android:layout_below="@+id/usage_record"/>
 
     <View
         style="@style/view_line2"

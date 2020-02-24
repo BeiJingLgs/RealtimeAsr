@@ -1,20 +1,28 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.ai.speech.realtime.R;
+import com.google.gson.Gson;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.LoginResult;
+import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.DaoTimer;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
 
 import androidx.annotation.NonNull;
 
@@ -27,42 +35,10 @@ public class RegisterActivity extends BaseActivity {
     private TextView get_mob;
     private Button user_register;
     private EventHandler eh;
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            int event = msg.arg1;
-            int result = msg.arg2;
-            Object data = msg.obj;
-            if (result == SMSSDK.RESULT_COMPLETE) {
-                //回调完成
-                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                    //提交验证码成功
-//                    Toast.makeText(RegisterActivity.this, "提交验证码成功", Toast.LENGTH_LONG).show();
-                } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                    //获取验证码成功
-//                    Toast.makeText(RegisterActivity.this, "获取验证码成功", Toast.LENGTH_LONG).show();
-                } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
-                    //返回支持发送验证码的国家列表
-                }
-            } else if (result == SMSSDK.RESULT_ERROR) {
-                ((Throwable)data).printStackTrace();
-                /**
-                 * 下边代码是Mob后台回调的相关信息
-                 */
-//                String message = ((Throwable) data).getMessage();
-//                Gson gson = new Gson();
-//                MobMessage mobMessage = gson.fromJson(message, MobMessage.class);
-//                if (mobMessage.getStatus() == 462) {
-//                    Toast.makeText(RegisterActivity.this, "请求过于频繁", Toast.LENGTH_LONG).show();
-//                }
-            }
-        }
-    };
     private EditText set_mob;
     private EditText reg_phone, mPassWordEd;
-    //private DaoTimer timer;
     private TimeCount time;
+    private String msg, intentKey = "from", intentValue = "findPass";
 
     @Override
     int provideContentViewId() {
@@ -71,7 +47,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     void initView(Bundle savedInstanceState, View view) {
-        registerSDK();
+        //registerSDK();
         mHomeBtn.setVisibility(View.GONE);
         mMenus.setVisibility(View.GONE);
 
@@ -83,7 +59,11 @@ public class RegisterActivity extends BaseActivity {
         get_mob.setOnClickListener(this);
         user_register.setOnClickListener(this);
         time = new TimeCount(60000, 1000);
-        //timer = new DaoTimer(DaoTimer.MAX_S, DaoTimer.COUNT_S, get_mob, this);
+        Intent intent = getIntent();
+        msg = intent.getStringExtra(intentKey);
+        if (TextUtils.equals(msg, intentValue)) {
+            user_register.setText(getResources().getString(R.string.setPassword));
+        }
     }
 
     @Override
@@ -101,8 +81,13 @@ public class RegisterActivity extends BaseActivity {
                 RetrofitManager.getInstance().getVerificationCode(reg_phone.getText().toString(), new RetrofitManager.ICallBack() {
                     @Override
                     public void successData(String result) {
-                        //Log.e("AA", "onResponse: " + result + "返回值");
-                       // time.start();
+                        Gson gson2 = new Gson();
+                        VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                        if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                            ToastUtils.show(RegisterActivity.this, c.getMsg());
+                        } else {
+                            ToastUtils.show(RegisterActivity.this, c.getMsg());
+                        }
                     }
 
                     @Override
@@ -117,45 +102,54 @@ public class RegisterActivity extends BaseActivity {
             case R.id.user_register:
                 HashMap<String,String> map = new HashMap<>();
                 map.put("phone", reg_phone.getText().toString());
-                map.put("password", mPassWordEd.getText().toString());
                 map.put("smscode", set_mob.getText().toString());
-                RetrofitManager.getInstance().registerByPhone(map, new RetrofitManager.ICallBack() {
-                    @Override
-                    public void successData(String result) {
-                        //Log.e("AA", "onResponse: " + result + "返回值");
-                        MethodUtils.hideSoftInput(RegisterActivity.this);
-                        finish();
-                    }
+                if (TextUtils.equals(msg, intentValue)) {
+                    map.put("newPassword", mPassWordEd.getText().toString());
+                    RetrofitManager.getInstance().changePasswordBySms(map, new RetrofitManager.ICallBack() {
+                        @Override
+                        public void successData(String result) {
+                            //Log.e("AA", "onResponse: " + result + "返回值");
+                            Gson gson2 = new Gson();
+                            VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                            if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                                MethodUtils.hideSoftInput(RegisterActivity.this);
+                                finish();
+                            } else {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            }
 
-                    @Override
-                    public void failureData(String error) {
-                        //Log.e("AA", "error: " + error + "错");
+                        }
 
-                    }
-                });
+                        @Override
+                        public void failureData(String error) {
+                        }
+                    });
+                } else {
+                    map.put("password", mPassWordEd.getText().toString());
+                    RetrofitManager.getInstance().registerByPhone(map, new RetrofitManager.ICallBack() {
+                        @Override
+                        public void successData(String result) {
+                            Gson gson2 = new Gson();
+                            VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                            if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                                MethodUtils.hideSoftInput(RegisterActivity.this);
+                                finish();
+                            } else {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            }
+                        }
+
+                        @Override
+                        public void failureData(String error) {
+                        }
+                    });
+                }
+
                 break;
 
         }
-    }
-
-    private void registerSDK() {
-
-        // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
-        eh = new EventHandler() {
-            @Override
-            public void afterEvent(int event, int result, Object data) {
-                // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
-                Message msg = new Message();
-                msg.arg1 = event;
-                msg.arg2 = result;
-                msg.obj = data;
-                handler.sendMessage(msg);
-
-            }
-        };
-
-        //注册一个事件回调监听，用于处理SMSSDK接口请求的结果
-        SMSSDK.registerEventHandler(eh);
     }
 
     // 使用完EventHandler需注销，否则可能出现内存泄漏

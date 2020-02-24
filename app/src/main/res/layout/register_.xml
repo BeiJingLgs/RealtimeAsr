@@ -10,11 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/register_layout"
-        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,6 +54,7 @@
                     android:layout_gravity="center_vertical|right"
                     android:gravity="center"
                     android:text="@string/getVCode"
+                    android:background="@color/bai"
                     android:textColor="@color/black"
                     android:textSize="@dimen/edit_font" />
             </LinearLayout>
@@ -91,21 +88,15 @@
         <Button
             android:id="@+id/user_register"
             android:layout_width="@dimen/bar_more_width_port"
-            android:layout_height="@dimen/PaddingXXL"
+            android:layout_height="@dimen/marginTop"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_xl"
             android:background="@drawable/button_w_edge"
             android:text="@string/register"
             android:textSize="@dimen/edit_font" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/find_password_layout"
-        android:orientation="vertical">
 
-    </LinearLayout>
+
 
 
 </LinearLayout>

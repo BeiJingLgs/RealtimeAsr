@@ -13,7 +13,7 @@ public class Handwriting {
             synchronized (AppServiceApi.class){
                 if (appServiceApi==null){
                     Retrofit builder = new Retrofit.Builder()
-                            .baseUrl(BasePath.BASE_URL)
+                            .baseUrl(BasePath.BASE_LOCALTEST_URL)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();

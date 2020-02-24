@@ -2,6 +2,7 @@ package com.hanvon.speech.realtime.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
+import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.MethodUtils;
@@ -23,7 +25,7 @@ import com.hanvon.speech.realtime.view.CustomDialog;
 
 public class LoginActivity extends BaseActivity {
 
-    private TextView btn_Reg;
+    private TextView btn_Reg, mFindPassTv;
     private EditText user_phone;
     private EditText user_password;
     private ImageButton sys_pass;
@@ -44,9 +46,11 @@ public class LoginActivity extends BaseActivity {
         user_password = findViewById(R.id.user_password);
         sys_pass = findViewById(R.id.sys_pass);
         btn_login = findViewById(R.id.btn_login);
+        mFindPassTv = findViewById(R.id.findpasswordBtn);
         btn_Reg.setOnClickListener(this);
         btn_login.setOnClickListener(this);
         sys_pass.setOnClickListener(this);
+        mFindPassTv.setOnClickListener(this);
     }
 
     @Override
@@ -54,6 +58,7 @@ public class LoginActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.btn_reg:
                 Intent intent = new Intent(this, RegisterActivity.class);
+                intent.putExtra("from", "register");
                 startActivity(intent);
                 break;
             case R.id.btn_Home:
@@ -72,11 +77,17 @@ public class LoginActivity extends BaseActivity {
                         //customDialog.dismiss();
                         Gson gson2 = new Gson();
                         LoginResult c = gson2.fromJson(result, LoginResult.class);
-                        HvApplication.TOKEN = c.getToken();
-                        SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
-                        Log.e("AA", "onResponse: " + result + "返回值");
-                        MethodUtils.hideSoftInput(LoginActivity.this);
-                        finish();
+                        Log.e("A", "onResponse: " + result + "返回值");
+                        if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                            HvApplication.TOKEN = c.getToken();
+                            SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
+                            Log.e("AA", "onResponse: " + result + "返回值");
+                            MethodUtils.hideSoftInput(LoginActivity.this);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, c.getMsg(), 0);
+                        }
+
                     }
 
                     @Override
@@ -96,7 +107,11 @@ public class LoginActivity extends BaseActivity {
                 }
 
                 break;
-
+            case R.id.findpasswordBtn:
+                Intent intent2 = new Intent(this, RegisterActivity.class);
+                intent2.putExtra("from", "findPass");
+                startActivity(intent2);
+                break;
         }
     }
     CustomDialog customDialog;

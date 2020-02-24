@@ -53,6 +53,7 @@
     <string name="purchaserecord">购买记录</string>
     <string name="binddevice">绑定设备</string>
     <string name="checkupdate">检查升级</string>
+    <string name="usageRecord">使用记录</string>
     <string name="insufficientmemory">请注意：内存不足</string>
     <string name="progress">当前进度:&#160;</string>
     <string name="checkNet">请检查网络连接</string>
@@ -63,4 +64,5 @@
     <string name="hasLogined">已经登录</string>
     <string name="saveSd">录音存放Sd卡</string>内容
     <string name="content">内容</string>
+    <string name="setPassword">重置密码</string>
 </resources>

@@ -21,7 +21,7 @@ public interface AppServiceApi {
      * @return
      */
     @GET("/API/Account/PhoneLoginByPassword")
-    Observable<ResponseBody> loginByPassword(@Query("phone") String username, @Query("password") String password, @Query("deviceid") String deviceid);
+    Observable<ResponseBody> loginByPassword(@Query("phone") String username, @Query("password") String password, @Query("deviceSerialNo") String deviceid);
 
     /**
      * 设备id登陆
@@ -29,7 +29,7 @@ public interface AppServiceApi {
      * @return
      */
     @GET("API/Account/devicelogin")
-    Observable<ResponseBody> loginByDeviceId(@Query("deviceid") String deviceid);
+    Observable<ResponseBody> loginByDeviceId(@Query("deviceSerialNo") String deviceid);
 
     /**
      *
@@ -39,7 +39,7 @@ public interface AppServiceApi {
      * @return
      */
     @GET("........")
-    Observable<ResponseBody> loginBySms(@Path("phone") String phone ,@Path("smscode") String smscode, @Path("deviceid ") String deviceid);
+    Observable<ResponseBody> loginBySms(@Path("phone") String phone ,@Path("smscode") String smscode, @Path("deviceSerialNo ") String deviceid);
 
     /**
      * 获取验证码
@@ -54,6 +54,32 @@ public interface AppServiceApi {
     @POST("/API/Account/Register")
     Observable<ResponseBody> registerByPhone(@QueryMap Map<String, String> params);
 
+    @POST("/API/Account/ChangePasswordBySms")
+    Observable<ResponseBody> changePasswordBySms(@QueryMap Map<String, String> params);
+
+    /**
+     * 提交使用时间
+     * @param params
+     * @return
+     */
+    @POST("/API/Pack/SubmitUsedTime")
+    Observable<ResponseBody> submitUsedTime(@QueryMap Map<String, String> params);
+
+    /**
+     * 获取使用记录
+     */
+    @GET("/API/Pack/GetUseRecord")
+    Observable<ResponseBody> getUseRecord(@Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
+
+    /**
+     * 获取订单
+     */
+    @GET("/API/Order/GetOrders")
+    Observable<ResponseBody> getOrders(@Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
+
+    @GET("/API/Order/GetPayChannels")
+    Observable<ResponseBody> getPayChannels();
+
 
     /**
      * 获取验证码
@@ -66,7 +92,7 @@ public interface AppServiceApi {
     Observable<ResponseBody> getBindDevices(@Header("token") String token);
 
     @POST("API/Device/BindDevice")
-    Observable<ResponseBody> bindDevices(@Header("token") String token);
+    Observable<ResponseBody> bindDevices();
 
     @POST("/API/Device/GetBindUser")
     Observable<ResponseBody> getBindUser(@Header("token") String token, @QueryMap Map<String, String> params);
@@ -89,6 +115,11 @@ public interface AppServiceApi {
 
     @GET("API/Pack/GetUserPacks")
     Observable<ResponseBody> getUserPacks();
+
+
+
+
+
 
     @GET("........")
     Observable<VerificationResult> getUseRecord(@Path("token") String token, @Path("curpage") int curpage,

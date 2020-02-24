@@ -7,6 +7,7 @@ import android.util.Log;
 import android.webkit.WebSettings;
 
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.hanvon.speech.realtime.util.BasePath;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,10 +63,6 @@ public class RetrofitManager {
 
     //初始化fit
     private void initRetrofit() {
-        //拦截器
-        //HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-         //loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -80,8 +77,7 @@ public class RetrofitManager {
                 //添加Rxjava工厂
                 .client(getOkHttpClient())//获取后的okhttp头部
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-
-                .baseUrl("http://edu.hwebook.cn:8008/")
+                .baseUrl(BasePath.BASE_LOCALTEST_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -94,11 +90,8 @@ public class RetrofitManager {
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request()
                                 .newBuilder()
-                                //.removeHeader("User-Agent")//移除旧的
                                 .header("Authorization", "auth-token")
                                 .header("Accept", "application/json")
-                               // .addHeader("User-Agent",
-                               //         "Mozilla/5.0 ( Windows; U; Windows NT 5.1; en-US; rv:0.9.4 ")//添加真正的头部
                                 .build();
                         return chain.proceed(request);
                     }
@@ -159,10 +152,22 @@ public class RetrofitManager {
     }
 
     //POst请求
-    public void bindDevices(String token, ICallBack callBack) {
+    public void changePasswordBySms(HashMap<String, String> params, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        iApiService.changePasswordBySms(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //POst请求
+    public void bindDevices(ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
-        iApiService.bindDevices(token)
+        iApiService.bindDevices()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -189,6 +194,38 @@ public class RetrofitManager {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
     }
+
+    public void getPayChannels(ICallBack callBack) {
+        iApiService.getPayChannels()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //Get请求
+    public void getUseRecord(String curPage, String pageSize, String sort, final ICallBack callback) {
+        iApiService.getUseRecord(curPage, pageSize, sort)
+                //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
+                .subscribeOn(Schedulers.io())
+                //最终完成后结果返回到哪个线程，mainThread代表主线
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callback));
+    }
+
+
+    //Get请求
+    public void getOrders(String curPage, String pageSize, String sort, final ICallBack callback) {
+        iApiService.getOrders(curPage, pageSize, sort)
+                //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
+                .subscribeOn(Schedulers.io())
+                //最终完成后结果返回到哪个线程，mainThread代表主线
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callback));
+    }
+
+
+
+
 
     //拿结果
     private Observer getObsetver(final ICallBack callBack) {

@@ -9,12 +9,17 @@ import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.google.gson.Gson;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.LoginResult;
+import com.hanvon.speech.realtime.bean.Result.PayList;
+import com.hanvon.speech.realtime.bean.Result.ShopTypeList;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.MethodUtils;
 
 public class MeActivity extends BaseActivity {
 
-    private TextView login_or_register, mLastTimeTv, mShopListTv, mBindDevicesTv, mUpdateTv;
+    private TextView login_or_register, mLastTimeTv, mShopListTv, mBindDevicesTv, mUpdateTv, mUsageRecordTv;
     private Button mLogOutBtn;
 
     @Override
@@ -32,23 +37,25 @@ public class MeActivity extends BaseActivity {
         mBindDevicesTv = findViewById(R.id.bind_deviceList);
         mUpdateTv = findViewById(R.id.update_check);
         mLogOutBtn = findViewById(R.id.btn_logout);
+        mUsageRecordTv = findViewById(R.id.usage_record);
         login_or_register.setOnClickListener(this);
         mLastTimeTv.setOnClickListener(this);
         mShopListTv.setOnClickListener(this);
         mBindDevicesTv.setOnClickListener(this);
         mUpdateTv.setOnClickListener(this);
         mLogOutBtn.setOnClickListener(this);
+        mUsageRecordTv.setOnClickListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (TextUtils.isEmpty(HvApplication.TOKEN)) {
+        /*if (TextUtils.isEmpty(HvApplication.TOKEN)) {
             mLogOutBtn.setVisibility(View.GONE);
         } else {
             mLogOutBtn.setVisibility(View.VISIBLE);
             login_or_register.setText(getResources().getString(R.string.hasLogined));
-        }
+        }*/
     }
 
     @Override
@@ -68,7 +75,15 @@ public class MeActivity extends BaseActivity {
                  RetrofitManager.getInstance().getPacks(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
-                         Log.e("AA", "onResponse: " + result + "返回值");
+
+                         Gson gson2 = new Gson();
+                         ShopTypeList c = gson2.fromJson(result, ShopTypeList.class);
+                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getShopType().size());
+                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+
+                         } else {
+
+                         }
                      }
 
                      @Override
@@ -79,10 +94,17 @@ public class MeActivity extends BaseActivity {
                  });
                  break;
              case R.id.shop_list:
-                 RetrofitManager.getInstance().getDevicePacks(new RetrofitManager.ICallBack() {
+                 RetrofitManager.getInstance().getPayChannels(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
-                         Log.e("AA", "onResponse: " + result + "返回值");
+                         Gson gson2 = new Gson();
+                         PayList c = gson2.fromJson(result, PayList.class);
+                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPayType().size());
+                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+
+                         } else {
+
+                         }
                      }
 
                      @Override
@@ -107,6 +129,18 @@ public class MeActivity extends BaseActivity {
                  });
                  break;
              case R.id.update_check:
+                 RetrofitManager.getInstance().bindDevices(new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Log.e("AA", "onResponse: " + result + "返回值");
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error + "错");
+
+                     }
+                 });
                  break;
              case R.id.btn_logout:
                  RetrofitManager.getInstance().logout(new RetrofitManager.ICallBack() {
@@ -115,6 +149,21 @@ public class MeActivity extends BaseActivity {
                          Log.e("AA", "onResponse: " + result + "返回值");
                          login_or_register.setText("未登陆");
                          mLogOutBtn.setVisibility(View.GONE);
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error + "错");
+
+                     }
+                 });
+                 break;
+             case R.id.usage_record:
+                 RetrofitManager.getInstance().getOrders(0 + "", 5 + "", "asc",new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Log.e("AA2", "onResponse: " + result + "返回值");
+
                      }
 
                      @Override

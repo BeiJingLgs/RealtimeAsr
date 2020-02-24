@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class ReceivedCookiesInterceptor implements Interceptor {
                 cookies.add(header);
             }
             HvApplication.SESSION = cookies.get(0);
+            SharedPreferencesUtils.saveStringSharePrefer(HvApplication.mContext, SharedPreferencesUtils.SESSION, HvApplication.SESSION);
+            Log.e("AA", "onResponse: " + HvApplication.SESSION + ": " + HvApplication.SESSION);
+
             Log.e("cookies", " 2cookies.: " + cookies.get(0));
             Log.e("cookies", " 2cookies.size: " + cookies.size());
             //String cookieStr = JSONObject.toJSONString(cookies);

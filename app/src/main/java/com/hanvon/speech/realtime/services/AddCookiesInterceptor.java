@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.hanvon.speech.realtime.ui.LoginActivity;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 
 import java.io.IOException;
 import java.util.List;

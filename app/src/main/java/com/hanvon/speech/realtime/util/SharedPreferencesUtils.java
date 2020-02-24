@@ -20,6 +20,7 @@ public class SharedPreferencesUtils {
     public static final String LOCAL_SEARCH_HISTORY = "local_search_history";
     public static final String PERMANENT_ID = "permanent_id";
     public static final String ISFIRST = "isFirst";
+	public static final String SESSION = "session";
 	public static final String TOKEN = "token";
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
@@ -50,7 +51,7 @@ public class SharedPreferencesUtils {
     }
     public static String getStringSharedprefer(Context context , String key){
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        return sp.getString(key, null);
+        return sp.getString(key, "");
     }
     
     public static boolean getIsFirstRun(Context context){
