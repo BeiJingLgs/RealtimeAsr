@@ -14,8 +14,13 @@ import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.bean.Result.PayList;
 import com.hanvon.speech.realtime.bean.Result.ShopTypeList;
+import com.hanvon.speech.realtime.bean.Result.UsageBeenList;
+import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
+
+import java.util.HashMap;
 
 public class MeActivity extends BaseActivity {
 
@@ -115,10 +120,30 @@ public class MeActivity extends BaseActivity {
                  });
                  break;
              case R.id.bind_deviceList:
-                 RetrofitManager.getInstance().getUserPacks(new RetrofitManager.ICallBack() {
+                 /*RetrofitManager.getInstance().getUserPacks(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Log.e("AA", "onResponse: " + result + "返回值");
+                     }
+
+                     @Override
+                     public void failureData(String error) {
+                         Log.e("AA", "error: " + error);
+
+                     }
+                 });*/
+                 HashMap<String,String> map = new HashMap<>();
+                 map.put("duration", "100");
+                 RetrofitManager.getInstance().submitUsedTime(map, new RetrofitManager.ICallBack() {
+                     @Override
+                     public void successData(String result) {
+                         Gson gson2 = new Gson();
+                         VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                             ToastUtils.show(MeActivity.this, c.getMsg());
+                         } else {
+                             ToastUtils.show(MeActivity.this, c.getMsg());
+                         }
                      }
 
                      @Override
@@ -159,10 +184,17 @@ public class MeActivity extends BaseActivity {
                  });
                  break;
              case R.id.usage_record:
-                 RetrofitManager.getInstance().getOrders(0 + "", 5 + "", "asc",new RetrofitManager.ICallBack() {
+                 RetrofitManager.getInstance().getUseRecord(0 + "", 5 + "", "asc",new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
-                         Log.e("AA2", "onResponse: " + result + "返回值");
+                         Gson gson2 = new Gson();
+                         UsageBeenList c = gson2.fromJson(result, UsageBeenList.class);
+                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getUsageBeen().size());
+                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+
+                         } else {
+
+                         }
 
                      }
 

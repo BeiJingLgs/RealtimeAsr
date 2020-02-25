@@ -164,6 +164,19 @@ public class RetrofitManager {
     }
 
     //POst请求
+    public void submitUsedTime(HashMap<String, String> params, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        iApiService.submitUsedTime(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+
+    //POst请求
     public void bindDevices(ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
