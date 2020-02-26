@@ -1,7 +1,11 @@
 package com.hanvon.speech.realtime.bean.Result;
 
-public class ShopType
-{
+import java.io.Serializable;
+
+/**
+ *获取可购买的服务包实体类
+ */
+public class ShopType {
     private int ID;
 
     private String Name;

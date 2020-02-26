@@ -106,6 +106,22 @@
         android:id="@+id/view_line6"
         android:layout_below="@+id/usage_record"/>
 
+    <TextView
+        android:id="@+id/usage_pack"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
+        android:layout_below="@+id/view_line6"
+        android:text="@string/usagePack"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/edit_font"
+        android:textColor="@color/black"/>
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line9"
+        android:layout_below="@+id/usage_pack"/>
+
     <View
         style="@style/view_line2"
         android:id="@+id/view_line7"

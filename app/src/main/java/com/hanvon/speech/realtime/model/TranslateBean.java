@@ -2,6 +2,12 @@ package com.hanvon.speech.realtime.model;
 
 
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.bean.Result.Order;
+import com.hanvon.speech.realtime.bean.Result.PackBean;
+import com.hanvon.speech.realtime.bean.Result.ShopType;
+import com.hanvon.speech.realtime.bean.Result.UsageBeen;
+
+import java.util.List;
 
 /**
  * Created by guhongbo on 2019/11/25.
@@ -13,6 +19,14 @@ public class TranslateBean {
 
 
     private FileBean fileBean;
+
+
+
+    private ShopType shopType;
+    private List<Order> orderList;
+    private List<PackBean> packList;
+    private List<UsageBeen> usageList;
+    private List<ShopType> shopTypes;
 
     private TranslateBean(){
     }
@@ -39,5 +53,43 @@ public class TranslateBean {
     public void setFileBean(FileBean fileBean) {
         this.fileBean = fileBean;
     }
+    public List<Order> getOrderList() {
+        return orderList;
+    }
 
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
+    }
+
+    public List<PackBean> getPackList() {
+        return packList;
+    }
+
+    public void setPackList(List<PackBean> packList) {
+        this.packList = packList;
+    }
+
+    public List<UsageBeen> getUsageList() {
+        return usageList;
+    }
+
+    public void setUsageList(List<UsageBeen> usageList) {
+        this.usageList = usageList;
+    }
+
+    public List<ShopType> getShopTypes() {
+        return shopTypes;
+    }
+
+    public void setShopTypes(List<ShopType> shopTypes) {
+        this.shopTypes = shopTypes;
+    }
+
+    public ShopType getShopType() {
+        return shopType;
+    }
+
+    public void setShopType(ShopType shopType) {
+        this.shopType = shopType;
+    }
 }

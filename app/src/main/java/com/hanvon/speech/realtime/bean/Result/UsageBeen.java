@@ -1,5 +1,8 @@
 package com.hanvon.speech.realtime.bean.Result;
 
+/**
+ * 使用记录实体类
+ */
 public class UsageBeen
 {
     private int ID;

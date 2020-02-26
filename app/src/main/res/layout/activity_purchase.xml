@@ -12,7 +12,7 @@
 
 
     <ListView
-        android:id="@+id/file_list"
+        android:id="@+id/listView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/Margin_XS"
@@ -38,7 +38,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_below="@+id/file_list"
+        android:layout_below="@+id/listView"
         android:paddingLeft="@dimen/dialog_margin4"
         android:paddingRight="@dimen/dialog_margin4"
         android:id="@+id/line_mid"

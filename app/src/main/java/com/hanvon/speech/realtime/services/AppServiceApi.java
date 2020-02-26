@@ -57,6 +57,9 @@ public interface AppServiceApi {
     @POST("/API/Account/ChangePasswordBySms")
     Observable<ResponseBody> changePasswordBySms(@QueryMap Map<String, String> params);
 
+    @POST("/API/Order/CreateOrderByPack")
+    Observable<ResponseBody> createOrderByPack(@QueryMap Map<String, String> params);
+
     /**
      * 提交使用时间
      * @param params
@@ -88,23 +91,10 @@ public interface AppServiceApi {
     @GET("/API/Account/logout")
     Observable<ResponseBody> logout();
 
-    @POST("/API/Device/GetBindDevices")
-    Observable<ResponseBody> getBindDevices(@Header("token") String token);
 
     @POST("API/Device/BindDevice")
     Observable<ResponseBody> bindDevices();
 
-    @POST("/API/Device/GetBindUser")
-    Observable<ResponseBody> getBindUser(@Header("token") String token, @QueryMap Map<String, String> params);
-
-    @POST("/API/Device/SetCommonlyUsedDevice")
-    Observable<ResponseBody> setCommonlyUsedDevice(@Header("token") String token, @QueryMap Map<String, String> params);
-
-    @POST("/API/Device/CancelCommonlyUsedDevice")
-    Observable<ResponseBody> cancelCommonlyUsedDevice(@Header("token") String token, @QueryMap Map<String, String> params);
-
-    @POST("/API/Device/UnBindDevice")
-    Observable<ResponseBody> unBindDevice(@Header("token") String token, @QueryMap Map<String, String> params);
 
 
     @GET("API/Pack/GetPacks")
@@ -116,19 +106,10 @@ public interface AppServiceApi {
     @GET("API/Pack/GetUserPacks")
     Observable<ResponseBody> getUserPacks();
 
+    @POST("API/Order/PayOrder")
+    Observable<ResponseBody> payOrder(@QueryMap Map<String, String> params);
 
+    @GET("API/Order/PayOrder")
+    Observable<ResponseBody> payOrder(@Query("orderId") String curPage, @Query("channelId") String pageSize);
 
-
-
-
-    @GET("........")
-    Observable<VerificationResult> getUseRecord(@Path("token") String token, @Path("curpage") int curpage,
-                                                @Path("pagesize") int pagesize, @Path("sort") String sort);
-
-    @GET("........")
-    Observable<VerificationResult> buy(@Path("token") String token );
-
-    @GET("........")
-    Observable<VerificationResult> getOrder(@Path("token") String token, @Path("curpage") int curpage,
-                                                @Path("pagesize") int pagesize, @Path("sort") String sort);
 }

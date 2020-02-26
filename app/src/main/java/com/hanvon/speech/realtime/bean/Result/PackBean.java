@@ -1,5 +1,8 @@
 package com.hanvon.speech.realtime.bean.Result;
 
+/**
+ *获取设备关联有效的服务包实体类
+ */
 public class PackBean
 {
     private int ID;

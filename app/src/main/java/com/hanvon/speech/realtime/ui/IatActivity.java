@@ -47,12 +47,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.model.IatThread;
 import com.hanvon.speech.realtime.model.TranslateBean;
+import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.EPDHelper;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.WifiOpenHelper;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
@@ -67,6 +71,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -480,6 +485,29 @@ public class IatActivity extends BaseActivity {
         nPageCount = getTotalqlPageCount(mTotalResultList.size());
         initPage();
         freshSentenceList(nPageIsx);
+    }
+
+    private void uploadUsageTime() {
+        HashMap<String,String> map2 = new HashMap<>();
+        map2.put("duration", "100");
+        RetrofitManager.getInstance().submitUsedTime(map2, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                Gson gson2 = new Gson();
+                VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                    ToastUtils.show(IatActivity.this, c.getMsg());
+                } else {
+                    ToastUtils.show(IatActivity.this, c.getMsg());
+                }
+            }
+
+            @Override
+            public void failureData(String error) {
+                Log.e("AA", "error: " + error);
+
+            }
+        });
     }
 
 

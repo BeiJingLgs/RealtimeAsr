@@ -1,21 +1,20 @@
 package com.hanvon.speech.realtime.bean.Result;
 
-/**
- * 获取订单实体类
- */
-public class Order
+public class OrderModal
 {
     private int ID;
 
     private String SerialNo;
 
-    private String PackName;
+    private int PackID;
 
     private int Amount;
 
     private int State;
 
-    private String PayChannelName;
+    private String ExpireTime;
+
+    private String PaySuccTime;
 
     private String CreateTime;
 
@@ -33,11 +32,11 @@ public class Order
     public String getSerialNo(){
         return this.SerialNo;
     }
-    public void setPackName(String PackName){
-        this.PackName = PackName;
+    public void setPackID(int PackID){
+        this.PackID = PackID;
     }
-    public String getPackName(){
-        return this.PackName;
+    public int getPackID(){
+        return this.PackID;
     }
     public void setAmount(int Amount){
         this.Amount = Amount;
@@ -51,11 +50,17 @@ public class Order
     public int getState(){
         return this.State;
     }
-    public void setPayChannelName(String PayChannelName){
-        this.PayChannelName = PayChannelName;
+    public void setExpireTime(String ExpireTime){
+        this.ExpireTime = ExpireTime;
     }
-    public String getPayChannelName(){
-        return this.PayChannelName;
+    public String getExpireTime(){
+        return this.ExpireTime;
+    }
+    public void setPaySuccTime(String PaySuccTime){
+        this.PaySuccTime = PaySuccTime;
+    }
+    public String getPaySuccTime(){
+        return this.PaySuccTime;
     }
     public void setCreateTime(String CreateTime){
         this.CreateTime = CreateTime;

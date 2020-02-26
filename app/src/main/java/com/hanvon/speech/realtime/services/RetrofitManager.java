@@ -175,6 +175,40 @@ public class RetrofitManager {
                 .subscribe(getObsetver(callBack));
     }
 
+    //POst请求
+    public void createOrderByPack(HashMap<String, String> params, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        iApiService.createOrderByPack(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //POst请求
+    public void payOrder(HashMap<String, String> params, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        iApiService.payOrder(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //POst请求
+    public void payOrder(String phone, String pass, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+
+        iApiService.payOrder(phone, pass)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
 
     //POst请求
     public void bindDevices(ICallBack callBack) {
@@ -235,6 +269,8 @@ public class RetrofitManager {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callback));
     }
+
+
 
 
 
