@@ -149,6 +149,7 @@ public class IatActivity extends BaseActivity {
     private String tmpFile;
     private int mAudioOffset;
     private AudioHandler mHandler;
+    private long mUseTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -386,39 +387,10 @@ public class IatActivity extends BaseActivity {
                     Toast.makeText(IatActivity.this,getResources().getString(R.string.playingAudio),Toast.LENGTH_LONG).show();
                     return;
                 }
-                uploadUsageTime();
-                if (!isRecording) {
-                    startLu();
-                    Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
-                } else {
-                    if (isRecording) {
-                        Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
-                    }
-                    isRecording = false;
-                    mAudioRecord.stop();
-                }
+                chheckUsageTime();
 
-                new Thread(() -> {
-                    // IO 操作都在新线程
-                    try {
-                        if (isRunning) {
-                            logger.info("点击停止");
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_begin);
-                            });
-                            close(false);
-                        } else {
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_end);
-                            });
-                            start();
-                            pollCheckStop();
 
-                        }
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
-                    }
-                }).start();
+
                 break;
             case R.id.text_edit:
                 if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
@@ -478,6 +450,45 @@ public class IatActivity extends BaseActivity {
         }
     }
 
+    private void startRecord() {
+        if (!isRecording) {
+            startLu();
+            Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
+        } else {
+            if (isRecording) {
+                Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
+            }
+            isRecording = false;
+            mAudioRecord.stop();
+        }
+    }
+
+    private void recognize() {
+        new Thread(() -> {
+            // IO 操作都在新线程
+            try {
+                if (isRunning) {
+                    logger.info("点击停止");
+                    runOnUiThread(() -> {
+                        mTextBegin.setText(R.string.text_begin);
+                        uploadUsageTime();
+                    });
+                    close(false);
+                } else {
+                    runOnUiThread(() -> {
+                        mUseTime = System.currentTimeMillis();
+                        mTextBegin.setText(R.string.text_end);
+                    });
+                    start();
+                    pollCheckStop();
+
+                }
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
+            }
+        }).start();
+    }
+
     private void freEditSentenceshPage() {
         mEditLayout.setVisibility(View.VISIBLE);
         mResultLayout.setVisibility(View.GONE);
@@ -490,7 +501,8 @@ public class IatActivity extends BaseActivity {
 
     private void uploadUsageTime() {
         HashMap<String,String> map2 = new HashMap<>();
-        map2.put("duration", "100");
+        mUseTime = System.currentTimeMillis() - mUseTime;
+        map2.put("duration", String.valueOf(mUseTime / 100));
         RetrofitManager.getInstance().submitUsedTime(map2, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
@@ -511,6 +523,7 @@ public class IatActivity extends BaseActivity {
         });
     }
 
+
     private void chheckUsageTime() {
         RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
             @Override
@@ -519,7 +532,8 @@ public class IatActivity extends BaseActivity {
                 PackList c = gson2.fromJson(result, PackList.class);
                 Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                 if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-
+                    startRecord();
+                    recognize();
                 } else {
                     ToastUtils.showLong(IatActivity.this, c.getMsg());
                 }
