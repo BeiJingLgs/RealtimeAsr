@@ -3,10 +3,14 @@ package com.hanvon.speech.realtime.services;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebSettings;
 
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.google.gson.Gson;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.util.BasePath;
 
 import java.io.IOException;
@@ -91,8 +95,8 @@ public class RetrofitManager {
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request()
                                 .newBuilder()
-                                .removeHeader("User-Agent")//移除旧的
-                                .addHeader("User-Agent", WebSettings.getDefaultUserAgent(HvApplication.mContext))//添加真正的头部
+                               // .removeHeader("User-Agent")//移除旧的
+                                //.addHeader("User-Agent", WebSettings.getDefaultUserAgent(HvApplication.mContext))//添加真正的头部
                                 .build();
                         return chain.proceed(request);
                     }
@@ -180,7 +184,7 @@ public class RetrofitManager {
         if (params == null) {
             params = new HashMap<>();
         }
-        iApiService.submitUsedTime(params)
+        iApiService.submitUsedTime(HvApplication.TOKEN, params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -192,7 +196,7 @@ public class RetrofitManager {
         if (params == null) {
             params = new HashMap<>();
         }
-        iApiService.createOrderByPack(params)
+        iApiService.createOrderByPack(HvApplication.TOKEN, params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -204,7 +208,7 @@ public class RetrofitManager {
         if (params == null) {
             params = new HashMap<>();
         }
-        iApiService.payOrder(params)
+        iApiService.payOrder(HvApplication.TOKEN, params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -216,7 +220,7 @@ public class RetrofitManager {
         if (params == null) {
             params = new HashMap<>();
         }
-        iApiService.PayOrderByWxNative(params)
+        iApiService.PayOrderByWxNative(HvApplication.TOKEN, params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -226,7 +230,7 @@ public class RetrofitManager {
     public void payOrder(String phone, String pass, ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
-        iApiService.payOrder(phone, pass)
+        iApiService.payOrder(HvApplication.TOKEN, phone, pass)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -237,7 +241,7 @@ public class RetrofitManager {
     public void bindDevices(ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
-        iApiService.bindDevices()
+        iApiService.bindDevices(HvApplication.TOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -247,7 +251,7 @@ public class RetrofitManager {
     public void getBindDevices(ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
-        iApiService.getBindDevices()
+        iApiService.getBindDevices(HvApplication.TOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -255,28 +259,28 @@ public class RetrofitManager {
 
 
     public void getPacks(ICallBack callBack) {
-        iApiService.getPacks()
+        iApiService.getPacks(HvApplication.TOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
     }
 
-    public void getDevicePacks(ICallBack callBack) {
-        iApiService.getDevicePacks()
+    public void getDevicePacks(String token, ICallBack callBack) {
+        iApiService.getDevicePacks(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
     }
 
     public void getUserPacks(ICallBack callBack) {
-        iApiService.getUserPacks()
+        iApiService.getUserPacks(HvApplication.TOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
     }
 
     public void getPayChannels(ICallBack callBack) {
-        iApiService.getPayChannels()
+        iApiService.getPayChannels(HvApplication.TOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -284,7 +288,7 @@ public class RetrofitManager {
 
     //Get请求
     public void getUseRecord(String curPage, String pageSize, String sort, final ICallBack callback) {
-        iApiService.getUseRecord(curPage, pageSize, sort)
+        iApiService.getUseRecord(HvApplication.TOKEN, curPage, pageSize, sort)
                 //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
                 .subscribeOn(Schedulers.io())
                 //最终完成后结果返回到哪个线程，mainThread代表主线
@@ -295,7 +299,17 @@ public class RetrofitManager {
 
     //Get请求
     public void getOrders(String curPage, String pageSize, String sort, final ICallBack callback) {
-        iApiService.getOrders(curPage, pageSize, sort)
+        iApiService.getOrders(HvApplication.TOKEN, curPage, pageSize, sort)
+                //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
+                .subscribeOn(Schedulers.io())
+                //最终完成后结果返回到哪个线程，mainThread代表主线
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callback));
+    }
+
+    //Get请求
+    public void getOrder(String curPage, final ICallBack callback) {
+        iApiService.getOrder(HvApplication.TOKEN, curPage)
                 //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
                 .subscribeOn(Schedulers.io())
                 //最终完成后结果返回到哪个线程，mainThread代表主线
@@ -324,6 +338,28 @@ public class RetrofitManager {
                 if (callBack != null) {
                     callBack.failureData(e.getMessage());
                     Log.e("AAA", e.getMessage());
+                    if (e instanceof NullPointerException) {
+                        RetrofitManager.getInstance().loginByDeviceId("1234567890123456", new RetrofitManager.ICallBack() {
+                            @Override
+                            public void successData(String result) {
+                                Gson gson2 = new Gson();
+                                LoginResult c = gson2.fromJson(result, LoginResult.class);
+                                Log.e("A", "onResponse: " + result + "返回值");
+                                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                    HvApplication.TOKEN = c.getToken();
+                                }
+                            }
+
+                            @Override
+                            public void failureData(String error) {
+                                Log.e("AA", "error: " + error + "错");
+                            }
+                        });
+                    } else {
+
+                    }
+
+                    //if ()
                 }
             }
 

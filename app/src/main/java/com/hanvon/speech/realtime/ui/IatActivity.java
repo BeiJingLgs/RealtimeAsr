@@ -39,6 +39,7 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.MiniMain;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.baidu.ai.speech.realtime.full.connection.Runner;
 import com.baidu.ai.speech.realtime.full.download.Result;
@@ -48,6 +49,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.PackList;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
@@ -384,8 +386,7 @@ public class IatActivity extends BaseActivity {
                     Toast.makeText(IatActivity.this,getResources().getString(R.string.playingAudio),Toast.LENGTH_LONG).show();
                     return;
                 }
-                //录音有问题
-//                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
+                uploadUsageTime();
                 if (!isRecording) {
                     startLu();
                     Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
@@ -499,6 +500,28 @@ public class IatActivity extends BaseActivity {
                     ToastUtils.show(IatActivity.this, c.getMsg());
                 } else {
                     ToastUtils.show(IatActivity.this, c.getMsg());
+                }
+            }
+
+            @Override
+            public void failureData(String error) {
+                Log.e("AA", "error: " + error);
+
+            }
+        });
+    }
+
+    private void chheckUsageTime() {
+        RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                Gson gson2 = new Gson();
+                PackList c = gson2.fromJson(result, PackList.class);
+                Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+
+                } else {
+                    ToastUtils.showLong(IatActivity.this, c.getMsg());
                 }
             }
 

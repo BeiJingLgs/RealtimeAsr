@@ -85,7 +85,7 @@ public class MeActivity extends BaseActivity {
                  finish();
                  break;
              case R.id.last_time:
-                 RetrofitManager.getInstance().getDevicePacks(new RetrofitManager.ICallBack() {
+                 RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Gson gson2 = new Gson();

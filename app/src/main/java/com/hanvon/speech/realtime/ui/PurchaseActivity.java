@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.OrderAdapter;
 import com.hanvon.speech.realtime.adapter.PackAdapter;
@@ -150,7 +151,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentPackValue)) {
-                    RetrofitManager.getInstance().getDevicePacks(new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -224,7 +225,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentPackValue)) {
-                    RetrofitManager.getInstance().getDevicePacks(new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();

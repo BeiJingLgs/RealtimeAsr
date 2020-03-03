@@ -45,7 +45,7 @@ public interface AppServiceApi {
 
 
     @GET("API/Device/GetBindDevices")
-    Observable<ResponseBody> getBindDevices();
+    Observable<ResponseBody> getBindDevices(@Header("token") String token);
 
     /**
      * 获取验证码
@@ -64,7 +64,7 @@ public interface AppServiceApi {
     Observable<ResponseBody> changePasswordBySms(@QueryMap Map<String, String> params);
 
     @POST("/API/Order/CreateOrderByPack")
-    Observable<ResponseBody> createOrderByPack(@QueryMap Map<String, String> params);
+    Observable<ResponseBody> createOrderByPack(@Header("token") String token, @QueryMap Map<String, String> params);
 
     /**
      * 提交使用时间
@@ -72,22 +72,29 @@ public interface AppServiceApi {
      * @return
      */
     @POST("/API/Pack/SubmitUsedTime")
-    Observable<ResponseBody> submitUsedTime(@QueryMap Map<String, String> params);
+    Observable<ResponseBody> submitUsedTime(@Header("token") String token, @QueryMap Map<String, String> params);
 
     /**
      * 获取使用记录
      */
     @GET("/API/Pack/GetUseRecord")
-    Observable<ResponseBody> getUseRecord(@Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
+    Observable<ResponseBody> getUseRecord(@Header("token") String token, @Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
 
     /**
      * 获取订单
      */
     @GET("/API/Order/GetOrders")
-    Observable<ResponseBody> getOrders(@Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
+    Observable<ResponseBody> getOrders(@Header("token") String token, @Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
+
+    /**
+     * 获取订单
+     */
+    @GET("/API/Order/GetOrder")
+    Observable<ResponseBody> getOrder(@Header("token") String token, @Query("orderId") String orderId);
+
 
     @GET("/API/Order/GetPayChannels")
-    Observable<ResponseBody> getPayChannels();
+    Observable<ResponseBody> getPayChannels(@Header("token") String token);
 
 
     /**
@@ -99,26 +106,26 @@ public interface AppServiceApi {
 
 
     @POST("API/Device/BindDevice")
-    Observable<ResponseBody> bindDevices();
+    Observable<ResponseBody> bindDevices(@Header("token") String token);
 
 
 
     @GET("API/Pack/GetPacks")
-    Observable<ResponseBody> getPacks();
+    Observable<ResponseBody> getPacks(@Header("token") String token);
 
     @GET("API/Pack/GetDevicePacks")
-    Observable<ResponseBody> getDevicePacks();
+    Observable<ResponseBody> getDevicePacks(@Header("token") String token);
 
     @GET("API/Pack/GetUserPacks")
-    Observable<ResponseBody> getUserPacks();
+    Observable<ResponseBody> getUserPacks(@Header("token") String token);
 
     @POST("API/Order/PayOrder")
-    Observable<ResponseBody> payOrder(@QueryMap Map<String, String> params);
+    Observable<ResponseBody> payOrder(@Header("token") String token, @QueryMap Map<String, String> params);
 
     @POST("API/Order/PayOrderByWxNative")
-    Observable<ResponseBody> PayOrderByWxNative(@QueryMap Map<String, String> params);
+    Observable<ResponseBody> PayOrderByWxNative(@Header("token") String token, @QueryMap Map<String, String> params);
 
     @GET("API/Order/PayOrder")
-    Observable<ResponseBody> payOrder(@Query("orderId") String curPage, @Query("channelId") String pageSize);
+    Observable<ResponseBody> payOrder(@Header("token") String token, @Query("orderId") String curPage, @Query("channelId") String pageSize);
 
 }

@@ -28,12 +28,15 @@ import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.ZXingUtils;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CommonShowActivity extends BaseActivity {
     private TextView mPackNameTv, mPackPrice, mPackDescripe, mPackDuration, mPayBtn, mValidPeriod;
     private ImageView mVcCode;
     private ShopType mShopType;
-
+    private Timer mTimer;
+    private final static int TIME_DELEAY = 10000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,7 @@ public class CommonShowActivity extends BaseActivity {
         mPackPrice.setText(TimeUtil.centToyuan(mShopType.getPrice()));
         mPackDescripe.setText(mShopType.getDescribe());
         mValidPeriod.setText(TimeUtil.hourToTime(mShopType.getValidPeriod()));
+        mTimer = new Timer();
     }
 
     @Override
@@ -88,6 +92,7 @@ public class CommonShowActivity extends BaseActivity {
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                             map.clear();
                             map.put("orderId", String.valueOf(c.getOrderModal().getID()));
+                            String id = String.valueOf(c.getOrderModal().getID());
                             RetrofitManager.getInstance().PayOrderByWxNative(map, new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
@@ -97,6 +102,13 @@ public class CommonShowActivity extends BaseActivity {
                                         Bitmap bitmap = ZXingUtils.createQRImage(c.getUrlBean().getUrl(),250,250);
                                         mVcCode.setImageBitmap(bitmap);
                                         mVcCode.setVisibility(View.VISIBLE);
+                                        mTimer = new Timer();
+                                        mTimer.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                checkPayStatus(id);
+                                            }
+                                        }, TIME_DELEAY, TIME_DELEAY);
                                     } else {
                                         ToastUtils.showLong(CommonShowActivity.this, c.getMsg());
                                     }
@@ -120,5 +132,31 @@ public class CommonShowActivity extends BaseActivity {
                 });
                 break;
         }
+    }
+
+    private void checkPayStatus(String id) {
+        RetrofitManager.getInstance().getOrder(id, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                Gson gson2 = new Gson();
+                OrderDetail c = gson2.fromJson(result, OrderDetail.class);
+                Log.e("A", "onResponse: " + "c.getShopType().size(): checkPayStatus" );
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                    if (c.getOrderModal().getState() == 1 || c.getOrderModal().getState() == 2) {
+                        mTimer.cancel();
+                        ToastUtils.showLong(CommonShowActivity.this, "购买成功");
+                        Intent intent = new Intent(CommonShowActivity.this, MeActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    ToastUtils.showLong(CommonShowActivity.this, c.getMsg());
+                }
+            }
+
+            @Override
+            public void failureData(String error) {
+                Log.e("AA", "error: " + error + "错");
+            }
+        });
     }
 }
