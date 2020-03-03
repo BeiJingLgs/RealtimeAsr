@@ -58,4 +58,56 @@ public class TimeUtil {
         return days + " days " + hours + " hours " + minutes + " minutes "
                 + seconds + " seconds ";
     }
+
+    /**
+     * 返回时分秒
+     * @param second
+     * @return
+     */
+    public static String secondToTime(long second) {
+        long hours = second / 3600;//转换小时数
+        second = second % 3600;//剩余秒数
+        long minutes = second / 60;//转换分钟
+        second = second % 60;//剩余秒数
+        if (0 < hours){
+            if (minutes == 0) {
+                return hours+"小时 ";
+            } else {
+                return hours+"小时 "+minutes+"分 ";
+            }
+        }else {
+            if (second == 0) {
+                return minutes+"分 ";
+            } else {
+                return minutes+"分 "+second+"秒";
+            }
+        }
+    }
+
+    /**
+     * 返回时分秒
+     * @param second
+     * @return
+     */
+    public static String hourToTime(long second) {
+        long hours = second / 24;//转换小时数
+        second = second % 24;//剩余秒数
+        long minutes = second / 60;//转换分钟
+        second = second % 60;//剩余秒数
+        if (0 < hours){
+            if (minutes == 0) {
+                return hours+"天 ";
+            } else {
+                return hours+"天 "+minutes+"小时";
+            }
+
+        }else {
+            return minutes+"小时";
+        }
+    }
+
+    public static String centToyuan(long second) {
+        double yuan = second / 100.0;
+        return yuan + "元";
+    }
 }

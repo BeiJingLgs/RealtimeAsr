@@ -12,6 +12,7 @@ import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.DeviceBeanList;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.bean.Result.OrderList;
 import com.hanvon.speech.realtime.bean.Result.PackList;
@@ -22,6 +23,7 @@ import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
 import java.util.HashMap;
@@ -61,12 +63,12 @@ public class MeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (TextUtils.isEmpty(HvApplication.TOKEN)) {
+        if (TextUtils.isEmpty(HvApplication.TOKEN)) {
             mLogOutBtn.setVisibility(View.GONE);
         } else {
             mLogOutBtn.setVisibility(View.VISIBLE);
             login_or_register.setText(getResources().getString(R.string.hasLogined));
-        }*/
+        }
     }
 
     @Override
@@ -105,14 +107,9 @@ public class MeActivity extends BaseActivity {
 
                      }
                  });
-
-
-
-
-
                  break;
              case R.id.shop_list:
-                 RetrofitManager.getInstance().getOrders(1 + "", 5 + "", "asc", new RetrofitManager.ICallBack() {
+                 RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc", new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Gson gson2 = new Gson();
@@ -131,48 +128,24 @@ public class MeActivity extends BaseActivity {
                      @Override
                      public void failureData(String error) {
                          Log.e("AA", "error: " + error + "错");
-
                      }
                  });
-                 /*HashMap<String,String> map = new HashMap<>();
-                 map.put("packId", "1");
-                 RetrofitManager.getInstance().createOrderByPack(map, new RetrofitManager.ICallBack() {
-                     @Override
-                     public void successData(String result) {
-                         Log.e("AA", "createOrderByPack result: " + result);
-                     }
-
-                     @Override
-                     public void failureData(String error) {
-                         Log.e("AA", "error: " + error + "错");
-
-                     }
-                 });*/
-                 /*RetrofitManager.getInstance().getPayChannels(new RetrofitManager.ICallBack() {
+                 break;
+             case R.id.bind_deviceList:
+                 RetrofitManager.getInstance().getBindDevices(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Gson gson2 = new Gson();
-                         PayList c = gson2.fromJson(result, PayList.class);
-                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPayType().size());
+                         DeviceBeanList c = gson2.fromJson(result, DeviceBeanList.class);
+                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getDeviceBean().size());
                          if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-
+                             TranslateBean.getInstance().setDeviceList(c.getDeviceBean());
+                             Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
+                             intent.putExtra("type", "OrderBeen");
+                             startActivity(intent);
                          } else {
-
+                             ToastUtils.showLong(MeActivity.this, c.getMsg());
                          }
-                     }
-
-                     @Override
-                     public void failureData(String error) {
-                         Log.e("AA", "error: " + error + "错");
-
-                     }
-                 });*/
-                 break;
-             case R.id.bind_deviceList:
-                 /*RetrofitManager.getInstance().getUserPacks(new RetrofitManager.ICallBack() {
-                     @Override
-                     public void successData(String result) {
-                         Log.e("AA", "onResponse: " + result + "返回值");
                      }
 
                      @Override
@@ -180,29 +153,17 @@ public class MeActivity extends BaseActivity {
                          Log.e("AA", "error: " + error);
 
                      }
-                 });*/
+                 });
 
                  break;
              case R.id.update_check:
-
-                 RetrofitManager.getInstance().getPayChannels(new RetrofitManager.ICallBack() {
-                     @Override
-                     public void successData(String result) {
-                         Log.e("AA", "onResponse: " + result + "返回值");
-                     }
-
-                     @Override
-                     public void failureData(String error) {
-                         Log.e("AA", "error: " + error + "错");
-
-                     }
-                 });
                  break;
              case R.id.btn_logout:
                  RetrofitManager.getInstance().logout(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Log.e("AA", "onResponse: " + result + "返回值");
+                         SharedPreferencesUtils.clear(MeActivity.this, SharedPreferencesUtils.TOKEN);
                          login_or_register.setText("未登陆");
                          mLogOutBtn.setVisibility(View.GONE);
                      }
@@ -215,7 +176,7 @@ public class MeActivity extends BaseActivity {
                  });
                  break;
              case R.id.usage_record:
-                 RetrofitManager.getInstance().getUseRecord(0 + "", 5 + "", "asc",new RetrofitManager.ICallBack() {
+                 RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc",new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
                          Gson gson2 = new Gson();

@@ -33,6 +33,7 @@
     <string name="password">密&#160;&#160;码</string>
     <string name="VCode">验&#160;证&#160;码</string>
     <string name="getVCode">获取验证码</string>
+    <string name="VCodelogin">验证码登录</string>
     <string name="phoneNumber">手&#160;机&#160;号</string>
     <string name="login">登&#160;&#160;录</string>
     <string name="logout">退&#160;出&#160;登&#160;录</string>

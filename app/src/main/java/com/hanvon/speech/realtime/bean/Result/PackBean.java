@@ -7,7 +7,11 @@ public class PackBean
 {
     private int ID;
 
-    private String RemainDuration;
+    private String PackName;
+
+    private int RemainDuration;
+
+    private String CreateTime;
 
     private String EndTime;
 
@@ -17,11 +21,23 @@ public class PackBean
     public int getID(){
         return this.ID;
     }
-    public void setRemainDuration(String RemainDuration){
+    public void setPackName(String PackName){
+        this.PackName = PackName;
+    }
+    public String getPackName(){
+        return this.PackName;
+    }
+    public void setRemainDuration(int RemainDuration){
         this.RemainDuration = RemainDuration;
     }
-    public String getRemainDuration(){
+    public int getRemainDuration(){
         return this.RemainDuration;
+    }
+    public void setCreateTime(String CreateTime){
+        this.CreateTime = CreateTime;
+    }
+    public String getCreateTime(){
+        return this.CreateTime;
     }
     public void setEndTime(String EndTime){
         this.EndTime = EndTime;

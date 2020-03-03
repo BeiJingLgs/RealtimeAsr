@@ -7,7 +7,7 @@ public class UsageBeen
 {
     private int ID;
 
-    private String UsedDuration;
+    private long UsedDuration;
 
     private String Time;
 
@@ -17,10 +17,10 @@ public class UsageBeen
     public int getID(){
         return this.ID;
     }
-    public void setUsedDuration(String UsedDuration){
+    public void setUsedDuration(long UsedDuration){
         this.UsedDuration = UsedDuration;
     }
-    public String getUsedDuration(){
+    public long getUsedDuration(){
         return this.UsedDuration;
     }
     public void setTime(String Time){

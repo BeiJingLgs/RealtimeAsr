@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
@@ -25,6 +26,7 @@ import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        HvApplication.TOKEN = SharedPreferencesUtils.getStringSharedprefer(this, SharedPreferencesUtils.TOKEN);
+
         init();
 
     }

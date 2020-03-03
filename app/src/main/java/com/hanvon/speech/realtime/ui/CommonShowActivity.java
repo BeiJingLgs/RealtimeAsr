@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.OrderDetail;
@@ -42,10 +43,10 @@ public class CommonShowActivity extends BaseActivity {
     private void init() {
         mShopType = TranslateBean.getInstance().getShopType();
         mPackNameTv.setText(mShopType.getName());
-        mPackDuration.setText(mShopType.getDuration());
-        mPackPrice.setText(String.valueOf(mShopType.getPrice()) + " 元");
+        mPackDuration.setText(TimeUtil.secondToTime(mShopType.getDuration()));
+        mPackPrice.setText(TimeUtil.centToyuan(mShopType.getPrice()));
         mPackDescripe.setText(mShopType.getDescribe());
-        mValidPeriod.setText(mShopType.getValidPeriod());
+        mValidPeriod.setText(TimeUtil.hourToTime(mShopType.getValidPeriod()));
     }
 
     @Override
@@ -85,9 +86,9 @@ public class CommonShowActivity extends BaseActivity {
                         Gson gson2 = new Gson();
                         OrderDetail c = gson2.fromJson(result, OrderDetail.class);
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-
-                            RetrofitManager.getInstance().payOrder(String.valueOf(c.getOrderModal().getID()),
-                                    Constant.WEIXIN_CODE, new RetrofitManager.ICallBack() {
+                            map.clear();
+                            map.put("orderId", String.valueOf(c.getOrderModal().getID()));
+                            RetrofitManager.getInstance().PayOrderByWxNative(map, new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
                                     Gson gson2 = new Gson();
@@ -118,7 +119,6 @@ public class CommonShowActivity extends BaseActivity {
                     }
                 });
                 break;
-
         }
     }
 }

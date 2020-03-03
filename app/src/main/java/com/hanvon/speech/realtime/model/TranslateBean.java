@@ -2,6 +2,7 @@ package com.hanvon.speech.realtime.model;
 
 
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.bean.Result.DeviceBean;
 import com.hanvon.speech.realtime.bean.Result.Order;
 import com.hanvon.speech.realtime.bean.Result.PackBean;
 import com.hanvon.speech.realtime.bean.Result.ShopType;
@@ -27,6 +28,16 @@ public class TranslateBean {
     private List<PackBean> packList;
     private List<UsageBeen> usageList;
     private List<ShopType> shopTypes;
+
+    public List<DeviceBean> getDeviceList() {
+        return deviceList;
+    }
+
+    public void setDeviceList(List<DeviceBean> deviceList) {
+        this.deviceList = deviceList;
+    }
+
+    private List<DeviceBean> deviceList;
 
     private TranslateBean(){
     }

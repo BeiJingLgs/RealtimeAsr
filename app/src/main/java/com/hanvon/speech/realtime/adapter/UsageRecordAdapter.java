@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.Result.Order;
 import com.hanvon.speech.realtime.bean.Result.UsageBeen;
 
@@ -101,7 +102,7 @@ public class UsageRecordAdapter extends BaseAdapter {
         viewHolder.title.setText(cateList.get(position).getTime());
         // viewHolder.content.setText(cateList.get(position).getPayChannelName());
         viewHolder.content.setVisibility(View.VISIBLE);
-        viewHolder.time.setText(cateList.get(position).getUsedDuration());
+        viewHolder.time.setText("使用时长： " + TimeUtil.secondToTime(cateList.get(position).getUsedDuration()) );
         if (mShowCheck) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {

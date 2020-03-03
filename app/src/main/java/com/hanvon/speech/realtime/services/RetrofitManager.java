@@ -68,14 +68,15 @@ public class RetrofitManager {
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(new ReceivedCookiesInterceptor()) //首次请求
-                .addInterceptor(new AddCookiesInterceptor()) //首次请求
+                .addInterceptor(new AddCookiesInterceptor())
+                //.addInterceptor()//首次请求
                 .retryOnConnectionFailure(true);
         OkHttpClient client = builder.build();
 
         //Retrofit的创建
         mRetrofit = new Retrofit.Builder()
                 //添加Rxjava工厂
-                .client(getOkHttpClient())//获取后的okhttp头部
+                //.client(getOkHttpClient())//获取后的okhttp头部
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(BasePath.BASE_LOCALTEST_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -90,8 +91,8 @@ public class RetrofitManager {
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request()
                                 .newBuilder()
-                                .header("Authorization", "auth-token")
-                                .header("Accept", "application/json")
+                                .removeHeader("User-Agent")//移除旧的
+                                .addHeader("User-Agent", WebSettings.getDefaultUserAgent(HvApplication.mContext))//添加真正的头部
                                 .build();
                         return chain.proceed(request);
                     }
@@ -121,6 +122,16 @@ public class RetrofitManager {
     //Get请求
     public void loginByPassword(String phone, String pass, String deviceid, final ICallBack callback) {
         iApiService.loginByPassword(phone, pass, deviceid)
+                //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
+                .subscribeOn(Schedulers.io())
+                //最终完成后结果返回到哪个线程，mainThread代表主线
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callback));
+    }
+
+    //Get请求
+    public void loginBySMS(String phone, String sms, String deviceid, final ICallBack callback) {
+        iApiService.loginBySMS(phone, sms, deviceid)
                 //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
                 .subscribeOn(Schedulers.io())
                 //最终完成后结果返回到哪个线程，mainThread代表主线
@@ -200,6 +211,18 @@ public class RetrofitManager {
     }
 
     //POst请求
+    public void PayOrderByWxNative(HashMap<String, String> params, ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        iApiService.PayOrderByWxNative(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //POst请求
     public void payOrder(String phone, String pass, ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
@@ -215,6 +238,16 @@ public class RetrofitManager {
         //一定要判空，如果是空，创建一个实例就可以了
 
         iApiService.bindDevices()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    //POst请求
+    public void getBindDevices(ICallBack callBack) {
+        //一定要判空，如果是空，创建一个实例就可以了
+
+        iApiService.getBindDevices()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));

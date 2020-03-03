@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Order;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
@@ -102,7 +103,8 @@ public class OrderAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.title.setText(cateList.get(position).getPackName());
-        viewHolder.content.setText(cateList.get(position).getPayChannelName());
+        viewHolder.content.setText(cateList.get(position).getPayChannelName() + ": " + TimeUtil.centToyuan(cateList.get(position).getAmount()));
+        viewHolder.content.setVisibility(View.VISIBLE);
 
         viewHolder.time.setText(cateList.get(position).getUpdateTime());
         if (mShowCheck) {

@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.Result.Order;
 import com.hanvon.speech.realtime.bean.Result.PackBean;
 
@@ -98,8 +99,8 @@ public class PackAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.title.setText(cateList.get(position).getID() + "");
-        viewHolder.content.setText(cateList.get(position).getRemainDuration());
+        viewHolder.title.setText(cateList.get(position).getPackName());
+        viewHolder.content.setText("剩余有效期： " + TimeUtil.secondToTime(cateList.get(position).getRemainDuration()));
 
         viewHolder.time.setText(cateList.get(position).getEndTime());
         if (mShowCheck) {

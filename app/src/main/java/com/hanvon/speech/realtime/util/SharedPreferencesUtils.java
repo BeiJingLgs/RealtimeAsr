@@ -71,7 +71,7 @@ public class SharedPreferencesUtils {
      * 清除所有数据
      * @param context
      */
-    public static void clear(Context context) {
+    public static void clearAll(Context context) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -82,7 +82,7 @@ public class SharedPreferencesUtils {
      * 清除指定数据
      * @param context
      */
-    public static void clearAll(Context context, String key) {
+    public static void clear(Context context, String key) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

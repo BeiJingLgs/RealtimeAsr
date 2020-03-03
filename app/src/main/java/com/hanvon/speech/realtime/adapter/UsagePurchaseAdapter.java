@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.Result.ShopType;
 import com.hanvon.speech.realtime.bean.Result.ShopTypeList;
 import com.hanvon.speech.realtime.bean.Result.UsageBeen;
@@ -99,10 +100,9 @@ public class UsagePurchaseAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.title.setText(cateList.get(position).getName() + "  " + cateList.get(position).getPrice() + " 元");
+        viewHolder.title.setText(cateList.get(position).getName() + "  " + TimeUtil.centToyuan(cateList.get(position).getPrice()));
         viewHolder.content.setText(cateList.get(position).getDescribe());
-        //viewHolder.content.setVisibility(View.VISIBLE);
-        viewHolder.time.setText(cateList.get(position).getDuration());
+        viewHolder.time.setText("使用时长：" + TimeUtil.secondToTime(cateList.get(position).getDuration()));
         if (mShowCheck) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {

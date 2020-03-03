@@ -23,6 +23,17 @@ public interface AppServiceApi {
     @GET("/API/Account/PhoneLoginByPassword")
     Observable<ResponseBody> loginByPassword(@Query("phone") String username, @Query("password") String password, @Query("deviceSerialNo") String deviceid);
 
+
+    /**
+     * 上传账号密码
+     * @param username
+     * @param password
+     * @return
+     */
+    @GET("/API/Account/PhoneLoginBySms")
+    Observable<ResponseBody> loginBySMS(@Query("phone") String username, @Query("smscode") String password, @Query("deviceSerialNo") String deviceid);
+
+
     /**
      * 设备id登陆
      * @param deviceid
@@ -31,15 +42,10 @@ public interface AppServiceApi {
     @GET("API/Account/devicelogin")
     Observable<ResponseBody> loginByDeviceId(@Query("deviceSerialNo") String deviceid);
 
-    /**
-     *
-     * @param phone
-     * @param smscode
-     * @param deviceid
-     * @return
-     */
-    @GET("........")
-    Observable<ResponseBody> loginBySms(@Path("phone") String phone ,@Path("smscode") String smscode, @Path("deviceSerialNo ") String deviceid);
+
+
+    @GET("API/Device/GetBindDevices")
+    Observable<ResponseBody> getBindDevices();
 
     /**
      * 获取验证码
@@ -108,6 +114,9 @@ public interface AppServiceApi {
 
     @POST("API/Order/PayOrder")
     Observable<ResponseBody> payOrder(@QueryMap Map<String, String> params);
+
+    @POST("API/Order/PayOrderByWxNative")
+    Observable<ResponseBody> PayOrderByWxNative(@QueryMap Map<String, String> params);
 
     @GET("API/Order/PayOrder")
     Observable<ResponseBody> payOrder(@Query("orderId") String curPage, @Query("channelId") String pageSize);
