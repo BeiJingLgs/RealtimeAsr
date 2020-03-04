@@ -98,6 +98,7 @@ public class OrderAdapter extends BaseAdapter {
             viewHolder.content = (TextView) convertView.findViewById(R.id.fileContent);
             viewHolder.time = (TextView) convertView.findViewById(R.id.fileModify);
             viewHolder.checkbox = convertView.findViewById(R.id.checkbox);
+            viewHolder.states = convertView.findViewById(R.id.states);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -105,8 +106,15 @@ public class OrderAdapter extends BaseAdapter {
         viewHolder.title.setText(cateList.get(position).getPackName());
         viewHolder.content.setText(cateList.get(position).getPayChannelName() + ": " + TimeUtil.centToyuan(cateList.get(position).getAmount()));
         viewHolder.content.setVisibility(View.VISIBLE);
+        viewHolder.states.setVisibility(View.VISIBLE);
 
         viewHolder.time.setText(cateList.get(position).getUpdateTime());
+
+        if (cateList.get(position).getState() == 1 || cateList.get(position).getState() == 2) {
+            viewHolder.states.setText("已完成");
+        } else {
+            viewHolder.states.setText("未完成");
+        }
         if (mShowCheck) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {
@@ -120,6 +128,7 @@ public class OrderAdapter extends BaseAdapter {
         public TextView title;
         public TextView content;
         public TextView time;
+        public TextView states;
         public CheckBox checkbox;
     }
 }

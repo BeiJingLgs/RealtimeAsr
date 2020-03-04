@@ -39,6 +39,7 @@
     <string name="logout">退&#160;出&#160;登&#160;录</string>
     <string name="findPassword">找回密码</string>
     <string name="nofile">当前还没有文件，快来创建吧！！</string>
+    <string name="nullList">当前列表为空！！</string>
     <string name="listEmpty">当前列表为空</string>
     <string name="start">开始</string>
     <string name="setting">设置</string>
@@ -60,7 +61,7 @@
     <string name="validPeriod">有效期</string>
     <string name="descrip">简介</string>
     <string name="title">名称</string>
-    <string name="purchase">购买</string>
+    <string name="purchase">购&#160;&#160;买</string>
     <string name="insufficientmemory">请注意：内存不足</string>
     <string name="progress">当前进度:&#160;</string>
     <string name="checkNet">请检查网络连接</string>
@@ -69,6 +70,7 @@
     <string name="hasend">已结束</string>
     <string name="loading">正在加载，请稍候。。</string>
     <string name="hasLogined">已经登录</string>
+    <string name="unLogined">未登录</string>
     <string name="saveSd">录音存放Sd卡</string>内容
     <string name="content">内容</string>
     <string name="setPassword">重置密码</string>

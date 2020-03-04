@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.baidu.ai.speech.realtime.android.LoggerUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.OrderAdapter;
 import com.hanvon.speech.realtime.adapter.PackAdapter;
@@ -73,6 +74,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
         mPagetTv = (TextView) findViewById(R.id.tvprogress);
+        mPagetTv.setVisibility(View.INVISIBLE);
         mListView = (ListView) findViewById(R.id.listView);
         mPreBtn.setBackgroundResource(R.drawable.pre_page_grey);
 
@@ -95,23 +97,33 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
             mUsageRecordList.addAll(TranslateBean.getInstance().getUsageList());
             mUsageRecordAdapter = new UsageRecordAdapter(mUsageRecordList, this);
             mListView.setAdapter(mUsageRecordAdapter);
+            if (mUsageRecordList.size() < Constant.PAGE_SIZE)
+                mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
         } else if (TextUtils.equals(msg, intentPackValue)) {
             mPackList.clear();
             mPackList.addAll(TranslateBean.getInstance().getPackList());
             mPackAdapter = new PackAdapter(mPackList, this);
             mListView.setAdapter(mPackAdapter);
+            if (mPackList.size() < Constant.PAGE_SIZE)
+                mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
         } else if (TextUtils.equals(msg, intentOrderValue)) {
             mOrderList.clear();
             mOrderList.addAll(TranslateBean.getInstance().getOrderList());
             mOrderAdapter = new OrderAdapter(mOrderList, this);
             mListView.setAdapter(mOrderAdapter);
+            if (mOrderList.size() < Constant.PAGE_SIZE)
+                mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
         } else {
             mShopTypeList.clear();
             mShopTypeList.addAll(TranslateBean.getInstance().getShopTypes());
             mUsagePuraseAdapter = new UsagePurchaseAdapter(mShopTypeList, this);
             mListView.setAdapter(mUsagePuraseAdapter);
+            if (mShopTypeList.size() < Constant.PAGE_SIZE)
+                mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
         }
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -124,13 +136,15 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                 break;
             case R.id.ivpre_page:
                 if (Constant.PAGE_INDEX == 1) {
+                    ToastUtils.showLong(PurchaseActivity.this, "已经是第一页了");
                     mPreBtn.setBackgroundResource(R.drawable.pre_page_grey);
                     return;
                 } else {
+                    mNextBtn.setBackgroundResource(R.drawable.next_page);
                     Constant.PAGE_INDEX--;
                 }
                 if (TextUtils.equals(msg, intentUsageValue)) {
-                    RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc", new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -173,7 +187,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentOrderValue)) {
-                    RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc", new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -198,13 +212,16 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                 }
                 break;
             case R.id.ivnext_page:
-                if (Constant.PAGE_INDEX == 1) {
-                    mPreBtn.setBackgroundResource(R.drawable.pre_page_grey);
-                } else {
+                if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
                     Constant.PAGE_INDEX++;
+                } else {
+                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                    return;
                 }
+
                 if (TextUtils.equals(msg, intentUsageValue)) {
-                    RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc", new RetrofitManager.ICallBack() {
+                    Log.e(TAG, "Constant.PAGE_INDEX: " + Constant.PAGE_INDEX);
+                    RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -214,6 +231,12 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 mUsageRecordList.clear();
                                 mUsageRecordList.addAll(c.getUsageBeen());
                                 mUsageRecordAdapter.notifyDataSetChanged();
+                                if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
+                                    mPreBtn.setBackgroundResource(R.drawable.pre_page);
+                                } else {
+                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                }
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }
@@ -235,6 +258,13 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 mPackList.clear();
                                 mPackList.addAll(c.getPackBean());
                                 mPackAdapter.notifyDataSetChanged();
+
+                                if (mPackList.size() == Constant.PAGE_SIZE) {
+                                    mPreBtn.setBackgroundResource(R.drawable.pre_page);
+                                } else {
+                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                }
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }
@@ -247,7 +277,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentOrderValue)) {
-                    RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "asc", new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -257,6 +287,13 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 mOrderList.clear();
                                 mOrderList.addAll(c.getOrder());
                                 mOrderAdapter.notifyDataSetChanged();
+
+                                if (mOrderList.size() == Constant.PAGE_SIZE) {
+                                    mPreBtn.setBackgroundResource(R.drawable.pre_page);
+                                } else {
+                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                }
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }

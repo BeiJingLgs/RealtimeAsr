@@ -105,8 +105,8 @@ public interface AppServiceApi {
     Observable<ResponseBody> logout();
 
 
-    @POST("API/Device/BindDevice")
-    Observable<ResponseBody> bindDevices(@Header("token") String token);
+    @GET("API/Device/GetBindUser")
+    Observable<ResponseBody> getBindUser(@Header("token") String token, @Query("deviceSerialNo")String deviceSerialNo);
 
 
 
@@ -118,6 +118,9 @@ public interface AppServiceApi {
 
     @GET("API/Pack/GetUserPacks")
     Observable<ResponseBody> getUserPacks(@Header("token") String token);
+
+    @GET("API/Pack/GetAccountPacks")
+    Observable<ResponseBody> getAccountPacks(@Header("token") String token, @Query("curPage") String curPage, @Query("pageSize") String pageSize, @Query("sort") String sort);
 
     @POST("API/Order/PayOrder")
     Observable<ResponseBody> payOrder(@Header("token") String token, @QueryMap Map<String, String> params);

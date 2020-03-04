@@ -115,7 +115,7 @@ public class LoginActivity extends BaseActivity {
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),
                             user_password.getText().toString(),
-                            "1234567890123456", new RetrofitManager.ICallBack() {
+                            "1234567890123474", new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
                                     //customDialog.dismiss();
@@ -124,6 +124,7 @@ public class LoginActivity extends BaseActivity {
                                     Log.e("A", "onResponse: " + result + "返回值");
                                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                                         HvApplication.TOKEN = c.getToken();
+                                        SharedPreferencesUtils.saveLoginStatesSharePrefer(LoginActivity.this, SharedPreferencesUtils.LOGIN);
                                         SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
                                         Log.e("AA", "onResponse: " + result + "返回值");
                                         MethodUtils.hideSoftInput(LoginActivity.this);
@@ -142,7 +143,7 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     RetrofitManager.getInstance().loginBySMS(mUserPhoneEd.getText().toString(),
                             mVcCodeEd.getText().toString(),
-                            "1234567890123456", new RetrofitManager.ICallBack() {
+                            "1234567890123474", new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
                                     //customDialog.dismiss();
@@ -151,6 +152,7 @@ public class LoginActivity extends BaseActivity {
                                     Log.e("A", "onResponse: " + result + "返回值");
                                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                                         HvApplication.TOKEN = c.getToken();
+                                        SharedPreferencesUtils.saveLoginStatesSharePrefer(LoginActivity.this, SharedPreferencesUtils.LOGIN);
                                         SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
                                         Log.e("AA", "onResponse: " + result + "返回值");
                                         MethodUtils.hideSoftInput(LoginActivity.this);

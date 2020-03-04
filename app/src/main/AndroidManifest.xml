@@ -48,8 +48,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name="com.hanvon.speech.realtime.ui.LoginActivity" />
-        <activity android:name="com.hanvon.speech.realtime.ui.RegisterActivity" />
+        <activity android:name="com.hanvon.speech.realtime.ui.LoginActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name="com.hanvon.speech.realtime.ui.RegisterActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

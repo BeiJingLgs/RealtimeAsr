@@ -96,6 +96,7 @@ public class UsagePurchaseAdapter extends BaseAdapter {
             viewHolder.content = (TextView) convertView.findViewById(R.id.fileContent);
             viewHolder.time = (TextView) convertView.findViewById(R.id.fileModify);
             viewHolder.checkbox = convertView.findViewById(R.id.checkbox);
+            viewHolder.states = convertView.findViewById(R.id.states);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -103,6 +104,7 @@ public class UsagePurchaseAdapter extends BaseAdapter {
         viewHolder.title.setText(cateList.get(position).getName() + "  " + TimeUtil.centToyuan(cateList.get(position).getPrice()));
         viewHolder.content.setText(cateList.get(position).getDescribe());
         viewHolder.time.setText("使用时长：" + TimeUtil.secondToTime(cateList.get(position).getDuration()));
+
         if (mShowCheck) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {
@@ -116,6 +118,7 @@ public class UsagePurchaseAdapter extends BaseAdapter {
         public TextView title;
         public TextView content;
         public TextView time;
+        public TextView states;
         public CheckBox checkbox;
     }
 }

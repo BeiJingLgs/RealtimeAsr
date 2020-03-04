@@ -80,5 +80,22 @@
         android:focusableInTouchMode="false"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/states"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/mydialog_button_width"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/Margin_L"
+        android:layout_weight="0.6"
+        android:button="@drawable/check_box"
+        android:stateListAnimator="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="gone" />
+
+
+
 
 </LinearLayout>

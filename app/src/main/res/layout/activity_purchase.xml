@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:padding="@dimen/dialog_margin4"
-        android:text="@string/nofile"
+        android:text="@string/nullList"
         android:textColor="@color/black"
         android:visibility="gone"
         android:textSize="@dimen/Second_Title_Font_Size"/>

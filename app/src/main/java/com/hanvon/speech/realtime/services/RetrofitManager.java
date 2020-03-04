@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.util.BasePath;
+import com.hanvon.speech.realtime.util.ToastUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -238,10 +239,10 @@ public class RetrofitManager {
 
 
     //POst请求
-    public void bindDevices(ICallBack callBack) {
+    public void getBindUser(String deviceSerialNo, ICallBack callBack) {
         //一定要判空，如果是空，创建一个实例就可以了
 
-        iApiService.bindDevices(HvApplication.TOKEN)
+        iApiService.getBindUser(HvApplication.TOKEN, deviceSerialNo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -274,6 +275,13 @@ public class RetrofitManager {
 
     public void getUserPacks(ICallBack callBack) {
         iApiService.getUserPacks(HvApplication.TOKEN)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callBack));
+    }
+
+    public void getAccountPacks(String curPage, String pageSize, String sort, ICallBack callBack) {
+        iApiService.getAccountPacks(HvApplication.TOKEN, curPage, pageSize, sort)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getObsetver(callBack));
@@ -349,17 +357,14 @@ public class RetrofitManager {
                                     HvApplication.TOKEN = c.getToken();
                                 }
                             }
-
                             @Override
                             public void failureData(String error) {
                                 Log.e("AA", "error: " + error + "错");
                             }
                         });
-                    } else {
-
+                    } else if(TextUtils.equals(e.getMessage(), "HTTP 403 Forbidden")) {
+                        ToastUtils.showLong(getApplicationContext(), "请使用账号密码登陆");
                     }
-
-                    //if ()
                 }
             }
 

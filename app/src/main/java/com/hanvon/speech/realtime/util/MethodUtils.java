@@ -3,8 +3,6 @@ package com.hanvon.speech.realtime.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-//import android.hwebook.HANVONEBK;
-import android.hwebook.HANVONEBK;
 import android.os.storage.StorageManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -193,12 +191,4 @@ public class MethodUtils {
         }
     }
 
-    public static String getDeviceId(){
-        HANVONEBK hv_ebk = new HANVONEBK();
-        String strId = hv_ebk.GetDeviceID();
-        if (strId != null && strId.length() > 0){
-            return strId;
-        }
-        return "null";
-    }
 }

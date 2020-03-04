@@ -117,7 +117,6 @@ public class CommonShowActivity extends BaseActivity {
                                 @Override
                                 public void failureData(String error) {
                                     Log.e("AA", "error: " + error + "错");
-
                                 }
                             });
                         } else {

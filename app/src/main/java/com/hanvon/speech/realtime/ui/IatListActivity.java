@@ -92,22 +92,25 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
             mTotalFileList = new ArrayList<FileBean>();
         }
         freshPage();
-        RetrofitManager.getInstance().loginByDeviceId("1234567890123456", new RetrofitManager.ICallBack() {
-            @Override
-            public void successData(String result) {
-                Gson gson2 = new Gson();
-                LoginResult c = gson2.fromJson(result, LoginResult.class);
-                Log.e("A", "onResponse: " + result + "返回值");
-                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                    HvApplication.TOKEN = c.getToken();
+        if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+            RetrofitManager.getInstance().loginByDeviceId("1234567890123473", new RetrofitManager.ICallBack() {
+                @Override
+                public void successData(String result) {
+                    Gson gson2 = new Gson();
+                    LoginResult c = gson2.fromJson(result, LoginResult.class);
+                    Log.e("A", "onResponse: " + result + "返回值");
+                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                        HvApplication.TOKEN = c.getToken();
+                        SharedPreferencesUtils.saveLoginStatesSharePrefer(IatListActivity.this, SharedPreferencesUtils.LOGIN);
+                    }
                 }
-            }
+                @Override
+                public void failureData(String error) {
+                    Log.e("AA", "error: " + error + "错");
+                }
+            });
+        }
 
-            @Override
-            public void failureData(String error) {
-                Log.e("AA", "error: " + error + "错");
-            }
-        });
     }
 
     private void freshPage() {
