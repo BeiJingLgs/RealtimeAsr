@@ -93,13 +93,14 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         }
         freshPage();
         if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
-            RetrofitManager.getInstance().loginByDeviceId("1234567890123473", new RetrofitManager.ICallBack() {
+            RetrofitManager.getInstance().loginByDeviceId(DEVICEID, new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
                     Gson gson2 = new Gson();
                     LoginResult c = gson2.fromJson(result, LoginResult.class);
-                    Log.e("A", "onResponse: " + result + "返回值");
+
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                        Log.e("A", "onResponse: " + result + "返回值");
                         HvApplication.TOKEN = c.getToken();
                         SharedPreferencesUtils.saveLoginStatesSharePrefer(IatListActivity.this, SharedPreferencesUtils.LOGIN);
                     }

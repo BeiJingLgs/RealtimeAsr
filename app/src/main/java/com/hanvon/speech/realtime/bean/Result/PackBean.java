@@ -13,7 +13,20 @@ public class PackBean
 
     private String CreateTime;
 
+
     private String EndTime;
+
+
+
+    private String Source;
+
+    public String getSource() {
+        return Source;
+    }
+
+    public void setSource(String source) {
+        Source = source;
+    }
 
     public void setID(int ID){
         this.ID = ID;

@@ -11,6 +11,7 @@ import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
+import com.hanvon.speech.realtime.ui.BaseActivity;
 import com.hanvon.speech.realtime.util.BasePath;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
@@ -347,7 +348,7 @@ public class RetrofitManager {
                     callBack.failureData(e.getMessage());
                     Log.e("AAA", e.getMessage());
                     if (e instanceof NullPointerException) {
-                        RetrofitManager.getInstance().loginByDeviceId("1234567890123456", new RetrofitManager.ICallBack() {
+                        RetrofitManager.getInstance().loginByDeviceId(BaseActivity.DEVICEID, new RetrofitManager.ICallBack() {
                             @Override
                             public void successData(String result) {
                                 Gson gson2 = new Gson();

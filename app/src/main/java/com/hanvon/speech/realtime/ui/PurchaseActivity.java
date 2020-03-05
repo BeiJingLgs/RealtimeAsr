@@ -165,7 +165,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentPackValue)) {
-                    RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance().getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -212,15 +212,14 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                 }
                 break;
             case R.id.ivnext_page:
-                if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
-                    Constant.PAGE_INDEX++;
-                } else {
-                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
-                    return;
-                }
-
                 if (TextUtils.equals(msg, intentUsageValue)) {
                     Log.e(TAG, "Constant.PAGE_INDEX: " + Constant.PAGE_INDEX);
+                    if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
+                        Constant.PAGE_INDEX++;
+                    } else {
+                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        return;
+                    }
                     RetrofitManager.getInstance().getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
@@ -228,15 +227,18 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                             UsageBeenList c = gson2.fromJson(result, UsageBeenList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getUsageBeen().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                                mUsageRecordList.clear();
-                                mUsageRecordList.addAll(c.getUsageBeen());
-                                mUsageRecordAdapter.notifyDataSetChanged();
-                                if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
+                                if (c.getUsageBeen().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
                                     ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                    return;
                                 }
+
+                                mUsageRecordList.clear();
+                                mUsageRecordList.addAll(c.getUsageBeen());
+                                mUsageRecordAdapter.notifyDataSetChanged();
+
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }
@@ -248,23 +250,29 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentPackValue)) {
-                    RetrofitManager.getInstance().getDevicePacks(HvApplication.TOKEN, new RetrofitManager.ICallBack() {
+                    if (mPackList.size() == Constant.PAGE_SIZE) {
+                        Constant.PAGE_INDEX++;
+                    } else {
+                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        return;
+                    }
+                    RetrofitManager.getInstance().getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
                             PackList c = gson2.fromJson(result, PackList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                                mPackList.clear();
-                                mPackList.addAll(c.getPackBean());
-                                mPackAdapter.notifyDataSetChanged();
-
-                                if (mPackList.size() == Constant.PAGE_SIZE) {
+                                if (c.getPackBean().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
                                     ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                    return;
                                 }
+                                mPackList.clear();
+                                mPackList.addAll(c.getPackBean());
+                                mPackAdapter.notifyDataSetChanged();
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }
@@ -277,6 +285,12 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentOrderValue)) {
+                    if (mOrderList.size() == Constant.PAGE_SIZE) {
+                        Constant.PAGE_INDEX++;
+                    } else {
+                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        return;
+                    }
                     RetrofitManager.getInstance().getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
@@ -284,16 +298,17 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                             OrderList c = gson2.fromJson(result, OrderList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getOrder().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                                mOrderList.clear();
-                                mOrderList.addAll(c.getOrder());
-                                mOrderAdapter.notifyDataSetChanged();
-
-                                if (mOrderList.size() == Constant.PAGE_SIZE) {
+                                if (c.getOrder().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
                                     ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
+                                    return;
                                 }
+
+                                mOrderList.clear();
+                                mOrderList.addAll(c.getOrder());
+                                mOrderAdapter.notifyDataSetChanged();
                             } else {
                                 ToastUtils.showLong(PurchaseActivity.this, c.getMsg());
                             }

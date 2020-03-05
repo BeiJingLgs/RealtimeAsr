@@ -115,7 +115,7 @@ public class LoginActivity extends BaseActivity {
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),
                             user_password.getText().toString(),
-                            "1234567890123474", new RetrofitManager.ICallBack() {
+                            DEVICEID, new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
                                     //customDialog.dismiss();
@@ -128,6 +128,8 @@ public class LoginActivity extends BaseActivity {
                                         SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
                                         Log.e("AA", "onResponse: " + result + "返回值");
                                         MethodUtils.hideSoftInput(LoginActivity.this);
+                                        Intent intent=new Intent(LoginActivity.this, MeActivity.class);
+                                        startActivity(intent);
                                         finish();
                                     } else {
                                         Toast.makeText(LoginActivity.this, c.getMsg(), 0);
@@ -143,7 +145,7 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     RetrofitManager.getInstance().loginBySMS(mUserPhoneEd.getText().toString(),
                             mVcCodeEd.getText().toString(),
-                            "1234567890123474", new RetrofitManager.ICallBack() {
+                            DEVICEID, new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
                                     //customDialog.dismiss();
@@ -156,6 +158,8 @@ public class LoginActivity extends BaseActivity {
                                         SharedPreferencesUtils.saveStringSharePrefer(LoginActivity.this, SharedPreferencesUtils.TOKEN, c.getToken());
                                         Log.e("AA", "onResponse: " + result + "返回值");
                                         MethodUtils.hideSoftInput(LoginActivity.this);
+                                        Intent intent=new Intent(LoginActivity.this, MeActivity.class);
+                                        startActivity(intent);
                                         finish();
                                     } else {
                                         Toast.makeText(LoginActivity.this, c.getMsg(), 0);

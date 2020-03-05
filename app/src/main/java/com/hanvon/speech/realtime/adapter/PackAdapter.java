@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,7 @@ public class PackAdapter extends BaseAdapter {
             viewHolder.content = (TextView) convertView.findViewById(R.id.fileContent);
             viewHolder.time = (TextView) convertView.findViewById(R.id.fileModify);
             viewHolder.checkbox = convertView.findViewById(R.id.checkbox);
+            viewHolder.states = convertView.findViewById(R.id.states);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -103,6 +105,13 @@ public class PackAdapter extends BaseAdapter {
         viewHolder.content.setText("剩余有效期： " + TimeUtil.secondToTime(cateList.get(position).getRemainDuration()));
 
         viewHolder.time.setText(cateList.get(position).getEndTime());
+        viewHolder.states.setVisibility(View.VISIBLE);
+        if(TextUtils.equals(cateList.get(position).getSource(), "Device")) {
+            viewHolder.states.setText("赠送包");
+        } else {
+            viewHolder.states.setText("购买包");
+        }
+
         if (mShowCheck) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);
         } else {
@@ -116,6 +125,7 @@ public class PackAdapter extends BaseAdapter {
         public TextView title;
         public TextView content;
         public TextView time;
+        public TextView states;
         public CheckBox checkbox;
     }
 }

@@ -50,6 +50,7 @@ public class MeActivity extends BaseActivity {
         mLastTimeTv = findViewById(R.id.last_time);
         mShopListTv = findViewById(R.id.shop_list);
         mBindDevicesTv = findViewById(R.id.bind_deviceList);
+        mBindDevicesTv.setVisibility(View.GONE);
         mUpdateTv = findViewById(R.id.update_check);
         mLogOutBtn = findViewById(R.id.btn_logout);
         mUsageRecordTv = findViewById(R.id.usage_record);
@@ -66,7 +67,7 @@ public class MeActivity extends BaseActivity {
     }
 
     private void initStates() {
-        RetrofitManager.getInstance().getBindUser("1234567890123473", new RetrofitManager.ICallBack() {
+        RetrofitManager.getInstance().getBindUser(DEVICEID, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
                 JSONObject json = JSONObject.parseObject(result);
@@ -87,14 +88,14 @@ public class MeActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        initStates();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        /*if (TextUtils.isEmpty(HvApplication.TOKEN)) {
-            mLogOutBtn.setVisibility(View.GONE);
-        } else {
-            mLogOutBtn.setVisibility(View.VISIBLE);
-            login_or_register.setText(getResources().getString(R.string.hasLogined));
-        }*/
     }
 
     @Override
@@ -193,6 +194,7 @@ public class MeActivity extends BaseActivity {
 
                  break;
              case R.id.update_check:
+                 ToastUtils.showLong(MeActivity.this, "該功能還沒上綫哦");
                  break;
              case R.id.btn_logout:
                  RetrofitManager.getInstance().logout(new RetrofitManager.ICallBack() {
@@ -244,7 +246,6 @@ public class MeActivity extends BaseActivity {
                  RetrofitManager.getInstance().getPacks(new RetrofitManager.ICallBack() {
                      @Override
                      public void successData(String result) {
-
                          Gson gson2 = new Gson();
                          ShopTypeList c = gson2.fromJson(result, ShopTypeList.class);
                          Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getShopType().size());
