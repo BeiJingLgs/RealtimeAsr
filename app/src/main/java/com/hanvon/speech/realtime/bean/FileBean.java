@@ -15,6 +15,16 @@ public class FileBean implements Serializable{
     public String createtime;
     public String modifytime;
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int duration;
+
     public boolean mSelect;
 
     public String getmSd() {
@@ -51,7 +61,7 @@ public class FileBean implements Serializable{
 
 
 
-    public FileBean(String title, String content, String json, String createtime, String modifytime, String createmillis, String mSd) {
+    public FileBean(String title, String content, String json, String createtime, String modifytime, String createmillis, String mSd, int duration) {
         this.title = title;
         this.content = content;
         this.json = json;
@@ -59,6 +69,7 @@ public class FileBean implements Serializable{
         this.modifytime = modifytime;
         this.createmillis = createmillis;
         this.mSd = mSd;
+        this.duration = duration;
     }
 
     public void setTitle(String title) {

@@ -1,19 +1,25 @@
 package com.hanvon.speech.realtime.services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebSettings;
+import android.widget.Toast;
 
+import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.ui.BaseActivity;
+import com.hanvon.speech.realtime.ui.IatActivity;
 import com.hanvon.speech.realtime.util.BasePath;
 import com.hanvon.speech.realtime.util.ToastUtils;
+import com.hanvon.speech.realtime.util.WifiOpenHelper;
+import com.hanvon.speech.realtime.util.WifiUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -52,11 +58,22 @@ public class RetrofitManager {
     }
 
     public static RetrofitManager getInstance() {
+        if (WifiUtils.getWifiConnectState(getApplicationContext()) == NetworkInfo.State.DISCONNECTED) {
+            Toast.makeText(getApplicationContext(),getApplicationContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
+            WifiOpenHelper wifi = new WifiOpenHelper(getApplicationContext());
+            wifi.openWifi();
+            getApplicationContext().startActivity(new Intent(
+                    android.provider.Settings.ACTION_WIFI_SETTINGS));
+            return oKHPMH.instance;
+        }
+        if (!isNetWorkConneted(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(),getApplicationContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
+        }
         return oKHPMH.instance;
     }
 
     //网络判断
-    public boolean isNetWorkConneted(Context context) {
+    public static boolean isNetWorkConneted(Context context) {
         if (context != null) {
             ConnectivityManager systemService = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = systemService.getActiveNetworkInfo();

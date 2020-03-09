@@ -22,7 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "createtime text," +
             "modifytime text," +
             "sdcard text," +
-            "createmillis long)";
+            "createmillis long," +
+            "duration int)";
  
     //删除表
     private static final String DROP_TABLE_NOTE = "drop table if exists note";

@@ -37,8 +37,8 @@ public class DatabaseUtils {
     //"title text,content text,createtime text,modifytime text,createmillis long)
     public void insert(FileBean note) {
         logger.info("insert ： " + note.title);
-        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis)values(?, ?, ?, ?, ?, ?)";
-        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis};
+        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis, duration)values(?, ?, ?, ?, ?, ?, ?)";
+        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis, note.duration};
         SQLiteDatabase db = dbHelper.getWritableDatabase();
  
         db.execSQL(sql, args);
@@ -83,6 +83,7 @@ public class DatabaseUtils {
             note.modifytime = cursor.getString(5);
             note.mSd = cursor.getString(6);
             note.createmillis = cursor.getString(7);
+            note.duration = cursor.getInt(8);
             notes.add(note);
         }
         cursor.close();
@@ -103,6 +104,19 @@ public class DatabaseUtils {
             contentValues.put("json", userBean.json);
             contentValues.put("modifytime", userBean.modifytime);
             contentValues.put("sdcard", userBean.mSd + "");
+            contentValues.put("duration", userBean.duration + "");
+            dbHelper.getWritableDatabase().update("note", contentValues
+                    , "createmillis=?"
+                    , new String[]{userBean.createmillis + ""});
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void updataDurationByContent(FileBean userBean) {
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("duration", userBean.duration + "");
             dbHelper.getWritableDatabase().update("note", contentValues
                     , "createmillis=?"
                     , new String[]{userBean.createmillis + ""});
