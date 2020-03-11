@@ -22,6 +22,7 @@ import com.hanvon.speech.realtime.util.WifiOpenHelper;
 import com.hanvon.speech.realtime.util.WifiUtils;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +38,6 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.security.KeyStore.getApplicationContext;
 
 /*Time:2019/5/15
  *Author:zhaozhiwei
@@ -58,16 +58,16 @@ public class RetrofitManager {
     }
 
     public static RetrofitManager getInstance() {
-        if (WifiUtils.getWifiConnectState(getApplicationContext()) == NetworkInfo.State.DISCONNECTED) {
-            Toast.makeText(getApplicationContext(),getApplicationContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
-            WifiOpenHelper wifi = new WifiOpenHelper(getApplicationContext());
+        if (WifiUtils.getWifiConnectState(HvApplication.getContext()) == NetworkInfo.State.DISCONNECTED) {
+            Toast.makeText(HvApplication.getContext(),HvApplication.getContext().getResources().getString(R.string.checkNeterror),Toast.LENGTH_LONG).show();
+            WifiOpenHelper wifi = new WifiOpenHelper(HvApplication.getContext());
             wifi.openWifi();
-            getApplicationContext().startActivity(new Intent(
+            HvApplication.getContext().startActivity(new Intent(
                     android.provider.Settings.ACTION_WIFI_SETTINGS));
             return oKHPMH.instance;
         }
-        if (!isNetWorkConneted(getApplicationContext())) {
-            Toast.makeText(getApplicationContext(),getApplicationContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
+        if (!isNetWorkConneted(HvApplication.getContext())) {
+            Toast.makeText(HvApplication.getContext(),HvApplication.getContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
         }
         return oKHPMH.instance;
     }
@@ -381,7 +381,9 @@ public class RetrofitManager {
                             }
                         });
                     } else if(TextUtils.equals(e.getMessage(), "HTTP 403 Forbidden")) {
-                        ToastUtils.showLong(getApplicationContext(), "请使用账号密码登陆");
+                        ToastUtils.showLong(HvApplication.getContext(), "请使用账号密码登陆");
+                    } else if(e instanceof UnknownHostException) {
+                        ToastUtils.showLong(HvApplication.getContext(), "服务器开小差了，请稍候再试");
                     }
                 }
             }

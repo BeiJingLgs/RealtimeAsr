@@ -30,6 +30,15 @@ public class hvFileCommonUtils {
 	public static final int CREATE_FILE_NONEED = 2;
 	
 	
+    public static boolean isFileExist(String filepath)
+    {
+    	File file=new File(filepath);
+    	if(file.exists())
+    		return true;
+    	else
+    		return false;
+    }
+	
 	public static boolean createDirIfNeed(Context context, String path){
 		File file = new File(path);
 		return createDirIfNeed(context, file);
@@ -103,13 +112,23 @@ public class hvFileCommonUtils {
 			}
 		}
 	
-	//删除文件或目录
-	public static boolean recursiveDelete(Context context, String strPath) {
+	
+	public static boolean recursiveDeleteExcludeRoot(Context context, String strPath){
 		File file = new File(strPath);
-		return recursiveDelete(context,file);
+		return recursiveDelete(context,file, false);
+	}
+	
+	//删除文件或目录
+	public static boolean recursiveDeleteAll(Context context, String strPath) {
+		File file = new File(strPath);
+		return recursiveDelete(context,file, true);
+	}
+	
+	public static boolean recursiveDeleteAll(Context context, File file) {
+		return recursiveDelete(context,file, true);
 	}
 
-	public static boolean recursiveDelete(Context context, File file) {
+	public static boolean recursiveDelete(Context context,File file, boolean bDeleteRootDir) {
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
 			if (files.length == 0) {
@@ -121,15 +140,26 @@ public class hvFileCommonUtils {
 			}
 			for (int x = 0; x < files.length; x++) {
 				File childFile = files[x];
-				recursiveDelete(context, childFile);
+				recursiveDelete(context, childFile, true);
 			}
 		}
 		if (file.exists()) {
-			if(!file.delete()){
-				return false;
-			}else{
+			if (file.isDirectory()){
+				if (bDeleteRootDir){
+					if (!file.delete()){
+						return false;
+					}
+					notifySystemToScan(context, file);
+				}
+			}
+			else{
+				if(!file.delete()){
+					return false;
+				}
 				notifySystemToScan(context, file);
 			}
+			
+			
 		}
 		return true;
 	}
@@ -314,12 +344,12 @@ public class hvFileCommonUtils {
   	}
   	
   	public static String getSdcardPath(Context context){
-		String path = hvReflectUtils.getStoragePath(context, "SD");
+  		String path = hvReflectUtils.getStoragePath(context, "diskId=disk:179:64");
   		return path;
   	}	
   	
   	public static String getUDiskPath(Context context){
-		String path = hvReflectUtils.getStoragePath(context, "U");
+  		String path = hvReflectUtils.getStoragePath(context, "diskId=disk:8:0");
   		return path;
   	}
   	
@@ -328,40 +358,9 @@ public class hvFileCommonUtils {
 		String status = getExtSdStorageState(context);
 		if (status.equals(Environment.MEDIA_MOUNTED)){
 			StatFs stat = new StatFs(getSdcardPath(context));
-			return stat.getAvailableBytes() / (1024 * 1024);
+			return stat.getAvailableBytes();
 		}
 		return 0;
     }
-
-    /**
-			* 获取手机内部空间总大小
-     *
-			 * @return 大小，字节为单位
-     */
-	static public long getTotalInternalMemorySize() {
-		//获取内部存储根目录
-		File path = Environment.getDataDirectory();
-		//系统的空间描述类
-		StatFs stat = new StatFs(path.getPath());
-		//每个区块占字节数
-		long blockSize = stat.getBlockSize();
-		//区块总数
-		long totalBlocks = stat.getBlockCount();
-		return totalBlocks * blockSize / (1024 * 1024);
-	}
-
-	/**
-	 * 获取手机内部可用空间大小
-	 *
-	 * @return 大小，字节为单位
-	 */
-	static public long getAvailableInternalMemorySize() {
-		File path = Environment.getDataDirectory();
-		StatFs stat = new StatFs(path.getPath());
-		long blockSize = stat.getBlockSize();
-		//获取可用区块数量
-		long availableBlocks = stat.getAvailableBlocks();
-		return availableBlocks * blockSize / (1024 * 1024);
-	}
 	
 }

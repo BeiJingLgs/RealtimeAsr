@@ -1,7 +1,13 @@
 package com.hanvon.speech.realtime.ui;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -44,7 +51,6 @@ public class MeActivity extends BaseActivity {
 
     @Override
     void initView(Bundle savedInstanceState, View view) {
-        mHomeBtn.setVisibility(View.GONE);
         mMenus.setVisibility(View.GONE);
         login_or_register = findViewById(R.id.login_or_register);
         mLastTimeTv = findViewById(R.id.last_time);
@@ -63,10 +69,22 @@ public class MeActivity extends BaseActivity {
         mLogOutBtn.setOnClickListener(this);
         mUsageRecordTv.setOnClickListener(this);
         mUsagePackTv.setOnClickListener(this);
+        init();
         initStates();
     }
 
+    private void init() {
+        SpannableString spanStr = new SpannableString(mUsagePackTv.getText().toString());
+        spanStr.setSpan(new ForegroundColorSpan(Color.parseColor("#000000")), 0, 8, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spanStr.setSpan(new RelativeSizeSpan(0.6f), 8, spanStr.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mUsagePackTv.setText(spanStr);
+    }
+
     private void initStates() {
+        if (TextUtils.isEmpty(MethodUtils.getDeviceId())&& !Const.IS_DEBUG) {
+            ToastUtils.show(this, "设备id为空，无法正常使用");
+            return;
+        }
         RetrofitManager.getInstance().getBindUser(DEVICEID, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {

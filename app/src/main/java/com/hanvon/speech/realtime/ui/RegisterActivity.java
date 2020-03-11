@@ -28,13 +28,10 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
 
 public class RegisterActivity extends BaseActivity {
     private TextView get_mob;
     private Button user_register;
-    private EventHandler eh;
     private EditText set_mob;
     private EditText reg_phone, mPassWordEd;
     private TimeCount time;
@@ -155,7 +152,6 @@ public class RegisterActivity extends BaseActivity {
     // 使用完EventHandler需注销，否则可能出现内存泄漏
     protected void onDestroy() {
         super.onDestroy();
-        SMSSDK.unregisterEventHandler(eh);
     }
 
 

@@ -17,6 +17,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
@@ -32,6 +33,7 @@ import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.ArrayList;
@@ -93,6 +95,10 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         }
         freshPage();
         if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+            if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
+                ToastUtils.show(this, "设备id为空，无法正常使用");
+                return;
+            }
             RetrofitManager.getInstance().loginByDeviceId(DEVICEID, new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {

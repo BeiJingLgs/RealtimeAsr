@@ -7,6 +7,9 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.baidu.ai.speech.realtime.android.HvApplication;
+
+
 public class MediaPlayerManager {
     private static MediaPlayerManager mInstance;
     private MediaPlayer player;
@@ -39,6 +42,7 @@ public class MediaPlayerManager {
 
             @Override
             public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
+                ToastUtils.showLong(HvApplication.getContext(), "当前文件为空或已损坏");
                 stop();
                 return false;
             }

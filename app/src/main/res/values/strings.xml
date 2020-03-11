@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">语音转写</string>
+    <string name="app_name">录音记事</string>
 
     <string name="pref_key_iat_show">iat_show</string>
     <string name="pref_title_iat_show">显示听写界面</string>
@@ -51,19 +51,20 @@
     <string name="newbuild">新&#160;&#160;建</string>
     <string name="mine">我&#160;&#160;的</string>
     <string name="loginregister">点击登录/注册</string>
-    <string name="remainTime">剩余时长</string>
-    <string name="purchaserecord">购买记录</string>
-    <string name="binddevice">绑定设备</string>
-    <string name="checkupdate">检查升级</string>
-    <string name="usageRecord">使用记录</string>
-    <string name="usagePack">购买使用包</string>
-    <string name="duration">使用时长</string>
+    <string name="remainTime">剩&#160;&#160;余&#160;&#160;时&#160;&#160;长</string>
+    <string name="purchaserecord">购&#160;&#160;买&#160;&#160;记&#160;&#160;录</string>
+    <string name="binddevice">绑&#160;&#160;定&#160;&#160;设&#160;&#160;备</string>
+    <string name="checkupdate">检&#160;&#160;查&#160;&#160;升&#160;&#160;级</string>
+    <string name="usageRecord">使&#160;&#160;用&#160;&#160;记&#160;&#160;录</string>
+    <string name="usagePack">购买语音识别服务(采用国际领先的语音识别算法,将语音快速准确识别为文字)</string>
+    <string name="duration">使&#160;&#160;用&#160;&#160;时&#160;&#160;长</string>
     <string name="validPeriod">有效期</string>
     <string name="descrip">简介</string>
     <string name="title">名称</string>
     <string name="purchase">购&#160;&#160;买</string>
     <string name="insufficientmemory">请注意：内存不足</string>
     <string name="progress">当前进度:&#160;</string>
+    <string name="checkNeterror">网络连接出现问题，请检查网络连接</string>
     <string name="checkNet">请检查网络连接</string>
     <string name="playingAudio">正在播放音频，录制失败</string>
     <string name="startrecording">在开始录制</string>

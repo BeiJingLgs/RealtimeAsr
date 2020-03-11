@@ -104,7 +104,7 @@ public class Stat {
             IatResults.addResult(result);
         }
         Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
-        LocalBroadcastManager.getInstance(HvApplication.getContext()).sendBroadcast(intent);
+        HvApplication.getContext().sendBroadcast(intent);
     }
 
     private StringBuilder formatTime(long timeStamp, String message) {

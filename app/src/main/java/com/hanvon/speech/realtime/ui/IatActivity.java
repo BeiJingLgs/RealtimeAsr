@@ -4,14 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,8 +24,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
@@ -51,7 +45,6 @@ import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.services.RetrofitManager;
-import com.hanvon.speech.realtime.util.EPDHelper;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.MediaPlayerManager;
 import com.hanvon.speech.realtime.util.MediaRecorderManager;
@@ -59,7 +52,6 @@ import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
-import com.hanvon.speech.realtime.view.HandWriteNoteView;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,14 +83,10 @@ public class IatActivity extends BaseActivity {
 
     private static Logger logger = Logger.getLogger("IatActivity");
     protected static int mode;
-    protected static long FILE_LENGTH;
     static {
         mode = MODE_REAL_TIME_STREAM;
     }
 
-
-    private Toast mToast;
-    private SharedPreferences mSharedPreferences;
     private SequenceAdapter mSequenceAdapter;
     private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
     private TextView mTimeTv;
@@ -108,9 +96,8 @@ public class IatActivity extends BaseActivity {
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private LocalReceiver localReceiver;
     private View mEditLayout, mResultLayout;
-    private boolean isNEW, isTips = false;
+    private boolean isNEW;
 
     private boolean rubberEnableFlag = false;
 
@@ -118,26 +105,18 @@ public class IatActivity extends BaseActivity {
     private int nPageCount = 0; // 当前分类的页总数
     private int nPageIsx = 0; // 当前显示的页idx
     protected static int PAGE_CATEGORY = 10;// 每页显示几个
+    private int TIME_DELAY = 1;
     private ArrayList<Result> mTotalResultList, mTempResultList;
-    private Thread mThread = null;
-    private byte[] data = null;
-    private HandWriteNoteView mNoteView;
+
     private Bitmap mBitmap;
     private Timer timer;
     private boolean isSeekbarChaning;
-    /*默认数据*/
-    private int mSampleRateInHZ = 16000; //采样率
-    private int mAudioFormat = AudioFormat.ENCODING_PCM_16BIT;  //位数
-    private int mChannelConfig = AudioFormat.CHANNEL_IN_MONO;   //声道
-    private AudioRecord mAudioRecord;
-    private int mRecorderBufferSize;
-    private byte[] mAudioData;
     private boolean isRecording = false;
     private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>());
     private String mRecordFilePath, mTempPath;
     private int mAudioOffset;
-    private AudioHandler mHandler;
+    private Handler mHandler;
     private long mUseTime;
     private int duration;
     @Override
@@ -156,7 +135,6 @@ public class IatActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState, View view) {
         //TODO  初始化
-        EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
@@ -175,7 +153,7 @@ public class IatActivity extends BaseActivity {
         mResultLayout = findViewById(R.id.result_layout);
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
-        mNoteView = view.findViewById(R.id.MyNoteView);
+       // mNoteView = view.findViewById(R.id.MyNoteView);
         mCheckbox = findViewById(R.id.checkbox);
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
@@ -184,25 +162,34 @@ public class IatActivity extends BaseActivity {
         mEditNextPageBtn.setOnClickListener(this);
         mResultPreBtn.setOnClickListener(this);
         mResultNextBtn.setOnClickListener(this);
-        mNoteView.setZOrderOnTop(true);
-        mNoteView.setReflushDrityEnable(true);
-        mNoteView.setRubberMode(rubberEnableFlag);
-        mNoteView.setBackground(mBitmap);
+
     }
 
     private void initData() {
-        mRecorderBufferSize = AudioRecord.getMinBufferSize(mSampleRateInHZ, mChannelConfig, mAudioFormat);
-        mAudioData = new byte[320];
-        mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, mSampleRateInHZ, mChannelConfig, mAudioFormat, mRecorderBufferSize);
+        RecordReceiver recordReceiver = new RecordReceiver();
+        IntentFilter mBtFilter = new IntentFilter();
+        mBtFilter.addAction(ConstBroadStr.SHOW_BACKLOGO);//ConstBroadStr.UPDATERECOG
+        mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
+        registerReceiver(recordReceiver, mBtFilter);
+    }
+
+    protected class RecordReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
+                stopPlayRecord();
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
+                mRecogResultTv.setText(IatResults.getResultsStr());
+                freshResultPage();
+                mRecogResultTv.gotoLastPage();
+            }
+        }
     }
 
     private void init() {
         mHandler = new AudioHandler(this);
         mTotalResultList = new ArrayList<>();
         mTempResultList = new ArrayList<>();
-        localReceiver = new LocalReceiver();
-        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        manager.registerReceiver(localReceiver, new IntentFilter(ConstBroadStr.UPDATERECOG));
         mFileBean = TranslateBean.getInstance().getFileBean();
         duration = mFileBean.getDuration();
 
@@ -215,14 +202,15 @@ public class IatActivity extends BaseActivity {
         if (hvFileCommonUtils.hasSdcard(this)) {
             mCheckbox.setVisibility(View.VISIBLE);
         }
-
         if (isNEW)
             return;
         else
             mCheckbox.setVisibility(View.GONE);
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
-        mRecordFilePath = ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
+        mRecordFilePath = ConstBroadStr.GetAudioRootPath(this,
+                TextUtils.equals(mFileBean.getmSd(), "sd")) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
+        Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
 
         IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
         }.getType()));
@@ -237,39 +225,12 @@ public class IatActivity extends BaseActivity {
 
     }
 
-    public class LocalReceiver extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
-            if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
-                mRecogResultTv.setText(IatResults.getResultsStr());
-                freshResultPage();
-                mRecogResultTv.gotoLastPage();
-            }
-        }
-    }
-
-    private class AudioHandler extends Handler {
-        WeakReference<IatActivity> weakReference ;
-
-        public AudioHandler(IatActivity activity ){
-            weakReference  = new WeakReference<IatActivity>( activity) ;
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-
-        }
-    }
-
     private SeekBar.OnSeekBarChangeListener seekListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mAudioOffset = seekBar.getProgress();
             logger.info("===onStopTrackingTouch seekBar.mAudioOffset(): " + mAudioOffset);
             isSeekbarChaning = false;
-            //if (!isSeekbarChaning)
-            //    mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / duration + "%");
-
         }
 
         @Override
@@ -281,11 +242,9 @@ public class IatActivity extends BaseActivity {
         }
 
         @Override
-        public void onProgressChanged(SeekBar seekBar, int progress,
-                                      boolean fromUser) {
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             logger.info("===onProgressChanged: " + seekBar.getProgress());
-            //if (!isSeekbarChaning)
-                mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / duration + "%");
+            mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / duration + "%");
 
         }
     };
@@ -330,7 +289,6 @@ public class IatActivity extends BaseActivity {
         stopPlayRecord();
         IatResults.clearResults();
         close(false);
-        mAudioRecord.stop();
     }
 
     @Override
@@ -363,13 +321,16 @@ public class IatActivity extends BaseActivity {
                     return;
                 }
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-                    timer.cancel();
+                    if (timer != null)
+                        timer.cancel();
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                 } else {
                     Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
-                    if (mRecordFilePath == null)
+                    if (mRecordFilePath == null) {
+                        ToastUtils.showLong(this, "当前文件为空");
                         return;
+                    }
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
                     playRecord();
                 }
@@ -410,7 +371,8 @@ public class IatActivity extends BaseActivity {
     }
 
     private void stopPlayRecord() {
-        timer.cancel();
+        if(timer != null)
+            timer.cancel();
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         MediaPlayerManager.getInstance().stop();
     }
@@ -428,6 +390,8 @@ public class IatActivity extends BaseActivity {
                 }
             });//开始播放
             duration = MediaPlayerManager.getInstance().getDuration();//获取音乐总时间
+            if (duration == 0)
+                return;
             mFileBean.setDuration(duration);
             DatabaseUtils.getInstance(this).updataDurationByContent(mFileBean);
             mSeekBar.setMax(duration);//将音乐总时间设置为Seekbar的最大值
@@ -446,19 +410,24 @@ public class IatActivity extends BaseActivity {
 
     private void startRecord() {
         if (!isRecording) {
-            String tmpName = mFileBean.getCreatemillis();
-            if (mCheckbox.isChecked()) {
-                mFileBean.mSd = "sd";
+            if (isNEW) {
+                String tmpName = mFileBean.getCreatemillis();
+                if (mCheckbox.isChecked()) {
+                    mFileBean.mSd = "sd";
+                }
+                createFile(tmpName);
             }
-            createFile(tmpName);
             isRecording = true;
             File file = new File(mRecordFilePath);
+            Log.e("startRecord", "mRecordFilePath: " + mRecordFilePath);
             Log.e("startRecord", "file.exists(): " + file.exists());
             if (file.exists()) {
                 MediaRecorderManager.getInstance().start(mTempPath);
             } else {
                 MediaRecorderManager.getInstance().start(mRecordFilePath);
             }
+            mTimeTv.setVisibility(View.VISIBLE);
+            mTimeTv.setText("");
             Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
         } else {
             if (isRecording) {
@@ -478,6 +447,20 @@ public class IatActivity extends BaseActivity {
             });
             isRecording = false;
             MediaRecorderManager.getInstance().stop();
+        }
+    }
+
+    private class AudioHandler extends Handler {
+        WeakReference<IatActivity> weakReference ;
+
+        public AudioHandler(IatActivity activity ){
+            weakReference  = new WeakReference<IatActivity>( activity) ;
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+
         }
     }
 
@@ -600,22 +583,21 @@ public class IatActivity extends BaseActivity {
         TextView menuItem1 = view.findViewById(R.id.popup_savePic);
         menuItem1.setOnClickListener(view13 -> {
             if (popupWindow != null) {
-                mNoteView.saveBitmap(ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" );
                 popupWindow.dismiss();
             }
         });
         TextView menuItem2 = view.findViewById(R.id.popup_delete);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                mNoteView.clear(false);
-                popupWindow.dismiss();
+               // mNoteView.clear(false);
+                //popupWindow.dismiss();
             }
         });
         TextView menuItem3 = view.findViewById(R.id.popup_rubber);
         menuItem3.setOnClickListener(view1 -> {
             if (popupWindow != null) {
-                rubberEnableFlag = !rubberEnableFlag;
-                mNoteView.setRubberMode(rubberEnableFlag);
+               // rubberEnableFlag = !rubberEnableFlag;
+               // mNoteView.setRubberMode(rubberEnableFlag);
                 popupWindow.dismiss();
             }
         });

@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -112,6 +113,11 @@ public class LoginActivity extends BaseActivity {
                 });
                 break;
             case R.id.btn_login://登陆  请求后台
+                if (TextUtils.isEmpty(MethodUtils.getDeviceId()) && !Const.IS_DEBUG) {
+                    ToastUtils.show(this, "设备id为空，无法正常使用");
+                    return;
+                }
+
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),
                             user_password.getText().toString(),
