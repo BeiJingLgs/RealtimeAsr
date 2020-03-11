@@ -60,9 +60,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         init();
-
     }
 
     @Override
