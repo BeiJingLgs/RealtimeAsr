@@ -17,7 +17,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     protected Button mHomeBtn;
     protected Button mBackBtn;
     protected ImageButton mMenus;
-    public static String DEVICEID = "1234567890123473";
+    public static String DEVICEID = "1234567890123456";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

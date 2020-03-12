@@ -193,7 +193,7 @@ public class IatActivity extends BaseActivity {
         mTempResultList = new ArrayList<>();
         mFileBean = TranslateBean.getInstance().getFileBean();
         duration = mFileBean.getDuration();
-        Log.e("mFileBean", "mFileBean getTime" + mFileBean.getTime());
+
 
         if (duration == 0) {
             mSeekBar.setVisibility(View.GONE);
@@ -208,12 +208,12 @@ public class IatActivity extends BaseActivity {
             return;
         else
             mCheckbox.setVisibility(View.GONE);
-        if (TextUtils.isEmpty(mFileBean.getJson()))
-            return;
+
         mRecordFilePath = ConstBroadStr.GetAudioRootPath(this,
                 TextUtils.equals(mFileBean.getmSd(), "sd")) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
         Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
-
+        if (TextUtils.isEmpty(mFileBean.getJson()))
+            return;
         IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
         }.getType()));
         mRecogResultTv.setText(mFileBean.getContent());
@@ -412,19 +412,21 @@ public class IatActivity extends BaseActivity {
 
     private void startRecord() {
         if (!isRecording) {
+            String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
-                String tmpName = mFileBean.getCreatemillis();
                 if (mCheckbox.isChecked()) {
                     mFileBean.mSd = "sd";
                 }
-                createFile(tmpName);
             }
+            createFile(tmpName);
             isRecording = true;
-            File file = new File(mRecordFilePath);
+            Log.e("startRecord", "before File: ");
+            //File file = new File(mRecordFilePath);
             Log.e("startRecord", "mRecordFilePath: " + mRecordFilePath);
-            Log.e("startRecord", "file.exists(): " + file.exists());
+            Log.e("startRecord", "mTempPath: " + mTempPath);
 
-            if (file.exists()) {
+            if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
+
                 MediaRecorderManager.getInstance().start(mTempPath);
             } else {
                 MediaRecorderManager.getInstance().start(mRecordFilePath);
@@ -436,16 +438,13 @@ public class IatActivity extends BaseActivity {
             if (isRecording) {
                 Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
             }
-            getCurrrentRecordTime();
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
                     if (TextUtils.isEmpty(mTempPath))
                         return;
-
-                    File file = new File(mTempPath);
-                    Log.e("startRecord", "file.exists(): " + file.exists());
-                    if (file.exists()) {
+                    Log.e("startRecord", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                    if (hvFileCommonUtils.isFileExist(mTempPath)) {
                         FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
                     }
                 }
@@ -484,7 +483,7 @@ public class IatActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         mUseTime = System.currentTimeMillis();
                         mTextBegin.setText(R.string.text_end);
-                        Log.e("startRecord", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
+                        //Log.e("startRecord", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
                     });
                     start();
                     pollCheckStop();
@@ -513,12 +512,12 @@ public class IatActivity extends BaseActivity {
     private void uploadUsageTime() {
         HashMap<String,String> map2 = new HashMap<>();
         long tempTime = System.currentTimeMillis() - mUseTime;
-        Log.e("startRecord", "mUseTime(): " + mUseTime);
+        Log.e("startRecord", "tempTime(): " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
 
         DatabaseUtils.getInstance(HvApplication.getContext()).updataTime(mFileBean);
 
-        map2.put("duration", String.valueOf(mUseTime / 1000));
+        map2.put("duration", String.valueOf(tempTime / 1000));
         RetrofitManager.getInstance().submitUsedTime(map2, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
@@ -547,11 +546,11 @@ public class IatActivity extends BaseActivity {
                 Gson gson2 = new Gson();
                 PackList c = gson2.fromJson(result, PackList.class);
                 Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
-                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
                     startRecord();
                     recognize();
                 } else {
-                    ToastUtils.showLong(IatActivity.this, c.getMsg());
+                    ToastUtils.showLong(IatActivity.this, "剩余时长不足，当前服务不可用，请及时购买服务包");
                 }
             }
 
@@ -570,9 +569,7 @@ public class IatActivity extends BaseActivity {
         }
         Log.e("tag", "file.exists(): " + file.exists());
         mRecordFilePath = dirPath + name + ".amr";
-        File file1 = new File(mRecordFilePath);
-        if (file1.exists()) {
-        } else {
+        if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
             mTempPath = dirPath + System.currentTimeMillis() + ".amr";
         }
     }

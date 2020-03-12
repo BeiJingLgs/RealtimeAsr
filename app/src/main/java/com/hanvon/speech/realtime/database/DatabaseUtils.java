@@ -118,10 +118,9 @@ public class DatabaseUtils {
         try {
             ContentValues contentValues = new ContentValues();
             contentValues.put("duration", userBean.duration + "");
-            int x = dbHelper.getWritableDatabase().update("note", contentValues
+            dbHelper.getWritableDatabase().update("note", contentValues
                     , "createmillis=?"
                     , new String[]{userBean.createmillis + ""});
-            int u = x;
         } catch (Exception ignored) {
 
         }
@@ -131,10 +130,9 @@ public class DatabaseUtils {
         try {
             ContentValues contentValues = new ContentValues();
             contentValues.put("time", userBean.time);
-            int x = dbHelper.getWritableDatabase().update("note", contentValues
+            dbHelper.getWritableDatabase().update("note", contentValues
                     , "createmillis=?"
                     , new String[]{userBean.createmillis + ""});
-            int u = x;
         } catch (Exception e) {
             e.printStackTrace();
         }
