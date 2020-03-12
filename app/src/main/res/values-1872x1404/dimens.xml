@@ -110,7 +110,7 @@
     <dimen name="Margin_XS">15dp</dimen>
     <dimen name="margin_M">20dp</dimen>
     <dimen name="marginTop">80dp</dimen>
-    <dimen name="content_tv_h">970dp</dimen>
+    <dimen name="content_tv_h">983dp</dimen>
     <dimen name="listview_h">1000dp</dimen>
     <dimen name="listview_w">990dp</dimen>
     <dimen name="edit_w">600dp</dimen>

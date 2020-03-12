@@ -30,6 +30,7 @@ import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.MiniMain;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.baidu.ai.speech.realtime.full.connection.Runner;
 import com.baidu.ai.speech.realtime.full.download.Result;
@@ -192,6 +193,7 @@ public class IatActivity extends BaseActivity {
         mTempResultList = new ArrayList<>();
         mFileBean = TranslateBean.getInstance().getFileBean();
         duration = mFileBean.getDuration();
+        Log.e("mFileBean", "mFileBean getTime" + mFileBean.getTime());
 
         if (duration == 0) {
             mSeekBar.setVisibility(View.GONE);
@@ -421,6 +423,7 @@ public class IatActivity extends BaseActivity {
             File file = new File(mRecordFilePath);
             Log.e("startRecord", "mRecordFilePath: " + mRecordFilePath);
             Log.e("startRecord", "file.exists(): " + file.exists());
+
             if (file.exists()) {
                 MediaRecorderManager.getInstance().start(mTempPath);
             } else {
@@ -433,11 +436,13 @@ public class IatActivity extends BaseActivity {
             if (isRecording) {
                 Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
             }
+            getCurrrentRecordTime();
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
                     if (TextUtils.isEmpty(mTempPath))
                         return;
+
                     File file = new File(mTempPath);
                     Log.e("startRecord", "file.exists(): " + file.exists());
                     if (file.exists()) {
@@ -479,6 +484,7 @@ public class IatActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         mUseTime = System.currentTimeMillis();
                         mTextBegin.setText(R.string.text_end);
+                        Log.e("startRecord", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
                     });
                     start();
                     pollCheckStop();
@@ -500,10 +506,19 @@ public class IatActivity extends BaseActivity {
         freshSentenceList(nPageIsx);
     }
 
+    private long getCurrrentRecordTime() {
+        return mFileBean.getTime() + System.currentTimeMillis() - mUseTime;
+    }
+
     private void uploadUsageTime() {
         HashMap<String,String> map2 = new HashMap<>();
-        mUseTime = System.currentTimeMillis() - mUseTime;
-        map2.put("duration", String.valueOf(mUseTime / 100));
+        long tempTime = System.currentTimeMillis() - mUseTime;
+        Log.e("startRecord", "mUseTime(): " + mUseTime);
+        mFileBean.setTime(mFileBean.getTime() + tempTime);
+
+        DatabaseUtils.getInstance(HvApplication.getContext()).updataTime(mFileBean);
+
+        map2.put("duration", String.valueOf(mUseTime / 1000));
         RetrofitManager.getInstance().submitUsedTime(map2, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {

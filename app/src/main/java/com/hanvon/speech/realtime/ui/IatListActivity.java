@@ -277,7 +277,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         String modify = TimeUtil.getTime(time);
         String content = "";
         intent.putExtra("isNew", true);
-        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0);
+        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0, 0);
         databaseUtils.insert(fileBean);
         TranslateBean.getInstance().setFileBean(fileBean);
         startActivityForResult(intent, READ_DIALOG_REQUEST);
