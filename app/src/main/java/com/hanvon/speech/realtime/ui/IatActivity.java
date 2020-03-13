@@ -110,7 +110,7 @@ public class IatActivity extends BaseActivity {
     private ArrayList<Result> mTotalResultList, mTempResultList;
 
     private Bitmap mBitmap;
-    private Timer timer;
+    private Timer mTimer;
     private boolean isSeekbarChaning;
     private boolean isRecording = false;
     private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
@@ -312,25 +312,25 @@ public class IatActivity extends BaseActivity {
                 break;
             case R.id.text_edit:
                 if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
-                    Toast.makeText(IatActivity.this,"正在转写音频，结束后才能编辑",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getString(R.string.tips1),Toast.LENGTH_LONG).show();
                     return;
                 }
                 freEditSentenceshPage();
                 break;
             case R.id.iat_play:
                 if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
-                    Toast.makeText(IatActivity.this,"正在录制音频，播放失败",Toast.LENGTH_LONG).show();
+                    Toast.makeText(IatActivity.this,getString(R.string.tips2),Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-                    if (timer != null)
-                        timer.cancel();
+                    if (mTimer != null)
+                        mTimer.cancel();
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                 } else {
                     Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
                     if (mRecordFilePath == null) {
-                        ToastUtils.showLong(this, "当前文件为空");
+                        ToastUtils.showLong(this, getString(R.string.tips3));
                         return;
                     }
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
@@ -373,8 +373,8 @@ public class IatActivity extends BaseActivity {
     }
 
     private void stopPlayRecord() {
-        if(timer != null)
-            timer.cancel();
+        if(mTimer != null)
+            mTimer.cancel();
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         MediaPlayerManager.getInstance().stop();
     }
@@ -397,8 +397,8 @@ public class IatActivity extends BaseActivity {
             mFileBean.setDuration(duration);
             DatabaseUtils.getInstance(this).updataDurationByContent(mFileBean);
             mSeekBar.setMax(duration);//将音乐总时间设置为Seekbar的最大值
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
+            mTimer = new Timer();
+            mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     if(!isSeekbarChaning) {
@@ -426,13 +426,19 @@ public class IatActivity extends BaseActivity {
             Log.e("startRecord", "mTempPath: " + mTempPath);
 
             if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
-
                 MediaRecorderManager.getInstance().start(mTempPath);
             } else {
                 MediaRecorderManager.getInstance().start(mRecordFilePath);
             }
-            mTimeTv.setVisibility(View.VISIBLE);
-            mTimeTv.setText("");
+            mTimer = new Timer();
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    mTimeTv.setVisibility(View.VISIBLE);
+                    mTimeTv.setText(TimeUtil.calculateTime((int)getCurrrentRecordTime()));
+                }
+            },1000,1000);
+
             Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
         } else {
             if (isRecording) {
@@ -550,7 +556,7 @@ public class IatActivity extends BaseActivity {
                     startRecord();
                     recognize();
                 } else {
-                    ToastUtils.showLong(IatActivity.this, "剩余时长不足，当前服务不可用，请及时购买服务包");
+                    ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
                 }
             }
 

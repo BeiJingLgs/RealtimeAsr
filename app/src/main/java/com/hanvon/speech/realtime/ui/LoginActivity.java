@@ -106,7 +106,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void failureData(String error) {
                         //Log.e("AA", "error: " + error + "错");
-                        mSendVcCode.setText("重新获取验证码");
+                        mSendVcCode.setText(getString(R.string.getVcode));
                         mSendVcCode.setClickable(true);
                         time.onFinish();
                     }
@@ -114,17 +114,17 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.btn_login://登陆  请求后台
                 if (TextUtils.isEmpty(MethodUtils.getDeviceId()) && !Const.IS_DEBUG) {
-                    ToastUtils.show(this, "设备id为空，无法正常使用");
+                    ToastUtils.show(this, getString(R.string.tips5));
                     return;
                 }
-
+                showProgrssDialog();
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),
                             user_password.getText().toString(),
                             DEVICEID, new RetrofitManager.ICallBack() {
                                 @Override
                                 public void successData(String result) {
-                                    //customDialog.dismiss();
+                                   // customDialog.dismiss();
                                     Gson gson2 = new Gson();
                                     LoginResult c = gson2.fromJson(result, LoginResult.class);
                                     Log.e("A", "onResponse: " + result + "返回值");
@@ -138,14 +138,15 @@ public class LoginActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        Toast.makeText(LoginActivity.this, c.getMsg(), 0);
+                                        customDialog.dismiss();
+                                        ToastUtils.showLong(LoginActivity.this, c.getMsg());
                                     }
                                 }
 
                                 @Override
                                 public void failureData(String error) {
                                     Log.e("AA", "error: " + error + "错");
-                                    //customDialog.dismiss();
+                                    customDialog.dismiss();
                                 }
                             });
                 } else {
@@ -168,14 +169,15 @@ public class LoginActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        Toast.makeText(LoginActivity.this, c.getMsg(), 0);
+                                        customDialog.dismiss();
+                                        ToastUtils.showLong(LoginActivity.this, c.getMsg());
                                     }
                                 }
 
                                 @Override
                                 public void failureData(String error) {
                                     Log.e("AA", "error: " + error + "错");
-                                    //customDialog.dismiss();
+                                    customDialog.dismiss();
                                 }
                             });
                 }
@@ -200,9 +202,8 @@ public class LoginActivity extends BaseActivity {
     CustomDialog customDialog;
     private void showProgrssDialog() {
         customDialog = new CustomDialog(this);
-        //customDialog.setTitle("提醒");
         customDialog.setMessage(getResources().getString(R.string.loading));
-        customDialog.setCancel("cancel", new CustomDialog.IOnCancelListener() {
+        customDialog.setCancel("取消", new CustomDialog.IOnCancelListener() {
             @Override
             public void onCancel(CustomDialog dialog) {
                 Toast.makeText(LoginActivity.this, "取消成功！",Toast.LENGTH_SHORT).show();

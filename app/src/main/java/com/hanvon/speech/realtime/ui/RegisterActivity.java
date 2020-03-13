@@ -163,14 +163,14 @@ public class RegisterActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            get_mob.setBackgroundColor(Color.parseColor("#B6B6D8"));
+           // get_mob.setBackgroundColor(Color.parseColor("#B6B6D8"));
             get_mob.setClickable(false);
-            get_mob.setText("("+millisUntilFinished / 1000 +") 秒后可重新发送");
+            get_mob.setText("("+millisUntilFinished / 1000 +")" + getString(R.string.reSendCode));
         }
 
         @Override
         public void onFinish() {
-            get_mob.setText("重新获取验证码");
+            get_mob.setText(getString(R.string.getVcode));
             get_mob.setClickable(true);
             //get_mob.setBackgroundColor(Color.parseColor("#4EB84A"));
 

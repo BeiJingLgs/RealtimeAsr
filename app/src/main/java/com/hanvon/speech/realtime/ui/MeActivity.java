@@ -82,7 +82,7 @@ public class MeActivity extends BaseActivity {
 
     private void initStates() {
         if (TextUtils.isEmpty(MethodUtils.getDeviceId())&& !Const.IS_DEBUG) {
-            ToastUtils.show(this, "设备id为空，无法正常使用");
+            ToastUtils.show(this, getString(R.string.tips5));
             return;
         }
         RetrofitManager.getInstance().getBindUser(DEVICEID, new RetrofitManager.ICallBack() {

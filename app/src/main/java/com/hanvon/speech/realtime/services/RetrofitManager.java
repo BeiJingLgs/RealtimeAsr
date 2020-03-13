@@ -17,6 +17,7 @@ import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.ui.BaseActivity;
 import com.hanvon.speech.realtime.ui.IatActivity;
 import com.hanvon.speech.realtime.util.BasePath;
+import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.WifiOpenHelper;
 import com.hanvon.speech.realtime.util.WifiUtils;
@@ -66,7 +67,7 @@ public class RetrofitManager {
                     android.provider.Settings.ACTION_WIFI_SETTINGS));
             return oKHPMH.instance;
         }
-        if (!isNetWorkConneted(HvApplication.getContext())) {
+         else if (!isNetWorkConneted(HvApplication.getContext())) {
             Toast.makeText(HvApplication.getContext(),HvApplication.getContext().getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
         }
         return oKHPMH.instance;
@@ -383,7 +384,7 @@ public class RetrofitManager {
                     } else if(TextUtils.equals(e.getMessage(), "HTTP 403 Forbidden")) {
                         ToastUtils.showLong(HvApplication.getContext(), "请使用账号密码登陆");
                     } else if(e instanceof UnknownHostException) {
-                        ToastUtils.showLong(HvApplication.getContext(), "服务器开小差了，请稍候再试");
+                        //ToastUtils.showLong(HvApplication.getContext(), "服务器开小差了，请稍候再试");
                     }
                 }
             }

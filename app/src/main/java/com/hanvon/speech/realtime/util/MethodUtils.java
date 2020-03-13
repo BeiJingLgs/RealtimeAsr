@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +99,20 @@ public class MethodUtils {
             return strId;
         }
         return "";
+    }
+
+    public static long getCurrentTimebyNetWork() {
+        try {
+            URL url = new URL("http://open.baidu.com/special/time/");//取得资源对象
+            URLConnection uc = url.openConnection();//生成连接对象
+            uc.connect(); //发出连接
+            long currentTime = uc.getDate(); //取得网站日期时间
+            System.out.println("当前时间：" + currentTime);
+            return currentTime;
+        } catch (Exception e){
+            System.out.println("当前时间：error");
+        }
+        return 0;
     }
 
 }

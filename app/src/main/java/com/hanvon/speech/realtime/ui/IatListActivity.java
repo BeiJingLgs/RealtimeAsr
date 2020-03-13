@@ -21,6 +21,7 @@ import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.baidu.ai.speech.realtime.android.LoggerUtil;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
@@ -31,6 +32,7 @@ import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.FileUtils;
+import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
@@ -60,6 +62,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.printErrorLog("onNewIntent", "===onCreate");
         init();
     }
 
@@ -92,11 +95,26 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
             mTotalFileList = new ArrayList<FileBean>();
         }
         freshPage();
+
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        LogUtils.printErrorLog("onNewIntent", "===onNewIntent");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
             if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
-                ToastUtils.show(this, "设备id为空，无法正常使用");
+                ToastUtils.show(this, getString(R.string.tips5));
                 return;
             }
+            if (!TextUtils.isEmpty(HvApplication.TOKEN))
+                return;
             RetrofitManager.getInstance().loginByDeviceId(DEVICEID, new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
@@ -115,7 +133,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 }
             });
         }
-
+        LogUtils.printErrorLog("onNewIntent", "===onResume");
     }
 
     private void freshPage() {
@@ -207,6 +225,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 onBackPressed();
                 break;
             case R.id.btn_Home:
+                HvApplication.TOKEN = "";
                 new MethodUtils(this).getHome();
                 break;
             case R.id.ivpre_page:
@@ -350,6 +369,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         if (mFileAdapter.ismShowCheck()) {
             setCheckGone();
         } else {
+            HvApplication.TOKEN = "";
             finish();
         }
     }
