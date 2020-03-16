@@ -63,7 +63,7 @@
     <string name="loading">正在加载，请稍候。。</string>
     <string name="hasLogined">已经登录</string>
     <string name="unLogined">未登录</string>
-    <string name="saveSd">录音存放Sd卡</string>内容
+    <string name="saveSd">录音存放Sd卡</string>
     <string name="content">内容</string>
     <string name="setPassword">重置密码</string>
     <string name="tips1">正在转写音频，结束后才能编辑</string>

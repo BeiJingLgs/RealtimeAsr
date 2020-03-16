@@ -91,7 +91,7 @@ public class MeActivity extends BaseActivity {
                 JSONObject json = JSONObject.parseObject(result);
                 if (json.get("Model") == null) {
                     mLogOutBtn.setVisibility(View.GONE);
-                    login_or_register.setText(getResources().getString(R.string.unLogined));
+                    login_or_register.setText(getResources().getString(R.string.loginregister));
                 } else {
                     mLogOutBtn.setVisibility(View.VISIBLE);
                     login_or_register.setText(getResources().getString(R.string.hasLogined));
@@ -221,7 +221,7 @@ public class MeActivity extends BaseActivity {
                          Log.e("AA", "onResponse: " + result + "返回值");
                          SharedPreferencesUtils.saveLoginStatesSharePrefer(MeActivity.this, "");
                          SharedPreferencesUtils.clear(MeActivity.this, SharedPreferencesUtils.TOKEN);
-                         login_or_register.setText("未登陆");
+                         login_or_register.setText(getString(R.string.loginregister));
                          HvApplication.TOKEN = "";
                          mLogOutBtn.setVisibility(View.GONE);
                      }

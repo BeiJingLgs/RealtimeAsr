@@ -55,8 +55,18 @@ public interface AppServiceApi {
     @GET("/API/Sms/send")
     Observable<ResponseBody> getVerificationCode(@Query("phone") String phone);
 
+    /**
+     * 获取验证码
+     * @param phone
+     * @return
+     */
+    @GET("/API/Sms/send")
+    Observable<ResponseBody> sendByRegisteredUser(@Query("phone") String phone);
 
-   // @FormUrlEncoded //这个加上有啥用，为什么不加这个会崩溃  @Field parameters can only be used with form encoding.
+
+
+
+    // @FormUrlEncoded //这个加上有啥用，为什么不加这个会崩溃  @Field parameters can only be used with form encoding.
     @POST("/API/Account/Register")
     Observable<ResponseBody> registerByPhone(@QueryMap Map<String, String> params);
 

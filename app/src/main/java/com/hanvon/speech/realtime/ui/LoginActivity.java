@@ -1,7 +1,6 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -13,9 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -23,10 +20,10 @@ import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
+import com.hanvon.speech.realtime.util.DialogUtil;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
-import com.hanvon.speech.realtime.view.CustomDialog;
 
 public class LoginActivity extends BaseActivity {
 
@@ -117,7 +114,7 @@ public class LoginActivity extends BaseActivity {
                     ToastUtils.show(this, getString(R.string.tips5));
                     return;
                 }*/
-                showProgrssDialog();
+                DialogUtil.getInstance().showProgressDialog(LoginActivity.this);
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),
                             user_password.getText().toString(),
@@ -138,7 +135,7 @@ public class LoginActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        customDialog.dismiss();
+                                        DialogUtil.getInstance().disProgressDialog();
                                         ToastUtils.showLong(LoginActivity.this, c.getMsg());
                                     }
                                 }
@@ -146,7 +143,7 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void failureData(String error) {
                                     Log.e("AA", "error: " + error + "错");
-                                    customDialog.dismiss();
+                                    DialogUtil.getInstance().disProgressDialog();
                                 }
                             });
                 } else {
@@ -169,7 +166,7 @@ public class LoginActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        customDialog.dismiss();
+                                        DialogUtil.getInstance().disProgressDialog();
                                         ToastUtils.showLong(LoginActivity.this, c.getMsg());
                                     }
                                 }
@@ -177,7 +174,7 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void failureData(String error) {
                                     Log.e("AA", "error: " + error + "错");
-                                    customDialog.dismiss();
+                                    DialogUtil.getInstance().disProgressDialog();
                                 }
                             });
                 }
@@ -199,24 +196,8 @@ public class LoginActivity extends BaseActivity {
                 break;
         }
     }
-    CustomDialog customDialog;
-    private void showProgrssDialog() {
-        customDialog = new CustomDialog(this);
-        customDialog.setMessage(getResources().getString(R.string.loading));
-        customDialog.setCancel("取消", new CustomDialog.IOnCancelListener() {
-            @Override
-            public void onCancel(CustomDialog dialog) {
-                Toast.makeText(LoginActivity.this, "取消成功！",Toast.LENGTH_SHORT).show();
-            }
-        });
-        customDialog.setConfirm("confirm", new CustomDialog.IOnConfirmListener(){
-            @Override
-            public void onConfirm(CustomDialog dialog) {
-                Toast.makeText(LoginActivity.this, "确认成功！",Toast.LENGTH_SHORT).show();
-            }
-        });
-        customDialog.show();
-    }
+
+
     private TimeCount time;
     class TimeCount extends CountDownTimer {
 

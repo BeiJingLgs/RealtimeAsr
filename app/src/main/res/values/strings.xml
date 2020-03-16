@@ -72,4 +72,6 @@
     <string name="reSendCode">seconds resending</string>
     <string name="record_time">录制时长：</string>
     <string name="noonLine">该功能还未上线</string>
+    <string name="success_Cancel">取消成功！</string>
+    <string name="contecting">正在连接，请稍候</string>
 </resources>

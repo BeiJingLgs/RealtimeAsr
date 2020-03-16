@@ -46,6 +46,7 @@ import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.services.RetrofitManager;
+import com.hanvon.speech.realtime.util.DialogUtil;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.MediaPlayerManager;
 import com.hanvon.speech.realtime.util.MediaRecorderManager;
@@ -54,7 +55,6 @@ import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.HVTextView;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -551,9 +551,11 @@ public class IatActivity extends BaseActivity {
 
 
     private void chheckUsageTime() {
+        startRecogUI(true);
         RetrofitManager.getInstance().getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
+                startRecogUI(false);
                 Gson gson2 = new Gson();
                 PackList c = gson2.fromJson(result, PackList.class);
                 Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
@@ -567,9 +569,20 @@ public class IatActivity extends BaseActivity {
 
             @Override
             public void failureData(String error) {
+                startRecogUI(false);
                 Log.e("AA", "error: " + error);
             }
         });
+    }
+
+    private void startRecogUI(boolean sta) {
+        if (sta) {
+            mTextBegin.setEnabled(false);
+            DialogUtil.getInstance().showWaitingDialog(IatActivity.this);
+        } else {
+            mTextBegin.setEnabled(true);
+            DialogUtil.getInstance().disWaitingDialog();
+        }
     }
 
     private void createFile(String name) {

@@ -144,6 +144,16 @@ public class RetrofitManager {
     }
 
     //Get请求
+    public void sendByRegisteredUser(String phone, final ICallBack callback) {
+        iApiService.sendByRegisteredUser(phone)
+                //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
+                .subscribeOn(Schedulers.io())
+                //最终完成后结果返回到哪个线程，mainThread代表主线
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getObsetver(callback));
+    }
+
+    //Get请求
     public void loginByPassword(String phone, String pass, String deviceid, final ICallBack callback) {
         iApiService.loginByPassword(phone, pass, deviceid)
                 //被观察者执行在哪个线程，这里面执行在io线程，io线程是一个子线程
