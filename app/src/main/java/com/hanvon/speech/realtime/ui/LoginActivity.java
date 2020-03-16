@@ -113,10 +113,10 @@ public class LoginActivity extends BaseActivity {
                 });
                 break;
             case R.id.btn_login://登陆  请求后台
-                if (TextUtils.isEmpty(MethodUtils.getDeviceId()) && !Const.IS_DEBUG) {
+                /*if (TextUtils.isEmpty(MethodUtils.getDeviceId()) && !Const.IS_DEBUG) {
                     ToastUtils.show(this, getString(R.string.tips5));
                     return;
-                }
+                }*/
                 showProgrssDialog();
                 if (mVcCodeEd.getVisibility() == View.VISIBLE) {
                     RetrofitManager.getInstance().loginByPassword(user_phone.getText().toString(),

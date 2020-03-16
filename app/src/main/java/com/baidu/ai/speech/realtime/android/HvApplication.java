@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.hanvon.speech.realtime.util.CrashHandler;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 
 public class HvApplication extends Application {
@@ -15,6 +16,9 @@ public class HvApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        // 注册crashHandler
+        crashHandler.init(mContext);
     }
 
 

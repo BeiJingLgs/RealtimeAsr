@@ -90,7 +90,7 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void failureData(String error) {
                         //Log.e("AA", "error: " + error + "错");
-                        get_mob.setText("重新获取验证码");
+                        get_mob.setText(getString(R.string.getVcode));
                         get_mob.setClickable(true);
                         time.onFinish();
                     }

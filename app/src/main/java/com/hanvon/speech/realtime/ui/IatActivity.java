@@ -405,8 +405,7 @@ public class IatActivity extends BaseActivity {
                         mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
                     }
                 }
-            },0,500);
-
+            },0,1000);
         }
     }
 
@@ -434,8 +433,13 @@ public class IatActivity extends BaseActivity {
             mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    mTimeTv.setVisibility(View.VISIBLE);
-                    mTimeTv.setText(TimeUtil.calculateTime((int)getCurrrentRecordTime()));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTimeTv.setVisibility(View.VISIBLE);
+                            mTimeTv.setText(getString(R.string.record_time) + TimeUtil.calculateTime((int)getCurrrentRecordTime() / 1000));
+                        }
+                    });
                 }
             },1000,1000);
 
@@ -444,6 +448,7 @@ public class IatActivity extends BaseActivity {
             if (isRecording) {
                 Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
             }
+            mTimer.cancel();
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -569,11 +574,13 @@ public class IatActivity extends BaseActivity {
 
     private void createFile(String name) {
         String dirPath = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + name + "/";
-        File file = new File(dirPath);
+        /*File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();
-        }
-        Log.e("tag", "file.exists(): " + file.exists());
+        }*/
+
+        hvFileCommonUtils.createDirIfNeed(this, dirPath);
+        Log.e("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
         mRecordFilePath = dirPath + name + ".amr";
         if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
             mTempPath = dirPath + System.currentTimeMillis() + ".amr";

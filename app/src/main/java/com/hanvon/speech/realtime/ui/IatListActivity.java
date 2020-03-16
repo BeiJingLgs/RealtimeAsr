@@ -109,10 +109,10 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     protected void onResume() {
         super.onResume();
         if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
-            if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
+            /*if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
                 ToastUtils.show(this, getString(R.string.tips5));
                 return;
-            }
+            }*/
             if (!TextUtils.isEmpty(HvApplication.TOKEN))
                 return;
             RetrofitManager.getInstance().loginByDeviceId(DEVICEID, new RetrofitManager.ICallBack() {
@@ -125,6 +125,8 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                         Log.e("A", "onResponse: " + result + "返回值");
                         HvApplication.TOKEN = c.getToken();
                         SharedPreferencesUtils.saveLoginStatesSharePrefer(IatListActivity.this, SharedPreferencesUtils.LOGIN);
+                    } else {
+                        ToastUtils.showLong(IatListActivity.this, c.getMsg());
                     }
                 }
                 @Override
@@ -132,8 +134,8 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                     Log.e("AA", "error: " + error + "错");
                 }
             });
+            LogUtils.printErrorLog("onNewIntent", "===onResume");
         }
-        LogUtils.printErrorLog("onNewIntent", "===onResume");
     }
 
     private void freshPage() {

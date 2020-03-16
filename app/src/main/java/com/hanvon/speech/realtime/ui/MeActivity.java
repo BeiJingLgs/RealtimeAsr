@@ -81,10 +81,10 @@ public class MeActivity extends BaseActivity {
     }
 
     private void initStates() {
-        if (TextUtils.isEmpty(MethodUtils.getDeviceId())&& !Const.IS_DEBUG) {
+        /*if (TextUtils.isEmpty(MethodUtils.getDeviceId())&& !Const.IS_DEBUG) {
             ToastUtils.show(this, getString(R.string.tips5));
             return;
-        }
+        }*/
         RetrofitManager.getInstance().getBindUser(DEVICEID, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
@@ -212,7 +212,7 @@ public class MeActivity extends BaseActivity {
 
                  break;
              case R.id.update_check:
-                 ToastUtils.showLong(MeActivity.this, "該功能還沒上綫哦");
+                 ToastUtils.showLong(MeActivity.this, getString(R.string.noonLine));
                  break;
              case R.id.btn_logout:
                  RetrofitManager.getInstance().logout(new RetrofitManager.ICallBack() {

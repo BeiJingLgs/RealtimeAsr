@@ -165,7 +165,7 @@ public class hvFileCommonUtils {
 	}
 	
 
-	private static int createFileIfNeed(Context context, File file){
+	public static int createFileIfNeed(Context context, File file){
 		boolean bCreated = false;
         if (!file.exists()){
         	try {
@@ -179,6 +179,7 @@ public class hvFileCommonUtils {
         if (!bCreated){
         	return CREATE_FILE_NONEED; // 2 是没有创建
         }
+		notifySystemToScan(context, file);
         return CREATE_FILE_OK; // 创建成功
 	}
 	

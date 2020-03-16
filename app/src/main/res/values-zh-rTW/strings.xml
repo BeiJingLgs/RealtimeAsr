@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">錄音記事</string>
+
+    <string name="pref_key_iat_show">iat_show</string>
+    <string name="pref_title_iat_show">顯示聽寫界面</string>
+    <string name="pref_title_iat_dwa">結果動態修正</string>
+
+    <!-- 听写 -->
+    <string name="text_record">錄音</string>
+    <string name="text_begin">開始錄制</string>
+    <string name="text_end">結束錄制</string>
+    <string name="text_recognize">識別中…</string>
+    <string name="new_file">新建</string>
+    <string name="file_create">創建</string>
+    <string name="file_modify">修改</string>
+    <string name="text_edit">轉寫編輯</string>
+    <string name="iat_play">開始播放</string>
+    <string name="iat_stop">暫停播放</string>
+    <!-- 提示安装语音+对话框 -->
+    <string name="superman_ok">確 定</string>
+    <string name="superman_cancel">取 消</string>
+    <string name="superman_title">来 吧 !</string>
+    <string name="superman_content">讓我把妳的應用變的能聽會說吧！</string>
+
+   <string name="no_trans">還沒有創建文件哦</string>
+    <string name="cancel">取消</string>
+    <string name="get_again">再次獲取</string>
+    <string name="register">註&#160;&#160;冊</string>
+    <string name="password">密&#160;&#160;碼</string>
+    <string name="VCode">驗&#160;證&#160;碼</string>
+    <string name="getVCode">獲取驗證碼</string>
+    <string name="VCodelogin">驗證碼登錄</string>
+    <string name="phoneNumber">手&#160;機&#160;號</string>
+    <string name="login">登&#160;&#160;錄</string>
+    <string name="logout">退&#160;出&#160;登&#160;錄</string>
+    <string name="findPassword">找回密碼</string>
+    <string name="nofile">當前還沒有文件，快來創建吧！！</string>
+    <string name="nullList">當前列表為空！！</string>
+    <string name="listEmpty">當前列表為空</string>
+    <string name="start">開始</string>
+    <string name="setting">設置</string>
+    <string name="delete">删除</string>
+    <string name="allselect">全選/全不選</string>
+    <string name="save">保&#160;&#160;存</string>
+    <string name="delete2">刪&#160;&#160;除</string>
+    <string name="errase">橡&#160;&#160;皮</string>
+    <string name="newbuild">新&#160;&#160;建</string>
+    <string name="mine">我&#160;&#160;的</string>
+    <string name="loginregister">點擊登錄/註冊</string>
+    <string name="remainTime">剩&#160;&#160;余&#160;&#160;時&#160;&#160;長</string>
+    <string name="purchaserecord">購&#160;&#160;買&#160;&#160;記&#160;&#160;錄</string>
+    <string name="binddevice">綁&#160;&#160;定&#160;&#160;設&#160;&#160;備</string>
+    <string name="checkupdate">檢&#160;&#160;查&#160;&#160;升&#160;&#160;級</string>
+    <string name="usageRecord">使&#160;&#160;用&#160;&#160;記&#160;&#160;錄</string>
+    <string name="usagePack">購買語音識別服務(采用國際領先的語音識別算法,將語音快速準確識別為文字)</string>
+    <string name="duration">使&#160;&#160;用&#160;&#160;時&#160;&#160;長</string>
+    <string name="validPeriod">有效期</string>
+    <string name="descrip">簡介</string>
+    <string name="title">名稱</string>
+    <string name="purchase">購&#160;&#160;買</string>
+    <string name="insufficientmemory">請註意：內存不足</string>
+    <string name="progress">當前進度:&#160;</string>
+    <string name="checkNeterror">網絡連接出現問題，請檢查網絡連接</string>
+    <string name="checkNet">請檢查網絡連接</string>
+    <string name="playingAudio">正在播放音頻，錄制失敗</string>
+    <string name="startrecording">在開始錄制</string>
+    <string name="hasend">已结束</string>
+    <string name="loading">正在加載，請稍候。。</string>
+    <string name="hasLogined">已經登錄</string>
+    <string name="unLogined">未登錄</string>
+    <string name="saveSd">錄音存放Sd卡</string>
+    <string name="content">內容</string>
+    <string name="setPassword">重置密碼</string>
+    <string name="tips1">正在轉寫音頻，結束後才能編輯</string>
+    <string name="tips2">正在錄制音頻，播放失敗</string>
+    <string name="tips3">當前文件為空</string>
+    <string name="tips4">剩余時長不足，當前服務不可用，請及時購買服務包</string>
+    <string name="tips5">設備id為空，無法正常使用</string>
+    <string name="getVcode">重新獲取驗證碼</string>
+    <string name="reSendCode">秒後可重新發送</string>
+</resources>
