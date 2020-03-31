@@ -786,8 +786,7 @@ public class IatActivity extends BaseActivity {
         if (!file.exists()) {
             file.mkdirs();
         }
-
-        Log.e("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
+        LogUtils.printErrorLog("tag","file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
         mRecordFilePath = dirPath + name + Constant.SUFFIX;
         if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
             mTempPath = dirPath + System.currentTimeMillis() + Constant.SUFFIX;

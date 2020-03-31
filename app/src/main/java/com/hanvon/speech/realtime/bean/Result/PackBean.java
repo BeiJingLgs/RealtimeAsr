@@ -16,7 +16,7 @@ public class PackBean
 
     private String EndTime;
 
-
+    private int Duration;
 
     private String Source;
 
@@ -57,5 +57,12 @@ public class PackBean
     }
     public String getEndTime(){
         return this.EndTime;
+    }
+    public int getDuration() {
+        return Duration;
+    }
+
+    public void setDuration(int duration) {
+        Duration = duration;
     }
 }

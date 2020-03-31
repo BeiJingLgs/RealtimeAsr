@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hwebook.HANVONEBK;
 import android.os.storage.StorageManager;
+import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 
 import java.io.File;
@@ -125,5 +126,14 @@ public class MethodUtils {
 
     public static String parseMapKey(String key, String fileName) {
         return key + "\"; filename=\"" + fileName;
+    }
+
+    public static int calculatorProgress(int r, int t) {
+        if (t == 0)
+            return 0;
+
+        if ((t - r) > t)
+            return  100;
+        return ((t - r) * 100) / t;
     }
 }
