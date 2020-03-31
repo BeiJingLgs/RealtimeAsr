@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="esdk_loading">加载中，请稍候...</string>
+    <string name="esdk_switch_to">跳转到 %s</string>
+    <string name="network_no_connected">当前网络不可用，是否连接网络？</string>
+    <string name="connect">连接</string>
+    <string name="cancle">取消</string>
+    <string name="evernote_upload">正在保存到印象笔记，请稍候...</string>
+</resources>

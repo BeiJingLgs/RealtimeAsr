@@ -25,21 +25,22 @@
         android:id="@+id/view_line2"
         android:layout_below="@+id/login_or_register"/>
 
+
     <TextView
-        android:id="@+id/last_time"
-        android:layout_marginLeft="80dp"
+        android:id="@+id/usage_pack"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
         android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line2"
-        android:text="@string/remainTime"
+        android:text="@string/usagePack"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
     <View
         style="@style/view_line2"
         android:id="@+id/view_line3"
-        android:layout_below="@+id/last_time"/>
+        android:layout_below="@+id/usage_pack"/>
 
     <TextView
         android:id="@+id/shop_list"
@@ -55,6 +56,7 @@
     <View
         style="@style/view_line2"
         android:id="@+id/view_line4"
+        android:visibility="gone"
         android:layout_below="@+id/shop_list"/>
 
     <TextView
@@ -73,22 +75,23 @@
         android:id="@+id/view_line5"
         android:layout_below="@+id/bind_deviceList"/>
 
+
     <TextView
-        android:id="@+id/update_check"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:id="@+id/last_time"
+        android:layout_marginLeft="80dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
         android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line5"
-        android:text="@string/checkupdate"
+        android:text="@string/remainTime"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/edit_font"
         android:textColor="@color/black"/>
-
     <View
         style="@style/view_line2"
         android:id="@+id/view_line8"
-        android:layout_below="@+id/update_check"/>
+        android:visibility="gone"
+        android:layout_below="@+id/last_time"/>
 
     <TextView
         android:id="@+id/usage_record"
@@ -105,6 +108,35 @@
         style="@style/view_line2"
         android:id="@+id/view_line6"
         android:layout_below="@+id/usage_record"/>
+    <TextView
+        android:id="@+id/update_check"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/register_ed_w"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
+        android:layout_below="@+id/view_line6"
+        android:text="@string/checkupdate"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/edit_font"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/version_name"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/register_ed_w"
+        android:layout_alignBottom="@+id/update_check"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/edit_font"
+        android:textColor="@color/dark"
+        android:layout_marginRight="@dimen/dialog_high_button_height"
+        android:gravity="center_vertical"
+        android:text="V1.2"
+        android:clickable="true"/>
+
+    <View
+        style="@style/view_line2"
+        android:id="@+id/view_line9"
+        android:layout_below="@+id/update_check"/>
 
     <View
         style="@style/view_line2"
@@ -116,6 +148,7 @@
         android:textColor="@color/dark"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dialog_button_height"
+        android:visibility="gone"
         android:layout_alignParentBottom ="true"
         android:background="@color/white"
         android:textSize="@dimen/Second_Title_Font_Size"

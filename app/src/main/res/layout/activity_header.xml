@@ -26,16 +26,43 @@
         android:background="@drawable/ic_navigation_return_normal" />
 
     <ImageButton
-        android:id="@+id/btn_option_menus"
+        android:id="@+id/btn_option_create"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_marginLeft="@dimen/Margin_XXXL"
+        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginBottom="@dimen/Margin_XS"
+        android:layout_toRightOf="@+id/btn_Return"
+        android:visibility="gone"
+        android:src="@drawable/ic_navigation_add1" />
+
+
+    <ImageButton
+        android:id="@+id/btn_option_mine"
         android:layout_width="@dimen/Button_H"
         android:layout_height="@dimen/Button_H"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
+        android:paddingLeft="@dimen/margin_other"
+        android:paddingRight="@dimen/margin_other"
         android:background="@color/personal_item_default"
+        android:visibility="gone"
+        android:src="@drawable/wodedangxuan" />
+
+    <ImageButton
+        android:id="@+id/btn_option_menus"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@color/personal_item_default"
+        android:layout_marginRight="@dimen/Margin_L"
         android:paddingLeft="@dimen/margin_other"
         android:paddingRight="@dimen/margin_other"
         android:src="@drawable/youcecaidan" />
+
+
 
     <View
         android:layout_width="match_parent"

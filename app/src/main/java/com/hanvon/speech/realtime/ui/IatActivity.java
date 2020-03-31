@@ -1,44 +1,43 @@
 package com.hanvon.speech.realtime.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.media.AudioAttributes;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaRecorder;
-import android.net.NetworkInfo;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.core.app.ActivityCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.MiniMain;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.baidu.ai.speech.realtime.full.connection.Runner;
 import com.baidu.ai.speech.realtime.full.download.Result;
@@ -47,26 +46,48 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.PackList;
+import com.hanvon.speech.realtime.bean.Result.PayResultBean;
+import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
-import com.hanvon.speech.realtime.model.IatThread;
 import com.hanvon.speech.realtime.model.TranslateBean;
+import com.hanvon.speech.realtime.model.note.NoteBaseData;
+import com.hanvon.speech.realtime.model.note.TraFile;
+import com.hanvon.speech.realtime.model.note.TraPage;
+import com.hanvon.speech.realtime.services.RetrofitManager;
+import com.hanvon.speech.realtime.util.CommonUtils;
+import com.hanvon.speech.realtime.util.DialogUtil;
 import com.hanvon.speech.realtime.util.EPDHelper;
+import com.hanvon.speech.realtime.bean.FTBlock;
+import com.hanvon.speech.realtime.bean.FTLine;
+import com.hanvon.speech.realtime.util.FileUtils;
+import com.hanvon.speech.realtime.util.LogUtils;
+import com.hanvon.speech.realtime.util.MediaPlayerManager;
+import com.hanvon.speech.realtime.util.MediaRecorderManager;
 import com.hanvon.speech.realtime.util.MethodUtils;
-import com.hanvon.speech.realtime.util.WifiOpenHelper;
-import com.hanvon.speech.realtime.util.WifiUtils;
+import com.hanvon.speech.realtime.model.PictureReco;
+import com.hanvon.speech.realtime.bean.RecoResult;
+import com.hanvon.speech.realtime.util.ShareUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
+import com.hanvon.speech.realtime.util.ZXingUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
+import com.hanvon.speech.realtime.view.CommonDialog;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.HandWriteNoteView;
+import com.hanvon.speech.realtime.view.UpLoadDialog;
+import com.xrz.SimplePen;
+
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -76,12 +97,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-import static com.baidu.ai.speech.realtime.ConstBroadStr.AUDIO_FORMAT;
-import static com.baidu.ai.speech.realtime.ConstBroadStr.SAMPLE_RATE_INHZ;
+import okhttp3.RequestBody;
+
 import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
-import static com.hanvon.speech.realtime.model.IatThread.EVENT_AVAILABLEE_MEMO;
-import static com.hanvon.speech.realtime.model.IatThread.EVENT_PLAY_PROGRESS;
-import static com.hanvon.speech.realtime.model.IatThread.EVENT_PLAY_STOP;
+import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
+import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
 public class IatActivity extends BaseActivity {
 
@@ -96,52 +116,47 @@ public class IatActivity extends BaseActivity {
 
     private static Logger logger = Logger.getLogger("IatActivity");
     protected static int mode;
-    protected static long FILE_LENGTH;
+
     static {
         mode = MODE_REAL_TIME_STREAM;
     }
 
-
-    private Toast mToast;
-    private SharedPreferences mSharedPreferences;
     private SequenceAdapter mSequenceAdapter;
-    private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn, mEditNextPageBtn, mResultPreBtn, mResultNextBtn;
-    private TextView mTimeTv;
+    private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn,
+            mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord;
+    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
     public CheckBox mCheckbox;
+    private ImageView mRecordStatusImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private LocalReceiver localReceiver;
-    private View mEditLayout, mResultLayout;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout;
     private boolean isNEW, isTips = false;
-
-    private boolean rubberEnableFlag = false;
-
 
     private int nPageCount = 0; // 当前分类的页总数
     private int nPageIsx = 0; // 当前显示的页idx
     protected static int PAGE_CATEGORY = 10;// 每页显示几个
     private ArrayList<Result> mTotalResultList, mTempResultList;
-    private Thread mThread = null;
-    private byte[] data = null;
-    private HandWriteNoteView mNoteView;
-    private Bitmap mBitmap;
 
-    /*默认数据*/
-    private int mSampleRateInHZ = 16000; //采样率
-    private int mAudioFormat = AudioFormat.ENCODING_PCM_16BIT;  //位数
-    private int mChannelConfig = AudioFormat.CHANNEL_IN_MONO;   //声道
-    private AudioRecord mAudioRecord;
-    private int mRecorderBufferSize;
-    private byte[] mAudioData;
+    private HandWriteNoteView mNoteView;
+    // 当前page页的序号，从0开始
+    protected int mNotePageIndex;
+    // 打开便笺文件后是否有修改
+    protected boolean isTraNoteModified = false;
+    private Bitmap mBitmap;
+    private Timer mTimer;
+    private boolean isSeekbarChaning;
     private boolean isRecording = false;
     private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>());
-    private String tmpFile;
+    private String mRecordFilePath, mTempPath, mPath;
     private int mAudioOffset;
     private AudioHandler mHandler;
+    private long mStartRecordTime, mUsageTime;
+    private int mDuration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +167,6 @@ public class IatActivity extends BaseActivity {
     @Override
     int provideContentViewId() {
         return R.layout.activity_main;
-
     }
 
     @Override
@@ -171,14 +185,19 @@ public class IatActivity extends BaseActivity {
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
         mEditBtn = (Button) findViewById(R.id.text_edit);
+        mSuspendRecord = findViewById(R.id.suspendRecord);
+        mIatLayout = findViewById(R.id.iat_layout);
+        mRecognizeStatusTv = findViewById(R.id.recording);
         mEditBtn.setVisibility(View.VISIBLE);
         mEditListView = (ListView) findViewById(R.id.sentence_list);
         mAudioPlayBtn = (Button) findViewById(R.id.iat_play);
         mResultLayout = findViewById(R.id.result_layout);
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
-        mNoteView = view.findViewById(R.id.MyNoteView);
+        mRecordLayout = view.findViewById(R.id.record_layout);
         mCheckbox = findViewById(R.id.checkbox);
+        mRecordStatusImg = findViewById(R.id.suspendImg);
+        mRecordStatusImg.setOnClickListener(this);
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
         mAudioPlayBtn.setOnClickListener(this);
@@ -186,41 +205,87 @@ public class IatActivity extends BaseActivity {
         mEditNextPageBtn.setOnClickListener(this);
         mResultPreBtn.setOnClickListener(this);
         mResultNextBtn.setOnClickListener(this);
+        mSuspendRecord.setOnClickListener(this);
+        mWriteLayout = findViewById(R.id.write_layout);
+        mBottomLayout = findViewById(R.id.bottom_layout);
+        mNoteView = view.findViewById(R.id.MyNoteView);
+        mNoteNextBtn = (Button) findViewById(R.id.note_nextpage);
+        mNotePreBtn = (Button) findViewById(R.id.note_prevpage);
+        mNotePageInfo = (TextView) findViewById(R.id.note_pg_info);
+        mNoteNextBtn.setOnClickListener(this);
+        mNotePreBtn.setOnClickListener(this);
         mNoteView.setZOrderOnTop(true);
-        mNoteView.setReflushDrityEnable(true);
-        mNoteView.setRubberMode(rubberEnableFlag);
+        SimplePen pencil = new SimplePen();
+        mNoteView.setPen(pencil);
         mNoteView.setBackground(mBitmap);
-        //mSeekBar.setElevation();
-
     }
+
+    RecordReceiver recordReceiver;
 
     private void initData() {
-        mRecorderBufferSize = AudioRecord.getMinBufferSize(mSampleRateInHZ, mChannelConfig, mAudioFormat);
-        mAudioData = new byte[320];
-        mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, mSampleRateInHZ, mChannelConfig, mAudioFormat, mRecorderBufferSize);
+        recordReceiver = new RecordReceiver();
+        IntentFilter mBtFilter = new IntentFilter();
+        mBtFilter.addAction(ConstBroadStr.SHOW_BACKLOGO);//ConstBroadStr.UPDATERECOG
+        mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
+        mBtFilter.addAction(ConstBroadStr.ACTION_HOME_PAGE);
+        registerReceiver(recordReceiver, mBtFilter);
     }
-
     private void init() {
+        TAG = getLocalClassName();
         mHandler = new AudioHandler(this);
+        mNoteView.setHandler(mHandler);
         mTotalResultList = new ArrayList<>();
         mTempResultList = new ArrayList<>();
-        localReceiver = new LocalReceiver();
-        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        manager.registerReceiver(localReceiver, new IntentFilter(ConstBroadStr.UPDATERECOG));
         mFileBean = TranslateBean.getInstance().getFileBean();
+        if (mFileBean == null)
+            mFileBean = new FileBean();
+        mDuration = mFileBean.getDuration();
+        Log.e("startRecognize", "203 mFileBean.getTime()(): " + mFileBean.getTime());
+        if (mDuration == 0) {
+            mSeekBar.setVisibility(View.GONE);
+        } else {
+            mSeekBar.setMax(mDuration);
+        }
         isNEW = getIntent().getBooleanExtra("isNew", false);
-        if (hvFileCommonUtils.hasSdcard(this)) {
+        //hvFileCommonUtils.hasSdcard(this)
+        if (false) {
             mCheckbox.setVisibility(View.VISIBLE);
         }
+        // wwn 如果是新建，创建便签文件
+        if (isNEW) {
+            mNotePageIndex = 0;
+            NoteBaseData.gTraFile = new TraFile();
+            String tmpName = mFileBean.getCreatemillis();
+            String dirPath = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/";
+            NoteBaseData.gTraFile.createNewTraFile(dirPath, tmpName);
+            // 添加一个新页
+            AddNoteNewEmptyPage(mNotePageIndex);
+            mNoteView.initialize((NoteBaseData.gTraFile.getPage(mNotePageIndex)).traces);
+            updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
+        } else {
+            mNotePageIndex = 0;
+            String tmpName = mFileBean.getCreatemillis();
+            String pathName = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/" + tmpName + NoteBaseData.NOTE_SUFFIX;
+            NoteBaseData.gTraFile = TraFile.readTraFile(false, pathName, this);
 
+            if (NoteBaseData.gTraFile.pages.size() > 0) {
+                updateNoteCurPage();
+            } else {
+                AddNoteNewEmptyPage(mNotePageIndex);
+                mNoteView.initialize((NoteBaseData.gTraFile.getPage(mNotePageIndex)).traces);
+                updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
+            }
+        }
         if (isNEW)
             return;
         else
             mCheckbox.setVisibility(View.GONE);
+
+        mRecordFilePath = ConstBroadStr.GetAudioRootPath(this,
+                TextUtils.equals(mFileBean.getmSd(), "sd")) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
+        Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
-        tmpFile = ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".pcm";
-
         IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
         }.getType()));
         mRecogResultTv.setText(mFileBean.getContent());
@@ -231,54 +296,62 @@ public class IatActivity extends BaseActivity {
                 freshResultPage();
             }
         }, 200);
-
     }
 
-    public class LocalReceiver extends BroadcastReceiver {
+    private void initPermissions() {
+        if (lacksPermission()) {//判断是否拥有权限
+            ActivityCompat.requestPermissions(this, permissions, OPEN_SET_REQUEST_CODE);
+        } else {
+            checkUsageTime();
+        }
+    }
+
+    protected class RecordReceiver extends BroadcastReceiver {
+        @Override
         public void onReceive(Context context, Intent intent) {
-            if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
-                mRecogResultTv.setText(IatResults.getResultsStr());
-                freshResultPage();
-                mRecogResultTv.gotoLastPage();
+            if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
+                stopPlayRecord();
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
+                if (mNoteView.canBeFresh()) {
+                    freshRecogContent();
+                }
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
+                saveAndExitActivity();
             }
         }
     }
 
-    private class AudioHandler extends Handler {
-        WeakReference<IatActivity> weakReference ;
+    private void freshRecogContent() {
+        mRecogResultTv.setText(IatResults.getResultsStr());
+        mRecogResultTv.gotoLastPage();
+        freshResultPage();
+    }
 
-        public AudioHandler(IatActivity activity ){
-            weakReference  = new WeakReference<IatActivity>( activity) ;
+
+    private class AudioHandler extends Handler {
+        WeakReference<IatActivity> weakReference;
+
+        public AudioHandler(IatActivity activity) {
+            weakReference = new WeakReference<IatActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            if ( weakReference.get() != null ){
-                if (message.what == IatThread.EVENT_PLAY_OVER) {
-                    //audioStop();
-                    Log.e("mHandler", "pro: EVENT_PLAY_OVER");
-                    mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
-                    mSeekBar.setProgress(0);
-                    mAudioOffset = 0;
-                } else if (message.what == EVENT_PLAY_PROGRESS) {
-                    mAudioOffset = message.arg1;
-                    Log.e("mHandler", "pro: " + mAudioOffset +
-                            "  FILE_LENGTH: " + FILE_LENGTH +
-                            "  pro * 100: " + mAudioOffset * 100 +
-                            "    (int)(pro * 100) / FILE_LENGTH: " + (int)(mAudioOffset * 100) / FILE_LENGTH);
-                    mSeekBar.setProgress((int)((mAudioOffset * 100) / FILE_LENGTH));
-                    if ((int)(mAudioOffset * 100) / FILE_LENGTH >= 100) {
-                        mSeekBar.setProgress(0);
-                        mAudioOffset = 0;
+            switch (message.what) {
+                case 1:
+                    if (isRecording) {
+                        if (mNoteView.canBeFresh())
+                            freshRecogContent();
+                    } else {
+                        if (mDuration == 0)
+                            return;
+                        if (mNoteView.canBeFresh()) {
+                            mTimeTv.setText(getResources().getString(R.string.progress) + (100 * mSeekBar.getProgress()) / mDuration + "%");
+                            mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                        }
                     }
-
-                } else if (EVENT_AVAILABLEE_MEMO == message.what) {
-                    Toast.makeText(IatActivity.this,getResources().getString(R.string.insufficientmemory),Toast.LENGTH_LONG).show();
-                } else if (EVENT_PLAY_STOP == message.what) {
-                    mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
-
-                }
+                    break;
             }
         }
     }
@@ -286,31 +359,27 @@ public class IatActivity extends BaseActivity {
     private SeekBar.OnSeekBarChangeListener seekListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            logger.info("===onStopTrackingTouch: ");
-
-            //data = Recordutil.getPCMData(tmpFile);
-            logger.info("===seekBar.getProgress(): " + seekBar.getProgress());
-            mAudioOffset = (int) (seekBar.getProgress() /100.0 * FILE_LENGTH);
-            if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-               // audioPlay();
-                playInModeStream(tmpFile);
-            }
-
+            mAudioOffset = seekBar.getProgress();
+            logger.info("===onStopTrackingTouch seekBar.mAudioOffset(): " + mAudioOffset);
+            isSeekbarChaning = false;
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             logger.info("===onStartTrackingTouch: ");
-          //audioStop();
+            stopPlayRecord();
+            isSeekbarChaning = true;
             mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         }
 
         @Override
-        public void onProgressChanged(SeekBar seekBar, int progress,
-                                      boolean fromUser) {
-            logger.info("===onProgressChanged: ");
-
-            mTimeTv.setText(getResources().getString(R.string.progress) + progress + "%");
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            logger.info("===onProgressChanged: " + seekBar.getProgress());
+            if (mNoteView.canBeFresh()) {
+                if (mDuration == 0)
+                    return;
+                mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / mDuration + "%");
+            }
         }
     };
 
@@ -331,111 +400,177 @@ public class IatActivity extends BaseActivity {
         if (mEditLayout.getVisibility() == View.VISIBLE) {
             mEditLayout.setVisibility(View.GONE);
             mResultLayout.setVisibility(View.VISIBLE);
+            mWriteLayout.setVisibility(View.VISIBLE);
+            mBottomLayout.setVisibility(View.VISIBLE);
+            mNoteView.setVisibility(View.VISIBLE);
+            updateNoteCurPage();
             nPageIsx = 0;
             updateEditList();
             mRecogResultTv.setText(IatResults.getResultsStr());
             mRecogResultTv.getPageCount();
         } else {
-            DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
-            String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
-            if (!TextUtils.equals(con, mFileBean.getContent())) {
-                mFileBean.setContent(con);
-                mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
-                mFileBean.setModifytime(TimeUtil.getTime(System.currentTimeMillis()));
-                databaseUtils.updataByContent(mFileBean);
-            }
-            exitActivity();
+            saveAndExitActivity();
             finish();
         }
     }
 
+    private void saveAndExitActivity() {
+        DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
+        String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
+        if (!TextUtils.equals(con, mFileBean.getContent())) {
+            mFileBean.setContent(con);
+            mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
+            mFileBean.setModifytime(TimeUtil.getTime(System.currentTimeMillis()));
+            mFileBean.setDuration(mDuration);
+            databaseUtils.updateByContent(mFileBean);
+        }
+        // 保存笔迹
+        saveNoteCurTracePage();
+        saveCurTraNoteFile();
+        exitActivity();
+    }
+
+    private void stopRecognize() {
+        if (isRecording) {
+            mRecognizeStatusTv.setText(R.string.recognizing);
+            mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+            uploadUsageTime();
+            close(false);
+            MediaRecorderManager.getInstance().stop();
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (TextUtils.isEmpty(mTempPath))
+                        return;
+                    Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                    if (hvFileCommonUtils.isFileExist(mTempPath)) {
+                        FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
+                    }
+                }
+            });
+            isRecording = false;
+        }
+    }
+
+
+    private void pauseRecognize() {
+        if (isRecording) {
+            mUsageTime = System.currentTimeMillis() - mStartRecordTime + mUsageTime;
+            close(false);
+            mRecognizeStatusTv.setText(getString(R.string.pausing));
+            MediaRecorderManager.getInstance().stop();
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (TextUtils.isEmpty(mTempPath))
+                        return;
+                    Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                    if (hvFileCommonUtils.isFileExist(mTempPath)) {
+                        FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
+                    }
+                }
+            });
+            isRecording = false;
+        }
+    }
+
+    private void continueRecognize() {
+        if (!isRecording) {
+            String tmpName = mFileBean.getCreatemillis();
+            if (isNEW) {
+                if (mCheckbox.isChecked()) {
+                    mFileBean.mSd = "sd";
+                }
+            }
+            createFile(tmpName);
+            isRecording = true;
+            mRecognizeStatusTv.setText(getString(R.string.recognizing));
+            mStartRecordTime = System.currentTimeMillis();
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        start();
+                        pollCheckStop();
+                    } catch (IOException e) {
+                        ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                    }
+                }
+            });
+
+            if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
+                MediaRecorderManager.getInstance().start(mTempPath);
+            } else {
+                MediaRecorderManager.getInstance().start(mRecordFilePath);
+            }
+            ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
+        }
+    }
+
     private void exitActivity() {
+        stopRecognize();
+        stopPlayRecord();
         IatResults.clearResults();
-       // audioStop();
-        close(false);
-        mAudioRecord.stop();
+        unregisterReceiver(recordReceiver);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_option_menus:
+                Log.e("onClick", "btn_option_menus");
+                PopupWindow popupWindow = showPopupWindow();
+                Log.i("tag", "onClick: " + popupWindow.isShowing());
+                if (popupWindow != null) {
+                    popupWindow.setFocusable(true);
+                }
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                } else {
+                    popupWindow.showAsDropDown(mMenus);
+                }
+                break;
             case R.id.btn_Return:
                 onBackPressed();
                 break;
             case R.id.btn_Home:
-                exitActivity();
+                saveAndExitActivity();
                 new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
-                if (WifiUtils.getWifiConnectState(this) == NetworkInfo.State.DISCONNECTED) {
-                    Toast.makeText(IatActivity.this,getResources().getString(R.string.checkNet),Toast.LENGTH_LONG).show();
-                    WifiOpenHelper wifi = new WifiOpenHelper(this);
-                    wifi.openWifi();
-                    this.startActivity(new Intent(
-                            android.provider.Settings.ACTION_WIFI_SETTINGS));
-                    return;
-                }
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-                    Toast.makeText(IatActivity.this,getResources().getString(R.string.playingAudio),Toast.LENGTH_LONG).show();
+                    ToastUtils.show(getApplicationContext(), getResources().getString(R.string.playingAudio));
                     return;
                 }
-                //录音有问题
-//                Recordutil.getInstance().startRecord(String.valueOf(mFileBean.getCreatemillis()));
-                if (!isRecording) {
-                    startLu();
-                    Toast.makeText(IatActivity.this,getResources().getString(R.string.startrecording),Toast.LENGTH_LONG).show();
-                } else {
-                    if (isRecording) {
-                        Toast.makeText(IatActivity.this, getResources().getString(R.string.hasend), Toast.LENGTH_LONG).show();
-                    }
-                    isRecording = false;
-                    mAudioRecord.stop();
-                }
+                initPermissions();
 
-                new Thread(() -> {
-                    // IO 操作都在新线程
-                    try {
-                        if (isRunning) {
-                            logger.info("点击停止");
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_begin);
-                            });
-                            close(false);
-                        } else {
-                            runOnUiThread(() -> {
-                                mTextBegin.setText(R.string.text_end);
-                            });
-                            start();
-                            pollCheckStop();
-
-                        }
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, e.getClass().getSimpleName() + ":" + e.getMessage(), e);
-                    }
-                }).start();
                 break;
             case R.id.text_edit:
-                if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
-                    Toast.makeText(IatActivity.this,"正在转写音频，结束后才能编辑",Toast.LENGTH_LONG).show();
+                if (isRecording) {
+                    ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips1));
                     return;
                 }
                 freEditSentenceshPage();
                 break;
             case R.id.iat_play:
-
-                /*if (TextUtils.equals(mTextBegin.getText(), getResources().getString(R.string.text_end))) {
-                    Toast.makeText(IatActivity.this,"正在录制音频，播放失败",Toast.LENGTH_LONG).show();
+                if (isRecording) {
+                    ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips2));
                     return;
                 }
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
+                    if (mTimer != null)
+                        mTimer.cancel();
+                    MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                 } else {
-                    Log.e("tmpFile", "tmpFile: " + tmpFile);
-                    if (tmpFile == null)
+                    Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
+                    if (mRecordFilePath == null) {
+                        ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
+                    }
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
-                    playInModeStream(tmpFile);
-                }*/
+                    playRecord();
+                }
                 break;
             case R.id.ivpre_page:
                 if ((nPageIsx - 1) >= 0) {
@@ -455,16 +590,24 @@ public class IatActivity extends BaseActivity {
             case R.id.result_ivnext_page:
                 nextResultPage();
                 break;
-            case R.id.btn_option_menus:
-                PopupWindow popupWindow = showPopupWindow();
-                Log.i("tag", "onClick: " + popupWindow.isShowing());
-                if (popupWindow != null) {
-                    popupWindow.setFocusable(true);
-                }
-                if (popupWindow.isShowing()) {
-                    popupWindow.dismiss();
+            case R.id.suspendRecord:
+                stopRecognize();
+                mIatLayout.setVisibility(View.VISIBLE);
+                mRecordLayout.setVisibility(View.GONE);
+                break;
+            case R.id.note_nextpage:
+                gotoNoteNextPage();
+                break;
+            case R.id.note_prevpage:
+                gotoNotePrevPage();
+                break;
+            case R.id.suspendImg:
+                if (!isRecording) {
+                    continueRecognize();
+                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                 } else {
-                    popupWindow.showAsDropDown(mMenus);
+                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
+                    pauseRecognize();
                 }
                 break;
             default:
@@ -472,9 +615,91 @@ public class IatActivity extends BaseActivity {
         }
     }
 
+    private void stopPlayRecord() {
+        if (mTimer != null)
+            mTimer.cancel();
+        mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
+        MediaPlayerManager.getInstance().stop();
+    }
+
+    private void playRecord() {
+        mSeekBar.setVisibility(View.VISIBLE);
+        if (!MediaPlayerManager.getInstance().isPlaying()) {
+            mAudioOffset = mSeekBar.getProgress();
+            Log.e("playRecord", "mAudioOffset: " + mAudioOffset);
+            MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    stopPlayRecord();
+                    mSeekBar.setProgress(0);
+                }
+            });//开始播放
+            mDuration = MediaPlayerManager.getInstance().getDuration();//获取音乐总时间
+            if (mDuration == 0)
+                return;
+            mFileBean.setDuration(mDuration);
+            DatabaseUtils.getInstance(this).updateDurationByContent(mFileBean);
+            mSeekBar.setMax(mDuration);//将音乐总时间设置为Seekbar的最大值
+            mTimer = new Timer();
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (!isSeekbarChaning) {
+                        if (mNoteView.canBeFresh()) {
+                            mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                        }
+                    }
+                }
+            }, 0, 1000);
+
+        }
+    }
+
+
+    private void startRecognize() {
+        if (!isRecording) {
+            String tmpName = mFileBean.getCreatemillis();
+            if (isNEW) {
+                if (mCheckbox.isChecked()) {
+                    mFileBean.mSd = "sd";
+                }
+            }
+            createFile(tmpName);
+            isRecording = true;
+            mStartRecordTime = System.currentTimeMillis();
+            //mTextBegin.setText(R.string.text_end);
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        start();
+                        pollCheckStop();
+                    } catch (IOException e) {
+                        ToastUtils.show(getApplicationContext(), "服务器出错了，请退出重试");
+                    }
+                }
+            });
+
+            if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
+                MediaRecorderManager.getInstance().start(mTempPath);
+            } else {
+                MediaRecorderManager.getInstance().start(mRecordFilePath);
+            }
+            ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
+        }
+    }
+
     private void freEditSentenceshPage() {
+        saveNoteCurTracePage();
+        if (IatResults.getResults().size() == 0) {
+            ToastUtils.show(this, getString(R.string.noEditText));
+            return;
+        }
         mEditLayout.setVisibility(View.VISIBLE);
         mResultLayout.setVisibility(View.GONE);
+        mWriteLayout.setVisibility(View.GONE);
+        mBottomLayout.setVisibility(View.GONE);
+        mNoteView.setVisibility(View.GONE);
         mTotalResultList.clear();
         mTotalResultList.addAll(IatResults.getResults());
         nPageCount = getTotalqlPageCount(mTotalResultList.size());
@@ -482,50 +707,91 @@ public class IatActivity extends BaseActivity {
         freshSentenceList(nPageIsx);
     }
 
+    public long getCurrrentRecordTime() {
+        return mFileBean.getTime() + System.currentTimeMillis() - mStartRecordTime;
+    }
 
-    public void startLu() {
-        if (isRecording) {
-            return;
-        }
-        String tmpName = mFileBean.getCreatemillis();
-        if (mCheckbox.isChecked()) {
-            mFileBean.mSd = "sd";
-        }
-        tmpFile = createFile(tmpName);
-        isRecording = true;
-        mAudioRecord.startRecording();
-        Log.e("tmpFile", "startLu tmpFile: " + tmpFile);
-        mExecutor.execute(() -> {
-            try {
-                FileOutputStream outputStream = new FileOutputStream(tmpFile, true);
-                while (isRecording) {
-                    /*if (hvFileCommonUtils.getAvailableInternalMemorySize() < 300 && ! isTips) {
-                        Message msg = Message.obtain(mHandler, EVENT_AVAILABLEE_MEMO);
-                        mHandler.sendMessage(msg);
-                        isTips = true;
-                    }*/
-                    int readSize = mAudioRecord.read(mAudioData, 0, mAudioData.length);
-                    Log.i("tag", "run: ------>" + readSize);
-                    outputStream.write(mAudioData);
+    private void uploadUsageTime() {
+        DialogUtil.getInstance().showWaitingDialog(this);
+        HashMap<String, String> map2 = new HashMap<>();
+        long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageTime;
+        Log.e("startRecognize", "tempTime(): " + tempTime);
+        mFileBean.setTime(mFileBean.getTime() + tempTime);
+        Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
+        DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
+
+        map2.put("duration", String.valueOf(tempTime / 1000));
+        RetrofitManager.getInstance(this).submitUsedTime(map2, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                DialogUtil.getInstance().disWaitingDialog();
+                Gson gson2 = new Gson();
+                VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                    ToastUtils.show(IatActivity.this, c.getMsg());
+                } else {
+                    ToastUtils.show(IatActivity.this, c.getMsg());
                 }
-                outputStream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            }
+
+            @Override
+            public void failureData(String error) {
+                Log.e("AA", "error: " + error);
+                DialogUtil.getInstance().disWaitingDialog();
             }
         });
     }
 
-    private String createFile(String name) {
+
+    private void checkUsageTime() {
+
+        if (!isRecording) {
+            if (mEditLayout.getVisibility() == View.VISIBLE) {
+                onReturn();
+            }
+            DialogUtil.getInstance().showWaitingDialog(this);
+            RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+                @Override
+                public void successData(String result) {
+                    mIatLayout.setVisibility(View.GONE);
+                    mRecordLayout.setVisibility(View.VISIBLE);
+                    mRecognizeStatusTv.setText(R.string.recognizing);
+                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+                    DialogUtil.getInstance().disWaitingDialog();
+                    Gson gson2 = new Gson();
+                    PackList c = gson2.fromJson(result, PackList.class);
+                    Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
+                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
+                        startRecognize();
+                    } else {
+                        ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
+                    }
+                }
+
+                @Override
+                public void failureData(String error) {
+                    DialogUtil.getInstance().disWaitingDialog();
+                    Log.e("AA", "error: " + error);
+                }
+            });
+        } else {
+            stopRecognize();
+        }
+
+    }
+
+    private void createFile(String name) {
         String dirPath = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + name + "/";
         File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        Log.e("tag", "file.exists(): " + file.exists());
-        String filePath = dirPath + name + ".pcm";
-        return filePath;
+
+        Log.e("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
+        mRecordFilePath = dirPath + name + Constant.SUFFIX;
+        if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
+            mTempPath = dirPath + System.currentTimeMillis() + Constant.SUFFIX;
+        }
     }
 
     private int getTotalqlPageCount(int size) {
@@ -549,25 +815,78 @@ public class IatActivity extends BaseActivity {
         TextView menuItem1 = view.findViewById(R.id.popup_savePic);
         menuItem1.setOnClickListener(view13 -> {
             if (popupWindow != null) {
-                mNoteView.saveBitmap(ConstBroadStr.GetAudioRootPath(this,false) + mFileBean.getCreatemillis() + "/" );
                 popupWindow.dismiss();
+                saveNoteCurTracePage();
+                saveCurTraNoteFile();
+                ToastUtils.show(this, getString(R.string.saved));
             }
         });
         TextView menuItem2 = view.findViewById(R.id.popup_delete);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                mNoteView.clear(false);
                 popupWindow.dismiss();
+                mNoteView.clearAllMemo();
+                //LogUtils.printErrorLog("setOnClickListener", "已经删除");
+                //ToastUtils.show(this, "已经删除");
             }
         });
         TextView menuItem3 = view.findViewById(R.id.popup_rubber);
         menuItem3.setOnClickListener(view1 -> {
             if (popupWindow != null) {
-                rubberEnableFlag = !rubberEnableFlag;
-                mNoteView.setRubberMode(rubberEnableFlag);
                 popupWindow.dismiss();
+                if (mNoteView.penType == mNoteView.TP_PEN) {
+                    mNoteView.penType = mNoteView.TP_ERASER;
+                } else {
+                    mNoteView.penType = mNoteView.TP_PEN;
+                }
+
             }
         });
+        TextView menuItem4 = view.findViewById(R.id.popup_share);
+        menuItem4.setOnClickListener(view12 -> {
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+                String pa = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+                mNoteView.saveCanvasInfo(pa);
+                showShareDialog();
+                File[] files = new File(ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis()).listFiles();
+                LogUtils.printErrorLog("menuItem4", "files.length: " + files.length);
+                ArrayList<String> mPathList = new ArrayList<>();
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].getPath().endsWith("png")) {
+                        mPathList.add(files[i].getPath());
+                    }
+                }
+                ArrayList<String> mBase64Img = new ArrayList<>();
+                StringBuffer sb = new StringBuffer();
+                for (String path : mPathList) {
+                    sb.setLength(0);
+                    sb.append(Constant.PRE_HSUFFIX).append(ShareUtils.imageToBase64(path)).append(Constant.AFTER_HSUFFIX);
+                    mBase64Img.add(sb.toString());
+                }
+                String ht = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
+                ShareUtils.generateHtml(ht, mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(),
+                        mBase64Img);
+                upLoadFile(ht);
+                LogUtils.printErrorLog("menuItem4", "mPathList.size(): " + mPathList.size());
+            }
+        });
+        TextView menuItem5 = view.findViewById(R.id.popup_recog);
+        menuItem5.setOnClickListener(view1 -> {
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+
+                RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
+                recognmizeImageAyncTask.execute();
+
+            }
+        });
+        if (mNoteView.penType == mNoteView.TP_PEN) {
+            menuItem3.setText(getString(R.string.erase));
+
+        } else {
+            menuItem3.setText(getString(R.string.pen));
+        }
         popupWindow.setContentView(view);
         popupWindow.setWidth(240);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -575,10 +894,55 @@ public class IatActivity extends BaseActivity {
         popupWindow.setTouchable(true);
         popupWindow.setOutsideTouchable(true);
         return popupWindow;
-
-
     }
 
+    UpLoadDialog upLoadDialog;
+
+    private void showShareDialog() {
+        upLoadDialog = new UpLoadDialog(this);
+        setFinishOnTouchOutside(false);
+        upLoadDialog.setCancel(this.getResources().getString(R.string.cancel), new UpLoadDialog.IOnCancelListener() {
+            @Override
+            public void onCancel(UpLoadDialog dialog) {
+                upLoadDialog.dismiss();
+            }
+        });
+
+        upLoadDialog.setOnDismiss(new UpLoadDialog.IOnDismisListener() {
+            @Override
+            public void onDismiss(UpLoadDialog dialog) {
+                upLoadDialog.dismiss();
+            }
+        });
+        upLoadDialog.show();
+    }
+
+    private void upLoadFile(String path) {
+        HashMap<String, RequestBody> map = new HashMap<>();
+        File logFile = new File(path);
+        if (logFile != null && logFile.length() > 0) {
+            map.put(parseMapKey("file", logFile.getName()), parseRequestBody(logFile));
+        }
+        RetrofitManager.getInstance(this).upLoadFile(map, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                Gson gson2 = new Gson();
+                PayResultBean payResultBean = gson2.fromJson(result, PayResultBean.class);
+                if (TextUtils.equals(payResultBean.getCode(), Constant.SUCCESSCODE)) {
+                    Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
+                    upLoadDialog.setUpLoadStatus(bitmap);
+                } else {
+                    ToastUtils.show(HvApplication.mContext, payResultBean.getMsg());
+                    upLoadDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void failureData(String error) {
+                upLoadDialog.dismiss();
+            }
+        });
+    }
 
     private void freshSentenceList(int currentPage) {
         if (mTempResultList == null) {
@@ -696,14 +1060,7 @@ public class IatActivity extends BaseActivity {
             public void run() {
                 if ((miniRunner != null && miniRunner.isClosed()) ||
                         (fullRunner != null && fullRunner.isClosed())) {
-                    logger.info("switch to start 开始");
                     isRunning = false;
-                    runOnUiThread(() -> {
-
-                    });
-
-                    if (!isRunning) {
-                    }
                     cancel();
                     timer.cancel();
                     close(true);
@@ -734,98 +1091,6 @@ public class IatActivity extends BaseActivity {
         }
     }
 
-   /* public void audioPlay() {
-        if (data == null) {
-            Toast.makeText(this, "No File...", Toast.LENGTH_LONG).show();
-            mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
-            return;
-        }
-        if (mThread == null) {
-            mThread = new Thread(new IatThread(data, mHandler, mAudioOffset));
-            mThread.start();
-        }
-    }*/
-
-    /**
-     * 播放，使用stream模式
-     */
-    private void playInModeStream(String path) {
-        /*
-         * SAMPLE_RATE_INHZ 对应pcm音频的采样率
-         * channelConfig 对应pcm音频的声道
-         * AUDIO_FORMAT 对应pcm音频的格式
-         * */
-        int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
-        final int minBufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE_INHZ, channelConfig, AUDIO_FORMAT) * 5;
-        AudioTrack audioTrack = new AudioTrack(
-                new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build(),
-                new AudioFormat.Builder().setSampleRate(SAMPLE_RATE_INHZ)
-                        .setEncoding(AUDIO_FORMAT)
-                        .setChannelMask(channelConfig)
-                        .build(),
-                minBufferSize,
-                AudioTrack.MODE_STREAM,
-                AudioManager.AUDIO_SESSION_ID_GENERATE);
-        audioTrack.play();
-
-        File file = new File(path);
-        FILE_LENGTH = file.length();
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            new Thread(new Runnable() {
-                @Override public void run() {
-                    try {
-                        byte[] tempBuffer = new byte[minBufferSize];
-                        fileInputStream.skip(mAudioOffset);
-                        while (fileInputStream.available() > 0 &&
-                                TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-
-                            int readCount = fileInputStream.read(tempBuffer);
-                            if (readCount == AudioTrack.ERROR_INVALID_OPERATION ||
-                                    readCount == AudioTrack.ERROR_BAD_VALUE) {
-                                continue;
-                            }
-                            if (readCount != 0 && readCount != -1) {
-                                mAudioOffset += readCount;
-                                audioTrack.write(tempBuffer, 0, readCount);
-                            }
-
-                            Message msg = Message.obtain(mHandler, EVENT_PLAY_PROGRESS);
-                            msg.arg1 = mAudioOffset;
-                            mHandler.sendMessage(msg);
-                        }
-                        Message msg = null;
-                        if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
-                             msg = Message.obtain(mHandler, IatThread.EVENT_PLAY_OVER);
-                        } else {
-                             msg = Message.obtain(mHandler, EVENT_PLAY_STOP);
-                        }
-                        mHandler.sendMessage(msg);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*public void audioStop() {
-        if (data == null) {
-            return;
-        }
-        if (mThread != null) {
-            mThread.interrupt();
-            mThread = null;
-        }
-    }*/
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -836,5 +1101,260 @@ public class IatActivity extends BaseActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         onReturn();
+    }
+
+    public boolean isRecording() {
+        return isRecording;
+    }
+
+    /**
+     * 添加一页新的空白页
+     *
+     * @param index 要插入的空白页的位置
+     * @return
+     */
+    protected boolean AddNoteNewEmptyPage(int index) {
+        saveNoteCurTracePage();
+        TraPage newPage = new TraPage();
+        NoteBaseData.gTraFile.addPage(index, newPage);
+        return true;
+    }
+
+    protected void updateNoteCurPage() {
+        // 刷新便笺的页面
+        mNoteView.updateImage(mNotePageIndex);
+        updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
+    }
+
+    protected void updateNotePageInfo(int curPage, int pageCount) {
+        mNotePageInfo.setText(curPage + 1 + "/" + pageCount);
+        if (curPage == 0 && pageCount > 1) {
+            mNotePreBtn.setBackgroundResource(R.drawable.pre_page_2_grey);
+
+        } else if (curPage == 0 && pageCount == 1) {
+            mNotePreBtn.setBackgroundResource(R.drawable.pre_page_2_grey);
+        } else if ((curPage + 1) == pageCount) {
+            mNotePreBtn.setBackgroundResource(R.drawable.pre_page_2);
+        } else {
+            mNotePreBtn.setBackgroundResource(R.drawable.pre_page_2);
+        }
+    }
+
+    /**
+     * 把当前的便笺信息保存到文件中,制作封面页的缩略图
+     *
+     * @return 返回是否保存了文件
+     */
+    protected boolean saveCurTraNoteFile() {
+        NoteBaseData.gTraFile.setWidth(mNoteView.getWidth());
+        NoteBaseData.gTraFile.setHeight(mNoteView.getHeight());
+        isTraNoteModified = true;
+        if (isTraNoteModified) { // 便笺内容有修改
+            NoteBaseData.gTraFile.setLastIndex(mNotePageIndex);
+            NoteBaseData.gTraFile.saveTraNote(NoteBaseData.gTraFile.getFilePathName());
+            NoteBaseData.gIsTraNoteModified = true;
+            isTraNoteModified = false;
+        } else {
+            NoteBaseData.gTraFile.setLastIndex(mNotePageIndex);
+            NoteBaseData.gIsTraNoteModified = true;
+            isTraNoteModified = false;
+        }
+        return true;
+    }
+
+
+    /**
+     * 保存当前页的笔迹信息
+     */
+    protected void saveNoteCurTracePage() {
+        if (mNoteView == null) {
+            return;
+        }
+        // 如果是修改方式且没有被修改则不需要操作
+        if (!mNoteView.isModified()) {
+            return;
+        }
+        //修改最近的修改时间
+        mFileBean.setModifytime(TimeUtil.getTime(System.currentTimeMillis()));
+        DatabaseUtils.getInstance(this).updateModifyTime(mFileBean);
+        // 构建便笺页信息
+        TraPage page = (TraPage) NoteBaseData.gTraFile.getPage(mNotePageIndex);
+        // 笔迹数据
+        page.copyTraces(mNoteView.getTraces());
+        // 保存以后设置笔迹没有修改
+        String path = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+        mNoteView.saveCanvasInfo(path);
+        mNoteView.setModified(false);
+        isTraNoteModified = true;
+    }
+
+    /***
+     * 跳转到下一页
+     */
+    public void gotoNoteNextPage() {
+        mNoteView.setInputEnabled(false);
+        // TODO Auto-generated method stub
+        // 保存当前页
+        saveNoteCurTracePage();
+        // 如果当前页最后一页
+        if (mNotePageIndex == NoteBaseData.gTraFile.getCount() - 1) {
+            // 新建页
+            AddNoteNewEmptyPage(mNotePageIndex + 1);
+        }
+        mNotePageIndex++;
+        // 刷新便笺的页面
+        updateNoteCurPage();
+        new Handler().postDelayed(new Runnable() {
+
+            public void run() {
+                mNoteView.setInputEnabled(true);
+            }
+
+        }, 500);
+    }
+
+    /**
+     * 跳转到上一页
+     */
+    public void gotoNotePrevPage() {
+        // TODO Auto-generated method stub
+        mNoteView.setInputEnabled(false);
+        // 保存当前页
+        saveNoteCurTracePage();
+        if (mNotePageIndex == 0) {
+            return;
+        }
+        mNotePageIndex--;
+        updateNoteCurPage();
+        new Handler().postDelayed(new Runnable() {
+
+            public void run() {
+                mNoteView.setInputEnabled(true);
+            }
+
+        }, 500);
+    }
+
+
+    private class RecognmizeImageAyncTask extends AsyncTask<Void, Void, String> {
+
+        //		@Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            mPath = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+
+            DialogUtil.getInstance().showRecogDialog(IatActivity.this);
+        }
+
+        //		@Override
+        protected String doInBackground(Void... arg0) {
+            // TODO Auto-generated method stub
+            String pa = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+            mNoteView.saveCanvasInfo(pa);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            LogUtils.printErrorLog(TAG, "doInBackground mPath: " + mPath);
+
+            RecoResult recoResult = null;
+            PictureReco reco = new PictureReco(IatActivity.this);
+            if (mPath.endsWith("png")) {
+                recoResult = reco.GetPicatureReco(mPath);
+            } else {
+                return "";
+            }
+
+            if (recoResult.result == null)
+                return "";
+            FTBlock ftBlock = recoResult.result;
+            if (ftBlock.lines == null)
+                return "";
+            ArrayList<FTLine> lines = ftBlock.lines;
+            for (FTLine line : lines) {
+                stringBuffer.append(line.GetLineString());
+            }
+            LogUtils.printErrorLog(TAG, "stringBuffer.toString(): " + stringBuffer.toString());
+            return stringBuffer.toString();
+        }
+
+        //		@Override
+        protected void onPostExecute(String result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            DialogUtil.getInstance().disRecogDialog();
+            if (TextUtils.isEmpty(result)) {
+                ToastUtils.show(IatActivity.this, getString(R.string.recognize_fail));
+                return;
+            }
+            LogUtils.printErrorLog(TAG, "result: " + result);
+            final String content = result;
+            final CommonDialog dialog = new CommonDialog(IatActivity.this, 0);
+            // 设置标题
+            dialog.setTitle(getResources().getString(R.string.recognize_result));
+            dialog.setDialogWidth((int) getResources().getDimension(R.dimen.navigate_menu_width));
+
+            dialog.setInfo(result);
+
+
+            dialog.setNegativeButton(getString(R.string.cancel), new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.setNeutralWidthButton(getString(R.string.save_to_local), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    File file, file1;
+                    String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_picpath);
+                    file = new File(path);
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+                    String srcTmpFilePath = path + getString(R.string.recog_txt);
+
+                    file1 = new File(srcTmpFilePath);
+
+                    if (!file1.exists()) {
+                        try {
+                            file1.createNewFile();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    CommonUtils.saveAsFileWriter(srcTmpFilePath, content);
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, strings, grantResults);
+        LogUtils.printErrorLog("onRequestPermissionsResult", "strings: " + strings.length);
+        LogUtils.printErrorLog("onRequestPermissionsResult", "grantResults: " + grantResults.length);
+        switch (requestCode) {
+            case OPEN_SET_REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            ToastUtils.show(getApplicationContext(), "未拥有相应权限: " + strings[1]);
+                            return;
+                        } else {
+                            if (i == 1) {
+                                checkUsageTime();
+                            }
+                        }
+                    }
+                    //拥有权限执行操作
+                } else {
+                    ToastUtils.show(getApplicationContext(), "未拥有相应权限: ");
+                }
+        }
     }
 }

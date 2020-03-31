@@ -2,6 +2,7 @@ package com.hanvon.speech.realtime.services;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebSettings;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.ai.speech.realtime.android.HvApplication;
@@ -19,15 +20,11 @@ public class AddCookiesInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Request.Builder builder = chain.request().newBuilder();
-        //String cookieStr = SPUtil.getData(Constant.SP.SP, Constant.SP.SESSION_ID, String.class, null);
-        //List<String> cookies = JSONObject.parseArray(cookieStr, String.class);
-       /* if (cookies != null) {
-            for (String cookie : cookies) {
-                builder.addHeader("Cookie", cookie);
-                Log.v("OkHttp", "Adding Header: " + cookie); // This is done so I know which headers are being added; this interceptor is used after the normal logging of OkHttp
-            }
-        }*/
+        Request.Builder builder = chain.request().newBuilder()
+                .removeHeader("User-Agent")//移除旧的
+                .addHeader("User-Agent", WebSettings.getDefaultUserAgent(HvApplication.mContext))//添加真正的头部
+                ;
+
        if (TextUtils.isEmpty(HvApplication.SESSION))
            return chain.proceed(builder.build());
         builder.addHeader("Cookie", HvApplication.SESSION);

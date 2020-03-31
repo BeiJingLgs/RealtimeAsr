@@ -15,16 +15,29 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.baidu.ai.speech.realtime.android.LoggerUtil;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
+import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
+import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.FileUtils;
+import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
+import com.hanvon.speech.realtime.util.UpdateUtil;
+import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.ArrayList;
@@ -48,11 +61,13 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     protected static int PAGE_CATEGORY = 8;// 每页显示几个
     private TextView mPagetTv;
     private static Logger logger = Logger.getLogger("IatListActivity");
+    private boolean IS_FIRST = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        HvApplication.IS_NETDIALOG = true;
+        LogUtils.printErrorLog("onNewIntent", "===onCreate");
         init();
-
     }
 
     @Override
@@ -61,6 +76,9 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     public void initView(Bundle savedInstanceState,View view) {
+        mMenus.setVisibility(View.GONE);
+        mCreateFile.setVisibility(View.VISIBLE);
+        mMineBtn.setVisibility(View.VISIBLE);
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -78,13 +96,82 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     private void init() {
+        IS_FIRST = true;
         TAG = this.getLocalClassName();
         PAGE_CATEGORY = getResources().getInteger(R.integer.item_num);
         if (mTotalFileList == null) {
             mTotalFileList = new ArrayList<FileBean>();
         }
         freshPage();
+    }
 
+    @Override
+    public void onWindowFocusChanged(boolean b) {
+        super.onWindowFocusChanged(b);
+        if (IS_FIRST) {
+            if (WifiUtils.isWifiConnected(this) && WifiUtils.isNetWorkConneted(this)) {
+                LogUtils.printLog("update_check", "UpdateUtil");
+                IS_FIRST = false;
+                UpdateUtil updateUtil = new UpdateUtil(this, false);
+                UpdateUtil.CheckApkTask checkApkTask = updateUtil.new CheckApkTask();
+                checkApkTask.execute();
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        LogUtils.printErrorLog("onNewIntent", "===onNewIntent");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+
+            String id = "";
+            if (HvApplication.ISDEBUG) {
+                id = DEVICEID;
+            } else {
+                if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
+                    ToastUtils.show(this, getString(R.string.tips5));
+                    return;
+                }
+                id = MethodUtils.getDeviceId();
+            }
+            if (!TextUtils.isEmpty(HvApplication.TOKEN))
+                return;
+            if (!HvApplication.IS_NETDIALOG)
+                return;
+            RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
+                @Override
+                public void successData(String result) {
+                    Gson gson2 = new Gson();
+                    LoginResult c = gson2.fromJson(result, LoginResult.class);
+
+                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                        Log.e("A", "onResponse: " + result + "返回值");
+                        HvApplication.TOKEN = c.getToken();
+                        SharedPreferencesUtils.saveLoginStatesSharePrefer(IatListActivity.this, SharedPreferencesUtils.LOGIN);
+                    } else {
+                        ToastUtils.showLong(IatListActivity.this, c.getMsg());
+                    }
+                }
+                @Override
+                public void failureData(String error) {
+                    Log.e("AA", "error: " + error + "错");
+                }
+            });
+            LogUtils.printErrorLog("onNewIntent", "===onResume");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LogUtils.printErrorLog("onNewIntent", "===onStop");
+        //
     }
 
     private void freshPage() {
@@ -176,6 +263,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 onBackPressed();
                 break;
             case R.id.btn_Home:
+                HvApplication.TOKEN = "";
                 new MethodUtils(this).getHome();
                 break;
             case R.id.ivpre_page:
@@ -232,6 +320,13 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                     popupWindow.showAsDropDown(mMenus);
                 }
                 break;
+            case R.id.btn_option_create:
+                newFile();
+                break;
+            case R.id.btn_option_mine:
+                Intent intent=new Intent(this,MeActivity.class);
+                startActivity(intent);
+                break;
             default:
                 break;
         }
@@ -246,7 +341,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         String modify = TimeUtil.getTime(time);
         String content = "";
         intent.putExtra("isNew", true);
-        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "");
+        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0, 0);
         databaseUtils.insert(fileBean);
         TranslateBean.getInstance().setFileBean(fileBean);
         startActivityForResult(intent, READ_DIALOG_REQUEST);
@@ -319,6 +414,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         if (mFileAdapter.ismShowCheck()) {
             setCheckGone();
         } else {
+            HvApplication.TOKEN = "";
             finish();
         }
     }

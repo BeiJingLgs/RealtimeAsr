@@ -8,9 +8,12 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,18 +31,16 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
 
 public class RegisterActivity extends BaseActivity {
     private TextView get_mob;
     private Button user_register;
-    private EventHandler eh;
     private EditText set_mob;
     private EditText reg_phone, mPassWordEd;
     private TimeCount time;
+    private ImageButton sys_pass;
     private String msg, intentKey = "from", intentValue = "findPass";
-
+    private Boolean isChecked = false;
     @Override
     int provideContentViewId() {
         return R.layout.register_;
@@ -56,6 +57,8 @@ public class RegisterActivity extends BaseActivity {
         set_mob = findViewById(R.id.set_mob);
         mPassWordEd = findViewById(R.id.reg_password);
         user_register = findViewById(R.id.user_register);
+        sys_pass = findViewById(R.id.reg_sys_pass);
+        sys_pass.setOnClickListener(this);
         get_mob.setOnClickListener(this);
         user_register.setOnClickListener(this);
         time = new TimeCount(60000, 1000);
@@ -75,29 +78,56 @@ public class RegisterActivity extends BaseActivity {
             case R.id.btn_Return:
                 finish();
                 break;
-
             case R.id.get_mob:
+                if (TextUtils.isEmpty(reg_phone.getText().toString())) {
+                    ToastUtils.show(this, getString(R.string.nonullPass));
+                    return;
+                }
                 time.start();
-                RetrofitManager.getInstance().getVerificationCode(reg_phone.getText().toString(), new RetrofitManager.ICallBack() {
-                    @Override
-                    public void successData(String result) {
-                        Gson gson2 = new Gson();
-                        VerificationResult c = gson2.fromJson(result, VerificationResult.class);
-                        if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                            ToastUtils.show(RegisterActivity.this, c.getMsg());
-                        } else {
-                            ToastUtils.show(RegisterActivity.this, c.getMsg());
+                if (TextUtils.equals(msg, intentValue)) {
+                    RetrofitManager.getInstance(this).sendByRegisteredUser(reg_phone.getText().toString(), new RetrofitManager.ICallBack() {
+                        @Override
+                        public void successData(String result) {
+                            Gson gson2 = new Gson();
+                            VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                            if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            } else {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            }
                         }
-                    }
 
-                    @Override
-                    public void failureData(String error) {
-                        //Log.e("AA", "error: " + error + "错");
-                        get_mob.setText("重新获取验证码");
-                        get_mob.setClickable(true);
-                        time.onFinish();
-                    }
-                });
+                        @Override
+                        public void failureData(String error) {
+                            //Log.e("AA", "error: " + error + "错");
+                            get_mob.setText(getString(R.string.getVcode));
+                            get_mob.setClickable(true);
+                            time.onFinish();
+                        }
+                    });
+                } else {
+                    RetrofitManager.getInstance(this).getVerificationCode(reg_phone.getText().toString(), new RetrofitManager.ICallBack() {
+                        @Override
+                        public void successData(String result) {
+                            Gson gson2 = new Gson();
+                            VerificationResult c = gson2.fromJson(result, VerificationResult.class);
+                            if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            } else {
+                                ToastUtils.show(RegisterActivity.this, c.getMsg());
+                            }
+                        }
+
+                        @Override
+                        public void failureData(String error) {
+                            //Log.e("AA", "error: " + error + "错");
+                            get_mob.setText(getString(R.string.getVcode));
+                            get_mob.setClickable(true);
+                            time.onFinish();
+                        }
+                    });
+                }
+
                 break;
             case R.id.user_register:
                 HashMap<String,String> map = new HashMap<>();
@@ -105,7 +135,7 @@ public class RegisterActivity extends BaseActivity {
                 map.put("smscode", set_mob.getText().toString());
                 if (TextUtils.equals(msg, intentValue)) {
                     map.put("newPassword", mPassWordEd.getText().toString());
-                    RetrofitManager.getInstance().changePasswordBySms(map, new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance(this).changePasswordBySms(map, new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             //Log.e("AA", "onResponse: " + result + "返回值");
@@ -127,7 +157,7 @@ public class RegisterActivity extends BaseActivity {
                     });
                 } else {
                     map.put("password", mPassWordEd.getText().toString());
-                    RetrofitManager.getInstance().registerByPhone(map, new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance(this).registerByPhone(map, new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -148,6 +178,15 @@ public class RegisterActivity extends BaseActivity {
                 }
 
                 break;
+            case R.id.reg_sys_pass:
+                if (isChecked) {
+                    mPassWordEd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    isChecked = false;
+                } else {
+                    mPassWordEd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    isChecked = true;
+                }
+                break;
 
         }
     }
@@ -155,7 +194,6 @@ public class RegisterActivity extends BaseActivity {
     // 使用完EventHandler需注销，否则可能出现内存泄漏
     protected void onDestroy() {
         super.onDestroy();
-        SMSSDK.unregisterEventHandler(eh);
     }
 
 
@@ -167,14 +205,14 @@ public class RegisterActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            get_mob.setBackgroundColor(Color.parseColor("#B6B6D8"));
+           // get_mob.setBackgroundColor(Color.parseColor("#B6B6D8"));
             get_mob.setClickable(false);
-            get_mob.setText("("+millisUntilFinished / 1000 +") 秒后可重新发送");
+            get_mob.setText("("+millisUntilFinished / 1000 +")" + getString(R.string.reSendCode));
         }
 
         @Override
         public void onFinish() {
-            get_mob.setText("重新获取验证码");
+            get_mob.setText(getString(R.string.getVcode));
             get_mob.setClickable(true);
             //get_mob.setBackgroundColor(Color.parseColor("#4EB84A"));
 

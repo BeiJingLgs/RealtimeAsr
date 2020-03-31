@@ -1,16 +1,20 @@
 package com.hanvon.speech.realtime.bean.Result;
 
-public class ShopType
-{
+import java.io.Serializable;
+
+/**
+ *获取可购买的服务包实体类
+ */
+public class ShopType {
     private int ID;
 
     private String Name;
 
     private int Price;
 
-    private String Duration;
+    private long Duration;
 
-    private String ValidPeriod;
+    private long ValidPeriod;
 
     private String Describe;
 
@@ -32,16 +36,16 @@ public class ShopType
     public int getPrice(){
         return this.Price;
     }
-    public void setDuration(String Duration){
+    public void setDuration(long Duration){
         this.Duration = Duration;
     }
-    public String getDuration(){
+    public long getDuration(){
         return this.Duration;
     }
-    public void setValidPeriod(String ValidPeriod){
+    public void setValidPeriod(long ValidPeriod){
         this.ValidPeriod = ValidPeriod;
     }
-    public String getValidPeriod(){
+    public long getValidPeriod(){
         return this.ValidPeriod;
     }
     public void setDescribe(String Describe){

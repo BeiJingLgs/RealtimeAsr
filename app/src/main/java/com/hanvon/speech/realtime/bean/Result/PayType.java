@@ -1,5 +1,8 @@
 package com.hanvon.speech.realtime.bean.Result;
 
+/**
+ * 获取可使用的支付渠道实体类
+ */
 public class PayType
 {
     private int ID;

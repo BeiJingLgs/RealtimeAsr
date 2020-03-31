@@ -142,4 +142,6 @@
     <dimen name="edit_w5">180dp</dimen>
     <dimen name="register_ed_w">130dp</dimen>
     <dimen name="PaddingXXL">3dp</dimen>
+    <dimen name="navigate_menu_width">467dp</dimen>
+    <dimen name="buttonW">150dp</dimen>
 </resources>

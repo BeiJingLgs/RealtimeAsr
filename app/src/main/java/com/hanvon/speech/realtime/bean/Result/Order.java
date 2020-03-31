@@ -1,5 +1,8 @@
 package com.hanvon.speech.realtime.bean.Result;
 
+/**
+ * 获取订单实体类
+ */
 public class Order
 {
     private int ID;

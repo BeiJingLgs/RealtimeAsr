@@ -13,11 +13,14 @@ import static com.baidu.ai.speech.realtime.android.HvApplication.getContext;
 
 public class ConstBroadStr {
     // 音频文件路径 /storage/sdcard0/Audio/hello.txt
+    public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+
     public static final String AUDIO_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio/";
-    public static final String AUDIO_PATH = "/reverseme.pcm";
+
 
     public static String GetAudioRootPath(Context context, boolean isSd) {
-        if (hvFileCommonUtils.hasSdcard(context) && isSd) {
+        //hvFileCommonUtils.hasSdcard(context) && isSd
+        if (false) {
             return hvFileCommonUtils.getSdcardPath(context) + "/Audio/";
         } else {
             return AUDIO_ROOT_PATH;
@@ -43,5 +46,7 @@ public class ConstBroadStr {
 
 
 
+    public static final String SHOW_BACKLOGO = "android.intent.action.SHOW_BACKLOGO";
     public static final String UPDATERECOG = "com.hanvon.realtime.UPDATERECOG";
+    public static final String ACTION_HOME_PAGE = "intent.hanvon.homepage";
 }

@@ -30,6 +30,15 @@ public class hvFileCommonUtils {
 	public static final int CREATE_FILE_NONEED = 2;
 	
 	
+    public static boolean isFileExist(String filepath)
+    {
+    	File file=new File(filepath);
+    	if(file.exists())
+    		return true;
+    	else
+    		return false;
+    }
+	
 	public static boolean createDirIfNeed(Context context, String path){
 		File file = new File(path);
 		return createDirIfNeed(context, file);
@@ -103,13 +112,23 @@ public class hvFileCommonUtils {
 			}
 		}
 	
-	//删除文件或目录
-	public static boolean recursiveDelete(Context context, String strPath) {
+	
+	public static boolean recursiveDeleteExcludeRoot(Context context, String strPath){
 		File file = new File(strPath);
-		return recursiveDelete(context,file);
+		return recursiveDelete(context,file, false);
+	}
+	
+	//删除文件或目录
+	public static boolean recursiveDeleteAll(Context context, String strPath) {
+		File file = new File(strPath);
+		return recursiveDelete(context,file, true);
+	}
+	
+	public static boolean recursiveDeleteAll(Context context, File file) {
+		return recursiveDelete(context,file, true);
 	}
 
-	public static boolean recursiveDelete(Context context, File file) {
+	public static boolean recursiveDelete(Context context,File file, boolean bDeleteRootDir) {
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
 			if (files.length == 0) {
@@ -121,21 +140,32 @@ public class hvFileCommonUtils {
 			}
 			for (int x = 0; x < files.length; x++) {
 				File childFile = files[x];
-				recursiveDelete(context, childFile);
+				recursiveDelete(context, childFile, true);
 			}
 		}
 		if (file.exists()) {
-			if(!file.delete()){
-				return false;
-			}else{
+			if (file.isDirectory()){
+				if (bDeleteRootDir){
+					if (!file.delete()){
+						return false;
+					}
+					notifySystemToScan(context, file);
+				}
+			}
+			else{
+				if(!file.delete()){
+					return false;
+				}
 				notifySystemToScan(context, file);
 			}
+			
+			
 		}
 		return true;
 	}
 	
 
-	private static int createFileIfNeed(Context context, File file){
+	public static int createFileIfNeed(Context context, File file){
 		boolean bCreated = false;
         if (!file.exists()){
         	try {
@@ -149,53 +179,54 @@ public class hvFileCommonUtils {
         if (!bCreated){
         	return CREATE_FILE_NONEED; // 2 是没有创建
         }
+		notifySystemToScan(context, file);
         return CREATE_FILE_OK; // 创建成功
 	}
-	
-    public static String ReadFromFile(String path, boolean utf8){
-        String strContent = "";
-    		File file = new File(path);
-        //如果path是传递过来的参数，可以做一个非目录的判断
- 	   	if (!file.exists()){
- 	   		return "NULL";
- 	   	}
- 	       if (file.isDirectory()){
- 	       	return "";
- 	       }
- 	       else{
- 	       	InputStream instream = null;
- 		        try {
- 			        instream = new FileInputStream(file);
- 			        if (instream != null) {
- 				        InputStreamReader inputreader = null;
- 				        if (utf8){
- 				        	inputreader = new InputStreamReader(instream, "utf-8");
- 				        }else{
- 				        	inputreader = new InputStreamReader(instream);
- 				        }
- 				        BufferedReader buffreader = new BufferedReader(inputreader);
- 				        String line;
- 				        while (( line = buffreader.readLine()) != null) {
- 				        	strContent += line;
- 				        }
- 			        }
- 		        }catch (FileNotFoundException e) {
- 		        	e.printStackTrace();
- 		        }catch (IOException e) {
- 		        	e.printStackTrace();
- 		        }
- 		        if (instream != null){
- 			        try {
- 						instream.close();
- 					} catch (IOException e) {
- 						// TODO Auto-generated catch block
- 						e.printStackTrace();
- 					}
- 		        }
- 		        return strContent;
- 	       }
-    }
-    
+
+	public static String ReadFromFile(String path, boolean utf8){
+		String strContent = "";
+		File file = new File(path);
+		//如果path是传递过来的参数，可以做一个非目录的判断
+		if (!file.exists()){
+			return "NULL";
+		}
+		if (file.isDirectory()){
+			return "";
+		}
+		else{
+			InputStream instream = null;
+			try {
+				instream = new FileInputStream(file);
+				if (instream != null) {
+					InputStreamReader inputreader = null;
+					if (utf8){
+						inputreader = new InputStreamReader(instream, "utf-8");
+					}else{
+						inputreader = new InputStreamReader(instream);
+					}
+					BufferedReader buffreader = new BufferedReader(inputreader);
+					String line;
+					while (( line = buffreader.readLine()) != null) {
+						strContent += line;
+					}
+				}
+			}catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (instream != null){
+				try {
+					instream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return strContent;
+		}
+	}
+
 	public static String ReadFromFileLine(String path) {
 		String strContent = "";
 		File file = new File(path);
@@ -228,140 +259,109 @@ public class hvFileCommonUtils {
 	}
 
 
-	
-	
-    public static void notifyDirUpdate(Context context, File file) {
-        ContentResolver resolver =context.getContentResolver();
-        Uri uri = Uri.parse("content://" + MediaStore.AUTHORITY + "/external/file");
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
-        values.put(MediaStore.Files.FileColumns.PARENT, file.getParent());
-        values.put(MediaStore.Files.FileColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
-        values.put(MediaStore.Files.FileColumns.TITLE, file.getName());
-        values.put("format", "12289");
-        values.put("storage_id", "65537");
-        try {
-            resolver.insert(uri, values);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
 
-    public static void notifyFileUpdate(Context context, File file) {
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri uri = Uri.fromFile(file);
-        intent.setData(uri);
-        context.sendBroadcast(intent);
-    }
-    
-    public static void notifySystemToScan(Context context, File file) {
-        if(file.isDirectory()){
-            notifyDirUpdate(context, file);
-        }else{
-            notifyFileUpdate(context, file);
-        }
-    }
-    
-  //判断SD卡是否存在
-  	public static boolean hasUdisk(Context context) {
-  		String status = getExtUdiskStorageState(context);
-  		if (status.equals(Environment.MEDIA_MOUNTED)
-  				|| status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-  			return true;
-  		} else {
-  			return false;
-  		}
-  	}
-  	
-  	//判断SD卡是否存在
-  	public static boolean hasSdcard(Context context) {
-  		String status = getExtSdStorageState(context);
-  		if (status.equals(Environment.MEDIA_MOUNTED) 
-  				|| status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-  			if (status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)){
-  				Log.v("hvFileUtils", "haha8 hasSdcard MEDIA_MOUNTED_READ_ONLY");
-  			}
-  			return true;
-  		} else {
-  			return false;
-  		}
-  	}
-  	
-  	public static boolean isSdChecking(Context context){
-  		String status = getExtSdStorageState(context);
-  		if (status.equals(Environment.MEDIA_CHECKING)) {
-  			return true;
-  		} else {
-  			return false;
-  		}
-  	}
-  	
-  	public static String getExtUdiskStorageState(Context context){
-  		String path = getUDiskPath(context);
-  		if (TextUtils.isEmpty(path)){
-  			return Environment.MEDIA_UNKNOWN;
-  		}
-  		return Environment.getStorageState(new File(path));
-  	}
-  	
-  	public static String getExtSdStorageState(Context context){
-  		String path = getSdcardPath(context);
-  		if (TextUtils.isEmpty(path)){
-  			return Environment.MEDIA_UNKNOWN;
-  		}
-  		return Environment.getStorageState(new File(getSdcardPath(context)));
-  	}
-  	
-  	public static String getSdcardPath(Context context){
-		String path = hvReflectUtils.getStoragePath(context, "SD");
-  		return path;
-  	}	
-  	
-  	public static String getUDiskPath(Context context){
-		String path = hvReflectUtils.getStoragePath(context, "U");
-  		return path;
-  	}
-  	
 
-    public static long getSDAvailableBytes(Context context){
+	public static void notifyDirUpdate(Context context, File file) {
+		ContentResolver resolver =context.getContentResolver();
+		Uri uri = Uri.parse("content://" + MediaStore.AUTHORITY + "/external/file");
+		ContentValues values = new ContentValues();
+		values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
+		values.put(MediaStore.Files.FileColumns.PARENT, file.getParent());
+		values.put(MediaStore.Files.FileColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
+		values.put(MediaStore.Files.FileColumns.TITLE, file.getName());
+		values.put("format", "12289");
+		values.put("storage_id", "65537");
+		try {
+			resolver.insert(uri, values);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void notifyFileUpdate(Context context, File file) {
+		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		Uri uri = Uri.fromFile(file);
+		intent.setData(uri);
+		context.sendBroadcast(intent);
+	}
+
+	public static void notifySystemToScan(Context context, File file) {
+		if(file.isDirectory()){
+			notifyDirUpdate(context, file);
+		}else{
+			notifyFileUpdate(context, file);
+		}
+	}
+
+	//判断SD卡是否存在
+	public static boolean hasUdisk(Context context) {
+		String status = getExtUdiskStorageState(context);
+		if (status.equals(Environment.MEDIA_MOUNTED)
+				|| status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//判断SD卡是否存在
+	public static boolean hasSdcard(Context context) {
+		String status = getExtSdStorageState(context);
+		if (status.equals(Environment.MEDIA_MOUNTED)
+				|| status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+			if (status.equals(Environment.MEDIA_MOUNTED_READ_ONLY)){
+				Log.v("hvFileUtils", "haha8 hasSdcard MEDIA_MOUNTED_READ_ONLY");
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean isSdChecking(Context context){
+		String status = getExtSdStorageState(context);
+		if (status.equals(Environment.MEDIA_CHECKING)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static String getExtUdiskStorageState(Context context){
+		String path = getUDiskPath(context);
+		if (TextUtils.isEmpty(path)){
+			return Environment.MEDIA_UNKNOWN;
+		}
+		return Environment.getStorageState(new File(path));
+	}
+
+	public static String getExtSdStorageState(Context context){
+		String path = getSdcardPath(context);
+		if (TextUtils.isEmpty(path)){
+			return Environment.MEDIA_UNKNOWN;
+		}
+		return Environment.getStorageState(new File(getSdcardPath(context)));
+	}
+
+	public static String getSdcardPath(Context context){
+		String path = hvReflectUtils.getStoragePath(context, "diskId=disk:179:64");
+		return path;
+	}
+
+	public static String getUDiskPath(Context context){
+		String path = hvReflectUtils.getStoragePath(context, "diskId=disk:8:0");
+		return path;
+	}
+
+
+	public static long getSDAvailableBytes(Context context){
 		String status = getExtSdStorageState(context);
 		if (status.equals(Environment.MEDIA_MOUNTED)){
 			StatFs stat = new StatFs(getSdcardPath(context));
-			return stat.getAvailableBytes() / (1024 * 1024);
+			return stat.getAvailableBytes();
 		}
 		return 0;
-    }
-
-    /**
-			* 获取手机内部空间总大小
-     *
-			 * @return 大小，字节为单位
-     */
-	static public long getTotalInternalMemorySize() {
-		//获取内部存储根目录
-		File path = Environment.getDataDirectory();
-		//系统的空间描述类
-		StatFs stat = new StatFs(path.getPath());
-		//每个区块占字节数
-		long blockSize = stat.getBlockSize();
-		//区块总数
-		long totalBlocks = stat.getBlockCount();
-		return totalBlocks * blockSize / (1024 * 1024);
 	}
 
-	/**
-	 * 获取手机内部可用空间大小
-	 *
-	 * @return 大小，字节为单位
-	 */
-	static public long getAvailableInternalMemorySize() {
-		File path = Environment.getDataDirectory();
-		StatFs stat = new StatFs(path.getPath());
-		long blockSize = stat.getBlockSize();
-		//获取可用区块数量
-		long availableBlocks = stat.getAvailableBlocks();
-		return availableBlocks * blockSize / (1024 * 1024);
-	}
-	
 }

@@ -1,6 +1,13 @@
 package com.hanvon.speech.realtime.util;
 
+import android.util.Log;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.logging.Logger;
 
 public class FileUtils {
@@ -97,5 +104,42 @@ public class FileUtils {
             return false;
         }
     }
+
+    public static void copyRecordFile(String originalVoiceMessageRecording, String  newVoiceMessageRecording) {
+        try {
+            File outputFile = new File(originalVoiceMessageRecording);
+            FileOutputStream fos = new FileOutputStream(outputFile, true); // Second parameter to indicate appending of data
+
+            File inputFile = new File(newVoiceMessageRecording);
+            FileInputStream fis = new FileInputStream(inputFile);
+
+            Log.d("doInBackground", "Length of outputFile: " + outputFile.length() + " and Length of inputFile: " + inputFile.length() );
+
+            byte fileContent[]= new byte[(int)inputFile.length()];
+            fis.read(fileContent);// Reads the file content as byte from the list.
+
+            /* copy the entire file, but not the first 6 bytes */
+            byte[] headerlessFileContent = new byte[fileContent.length-6];
+            for(int j=6; j<fileContent.length;j++){
+                headerlessFileContent[j-6] = fileContent[j];
+            }
+            fileContent = headerlessFileContent;
+
+            /* Write the byte into the combine file. */
+            fos.write(fileContent);
+
+            /* Delete the new recording as it is no longer required (Save memory!!!) :-) */
+            File file = new File(newVoiceMessageRecording);
+            boolean deleted = file.delete();
+
+            Log.d("doInBackground", "New recording deleted after merging: " + deleted);
+            Log.d("doInBackground", "Successfully merged the two Voice Message Recordings");
+            Log.d("doInBackground", "Length of outputFile after merging: " + outputFile.length());
+        } catch (Exception ex) {
+            Log.e("doInBackground", "Error while merging audio file: " + ex.getMessage());
+        }
+    }
+
+
 
 }

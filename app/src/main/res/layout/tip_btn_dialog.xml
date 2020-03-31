@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/mydialog_width"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/textInfo"
+        android:layout_width="@dimen/mydialog_width"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/mydialog_message_font" 
+        android:visibility="visible"
+        android:layout_margin="@dimen/mydialog_margin_message"/>
+    
+    
+       <RelativeLayout
+        android:id="@+id/relativeLayoutBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/mydialog_margin_small" 
+        android:paddingRight="@dimen/mydialog_margin_small" 
+        android:paddingBottom="@dimen/mydialog_margin_small" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnExtra"
+                android:layout_width="@dimen/mydialog_button_width"
+                android:layout_height="@dimen/mydialog_button_height"
+                android:background="@drawable/mydialog_basebtn"
+                android:textSize="@dimen/mydialog_button_font"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnNeutral"
+                android:layout_width="@dimen/mydialog_button_width"
+                android:layout_height="@dimen/mydialog_button_height"
+                android:layout_marginRight="@dimen/mydialog_button_margin"
+                android:background="@drawable/mydialog_basebtn"
+                android:textSize="@dimen/mydialog_button_font"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnOK"
+                android:layout_width="@dimen/mydialog_button_width"
+                android:layout_height="@dimen/mydialog_button_height"
+                android:layout_marginRight="@dimen/mydialog_button_margin"
+                android:background="@drawable/mydialog_basebtn"
+                android:text="@string/ok"
+                android:textSize="@dimen/mydialog_button_font"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/mydialog_button_height"
+                android:layout_marginRight="@dimen/mydialog_button_margin"
+                android:background="@drawable/mydialog_basebtn"
+                android:text="@string/cancel"
+                android:minWidth="@dimen/mydialog_button_width"
+                android:textSize="@dimen/mydialog_button_font"
+                android:visibility="gone" />
+
+            
+		</LinearLayout>
+        
+    </RelativeLayout>
+    
+
+</LinearLayout>

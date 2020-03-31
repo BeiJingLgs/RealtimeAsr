@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
-apply plugin: 'com.mob.sdk'
 
 android {
+    useLibrary 'org.apache.http.legacy'
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.baidu.ai.speech.realtimeasr"
+        applicationId "com.baidu.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 20
+        versionName "1.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -30,11 +30,8 @@ android {
         }
     }
 }
-MobSDK {
-    appKey "2dad57ff647ae"
-    appSecret "cfce1cea9cf792ec5c77ce0c512fc099"
-    SMSSDK {}
-}
+
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -51,7 +48,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
-
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation files('libs/HANVONEBK.jar')
 }
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {

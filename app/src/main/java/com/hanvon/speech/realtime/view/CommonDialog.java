@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
@@ -141,7 +142,12 @@ public class CommonDialog {
 			stub.inflate();
 		}
 	}
-	
+	private static int DIALOG_WIDTH = 700;
+	private int dialog_width = DIALOG_WIDTH;
+	public void setDialogWidth(int width){
+		dialog_width = width;
+	}
+
 	/**
 	 * ��ʾ�Ի�������ʾ֮ǰ������һЩ��ʼ���Ķ���
 	 */
@@ -178,7 +184,17 @@ public class CommonDialog {
 				return false;
 			}});
 	}
-	
+    public void setNeutralWidthButton(String text, OnClickListener listener){
+        btnType |= TYPE_RETRY;
+        btnRetry = (Button) view.findViewById(R.id.btnNeutral);
+
+        ViewGroup.LayoutParams params = btnRetry.getLayoutParams();
+        params.width = (int) context.getResources().getDimension(R.dimen.buttonW);
+        view.setLayoutParams(params);
+
+        btnRetry.setText(text);
+        btnRetry.setOnClickListener(listener);
+    }
 	/**
 	 * ��������ťλ��
 	 */
@@ -273,19 +289,13 @@ public class CommonDialog {
 		text.setText(title);
 	}
 	
-	/**
-	 * ���ر���
-	 * @param title
-	 */
+
 	public void hideTitle(){
 		TextView text = (TextView) view.findViewById(R.id.textTitle);
 		text.setVisibility(View.GONE);
 	}
 
-	/**
-	 * ��ʾ����
-	 * @param title
-	 */
+
 	public void showTitle(){
 		TextView text = (TextView) view.findViewById(R.id.textTitle);
 		text.setVisibility(View.VISIBLE);

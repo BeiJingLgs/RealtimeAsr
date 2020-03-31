@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <include
@@ -8,6 +9,72 @@
         layout="@layout/activity_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/record_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginLeft="@dimen/Margin_XS"
+        android:layout_marginRight="@dimen/Margin_XS"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone">
+
+
+        <ImageView
+            android:id="@+id/suspendImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="200dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="@dimen/margin_M"
+            android:layout_marginBottom="@dimen/margin_M"
+            android:background="@drawable/ps_pause" />
+
+        <TextView
+            android:id="@+id/recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/register_ed_w"
+            android:layout_marginTop="@dimen/Margin_XS"
+            android:layout_marginBottom="@dimen/Margin_S"
+            android:layout_toRightOf="@+id/suspendImg"
+            android:text="@string/recognizing"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeXL"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/recording_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recording"
+            android:layout_marginLeft="@dimen/margin_M"
+            android:layout_toRightOf="@+id/suspendImg"
+            android:background="@drawable/acoustic_wave" />
+
+
+        <Button
+            android:id="@+id/suspendRecord"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="50dp"
+            android:layout_toRightOf="@+id/recording_img"
+            android:background="@drawable/button_circle_edge"
+            android:padding="@dimen/margin_m"
+            android:stateListAnimator="@null"
+            android:text="@string/end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeXL" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/Separate_Line_H"
+            android:layout_below="@+id/recording_img"
+            android:layout_marginTop="@dimen/Margin_XS"
+            android:background="@color/black" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/iat_layout"
@@ -19,9 +86,12 @@
             android:id="@+id/time_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dip"
+            android:layout_marginLeft="@dimen/margin_M"
+            android:layout_marginTop="@dimen/Margin_XS"
+            android:layout_marginRight="@dimen/margin_M"
+            android:layout_marginBottom="@dimen/Margin_XS"
             android:text=""
-            android:textSize="@dimen/Text_Font_Size_S"
+            android:textSize="@dimen/Common_Text_Font_Size"
             android:textStyle="bold" />
 
         <SeekBar
@@ -29,7 +99,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_M"
-            android:layout_toRightOf="@+id/time_tv" />
+            android:layout_toRightOf="@+id/time_tv"
+            android:maxHeight="10dp"
+            android:progressDrawable="@drawable/shape_bg"
+            android:thumb="@drawable/thumb" />
+
 
         <Button
             android:id="@+id/text_begin"
@@ -42,7 +116,7 @@
             android:stateListAnimator="@null"
             android:text="@string/text_begin"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
+            android:textSize="@dimen/textSizeL" />
 
 
         <Button
@@ -54,10 +128,10 @@
             android:layout_toRightOf="@+id/text_begin"
             android:background="@drawable/button_w_edge"
             android:padding="@dimen/Margin_XS"
-            android:text="@string/text_edit"
             android:stateListAnimator="@null"
+            android:text="@string/text_edit"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
+            android:textSize="@dimen/textSizeL" />
 
         <Button
             android:id="@+id/iat_play"
@@ -68,41 +142,27 @@
             android:layout_toRightOf="@+id/text_edit"
             android:background="@drawable/button_w_edge"
             android:padding="@dimen/Margin_XS"
+            android:stateListAnimator="@null"
             android:text="@string/iat_play"
-            android:stateListAnimator="@null"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
-
-        <Button
-            android:id="@+id/iat_stop2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/time_tv"
-            android:layout_margin="@dimen/Margin_XS"
-            android:layout_toRightOf="@+id/iat_play"
-            android:background="@drawable/button_w_edge"
-            android:padding="@dimen/Margin_XS"
-            android:stateListAnimator="@null"
-            android:text="@string/iat_stop"
-            android:visibility="gone"
-            android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
+            android:textSize="@dimen/textSizeL" />
 
         <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/time_tv"
+            android:layout_alignParentRight="true"
             android:layout_margin="@dimen/Margin_XS"
-            android:layout_toRightOf="@+id/iat_play"
             android:button="@drawable/check_box"
+            android:focusableInTouchMode="false"
+            android:layoutDirection="rtl"
+            android:padding="@dimen/Margin_XS"
             android:stateListAnimator="@null"
             android:text="@string/saveSd"
-            android:visibility="gone"
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeM"
-            android:padding="@dimen/Margin_XS"
-            android:focusableInTouchMode="false" />
+            android:visibility="gone" />
 
         <View
             android:layout_width="match_parent"
@@ -116,45 +176,45 @@
         android:id="@+id/result_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/result_ivpre_page"
-            android:layout_width="@dimen/dialog_margin_small"
-            android:layout_height="@dimen/Button_H2"
+            android:layout_width="22dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="@dimen/marginTop"
-            android:layout_marginLeft="@dimen/margin_s"
-            android:stateListAnimator="@null"
             android:background="@drawable/arrow_left_gray"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:stateListAnimator="@null" />
 
         <com.hanvon.speech.realtime.view.HVTextView
             android:id="@+id/iatContent_tv"
             android:layout_width="@dimen/content_tv_h"
-            android:layout_height="@dimen/content_height"
+            android:layout_height="228.5dp"
             android:layout_marginLeft="@dimen/margin_s"
+            android:layout_marginTop="16.5dp"
             android:layout_marginRight="@dimen/margin_s"
-            android:layout_marginBottom="@dimen/margin_s"
-            android:layout_marginTop="@dimen/margin_s"
+            android:layout_marginBottom="@dimen/Margin_XSSSSS"
+            android:hint="@string/content"
             android:paddingLeft="@dimen/margin_s"
             android:paddingRight="@dimen/margin_s"
-            android:hint="@string/content"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
+            android:textSize="@dimen/textSizeL" />
 
         <Button
             android:id="@+id/result_ivnext_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="22dp"
+            android:layout_height="40dp"
             android:layout_marginTop="@dimen/marginTop"
+            android:layout_marginRight="10dp"
             android:background="@drawable/arrow_right_gray"
             android:clickable="true"
-            android:layout_marginRight="@dimen/margin_s"
-            android:stateListAnimator="@null"
-            android:focusable="true" />
+            android:focusable="true"
+            android:stateListAnimator="@null" />
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/length_3dp"
@@ -173,10 +233,10 @@
             android:layout_width="@dimen/dialog_margin_small"
             android:layout_height="@dimen/Button_H2"
             android:layout_marginTop="@dimen/bar_more_width_port"
-            android:stateListAnimator="@null"
             android:background="@drawable/arrow_left_gray"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:stateListAnimator="@null" />
 
 
         <ListView
@@ -187,26 +247,65 @@
             android:layout_marginTop="@dimen/Margin_XXS"
             android:divider="@drawable/list_divider_line"
             android:dividerHeight="1px"
-            android:stateListAnimator="@null"
             android:paddingLeft="@dimen/dialog_margin4"
-            android:paddingRight="@dimen/dialog_margin4" />
-       <!-- </ScrollView>-->
+            android:paddingRight="@dimen/dialog_margin4"
+            android:stateListAnimator="@null" />
+        <!-- </ScrollView>-->
         <Button
             android:id="@+id/ivnext_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/bar_more_width_port"
-            android:stateListAnimator="@null"
             android:background="@drawable/arrow_right_gray"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:stateListAnimator="@null" />
     </LinearLayout>
-    <com.hanvon.speech.realtime.view.HandWriteNoteView
-        android:id="@+id/MyNoteView"
+
+    <LinearLayout
+        android:id="@+id/write_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        android:layout_weight="1"
-        />
+        android:layout_height="720dp"
+        android:padding="@dimen/Margin_XS">
+
+        <com.hanvon.speech.realtime.view.HandWriteNoteView
+            android:id="@+id/MyNoteView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/note_prevpage"
+            android:layout_width="@dimen/mydialog_button_margin"
+            android:layout_height="@dimen/mydialog_button_margin"
+            android:layout_marginLeft="@dimen/Margin_S"
+            android:layout_marginBottom="@dimen/Margin_S"
+            android:background="@drawable/pre_page_2_grey" />
+
+        <TextView
+            android:id="@+id/note_pg_info"
+            android:layout_width="@dimen/edit_w5"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="1/1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/Second_Title_Font_Size" />
+
+        <Button
+            android:id="@+id/note_nextpage"
+            android:layout_width="@dimen/mydialog_button_margin"
+            android:layout_height="@dimen/mydialog_button_margin"
+            android:layout_marginBottom="@dimen/Margin_S"
+            android:background="@drawable/next_page_2" />
+
+
+    </LinearLayout>
 </LinearLayout>
 

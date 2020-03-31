@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mydialog_edge"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mydialog_title_height"
+        android:background="@drawable/mydialog_title"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/mydialog_title_font" />
+
+    <TextView
+        android:id="@+id/textInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/link_text_font"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:paddingLeft="@dimen/mydialog_margin_small"
+        android:paddingRight="@dimen/mydialog_margin_small">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="@dimen/mydialog_button_width"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:layout_marginLeft="280dp"
+            android:background="@drawable/mydialog_basebtn"
+            android:text="@string/cancel"
+            android:textSize="@dimen/mydialog_button_font"
+            android:visibility="gone" />
+
+
+        <Button
+            android:id="@+id/btnOK"
+            android:layout_width="@dimen/mydialog_button_width"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:layout_marginLeft="50dp"
+            android:layout_toRightOf="@+id/btnCancel"
+            android:background="@drawable/mydialog_basebtn"
+            android:text="OK"
+            android:textSize="@dimen/mydialog_button_font"
+            android:visibility="invisible" />
+    </RelativeLayout>
+</LinearLayout>

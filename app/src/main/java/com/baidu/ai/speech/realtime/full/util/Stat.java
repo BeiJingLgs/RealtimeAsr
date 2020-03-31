@@ -6,10 +6,12 @@ import android.content.Intent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.baidu.ai.speech.realtime.ConstBroadStr;
+import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.Util;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.full.download.Result;
 import com.hanvon.speech.realtime.model.IatResults;
+import com.hanvon.speech.realtime.util.ToastUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +79,7 @@ public class Stat {
         if (result.getErrNo() == -3005) {
             sb.append("【噪音】");
         } else if (result.getErrNo() != 0) {
+
             sb.append("【出错】");
         } else if (result.getType().equals(Result.TYPE_FIN_TEXT)) {
             sb.append("【一句话最终结果】");
@@ -88,6 +91,7 @@ public class Stat {
         }
         if (result.getErrNo() != 0) {
             sb.append("[").append(result.getErrNo()).append(" | ").append(result.getErrMsg()).append("]");
+            ToastUtils.show(HvApplication.mContext, result.getErrMsg());
         }
         if (result.getStartTime() >= 0) {
             long startTime = result.getStartTime();
@@ -102,9 +106,10 @@ public class Stat {
     public static void analiseResult(Result result) {
         if (result.getType().equals(Result.TYPE_FIN_TEXT) && result.getResult() != null) {
             IatResults.addResult(result);
+            Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
+            HvApplication.getContext().sendBroadcast(intent);
         }
-        Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
-        LocalBroadcastManager.getInstance(HvApplication.getContext()).sendBroadcast(intent);
+
     }
 
     private StringBuilder formatTime(long timeStamp, String message) {

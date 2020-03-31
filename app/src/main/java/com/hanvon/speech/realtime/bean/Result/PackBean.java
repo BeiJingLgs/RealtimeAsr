@@ -1,12 +1,32 @@
 package com.hanvon.speech.realtime.bean.Result;
 
+/**
+ *获取设备关联有效的服务包实体类
+ */
 public class PackBean
 {
     private int ID;
 
-    private String RemainDuration;
+    private String PackName;
+
+    private int RemainDuration;
+
+    private String CreateTime;
+
 
     private String EndTime;
+
+
+
+    private String Source;
+
+    public String getSource() {
+        return Source;
+    }
+
+    public void setSource(String source) {
+        Source = source;
+    }
 
     public void setID(int ID){
         this.ID = ID;
@@ -14,11 +34,23 @@ public class PackBean
     public int getID(){
         return this.ID;
     }
-    public void setRemainDuration(String RemainDuration){
+    public void setPackName(String PackName){
+        this.PackName = PackName;
+    }
+    public String getPackName(){
+        return this.PackName;
+    }
+    public void setRemainDuration(int RemainDuration){
         this.RemainDuration = RemainDuration;
     }
-    public String getRemainDuration(){
+    public int getRemainDuration(){
         return this.RemainDuration;
+    }
+    public void setCreateTime(String CreateTime){
+        this.CreateTime = CreateTime;
+    }
+    public String getCreateTime(){
+        return this.CreateTime;
     }
     public void setEndTime(String EndTime){
         this.EndTime = EndTime;

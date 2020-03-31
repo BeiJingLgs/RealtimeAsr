@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 
 public class DatabaseUtils {
- 
+
     private DatabaseHelper dbHelper;
 
     private static final String TAG = "DatabaseUtils ";
@@ -28,7 +28,7 @@ public class DatabaseUtils {
     public static DatabaseUtils getInstance(Context context) {
         return new DatabaseUtils(context);
     }
- 
+
     /**
      * 添加数据
      *
@@ -37,14 +37,14 @@ public class DatabaseUtils {
     //"title text,content text,createtime text,modifytime text,createmillis long)
     public void insert(FileBean note) {
         logger.info("insert ： " + note.title);
-        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis)values(?, ?, ?, ?, ?, ?)";
-        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis};
+        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis, duration, time)values(?, ?, ?, ?, ?, ?, ?, ?)";
+        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis, note.duration, note.time};
         SQLiteDatabase db = dbHelper.getWritableDatabase();
- 
+
         db.execSQL(sql, args);
         db.close();
     }
- 
+
     /**
      * 删除数据
      *
@@ -70,8 +70,8 @@ public class DatabaseUtils {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "select * from note order by _id desc";
         Cursor cursor = db.rawQuery(sql,null);
- 
- 
+
+
         ArrayList<FileBean> notes = new ArrayList<FileBean>();
         FileBean note = null;
         while (cursor.moveToNext()) {
@@ -83,6 +83,8 @@ public class DatabaseUtils {
             note.modifytime = cursor.getString(5);
             note.mSd = cursor.getString(6);
             note.createmillis = cursor.getString(7);
+            note.duration = cursor.getInt(8);
+            note.time = cursor.getLong(9);
             notes.add(note);
         }
         cursor.close();
@@ -96,13 +98,14 @@ public class DatabaseUtils {
         db.execSQL("delete from note");
     }
 
-    public void updataByContent(FileBean userBean) {
+    public void updateByContent(FileBean userBean) {
         try {
             ContentValues contentValues = new ContentValues();
             contentValues.put("content", userBean.content);
             contentValues.put("json", userBean.json);
             contentValues.put("modifytime", userBean.modifytime);
             contentValues.put("sdcard", userBean.mSd + "");
+            contentValues.put("duration", userBean.duration + "");
             dbHelper.getWritableDatabase().update("note", contentValues
                     , "createmillis=?"
                     , new String[]{userBean.createmillis + ""});
@@ -111,10 +114,33 @@ public class DatabaseUtils {
         }
     }
 
-    public void updataByJson(FileBean userBean) {
+    public void updateDurationByContent(FileBean userBean) {
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("json", userBean.getJson());
+            contentValues.put("duration", userBean.duration + "");
+            dbHelper.getWritableDatabase().update("note", contentValues
+                    , "createmillis=?"
+                    , new String[]{userBean.createmillis + ""});
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void updateTime(FileBean userBean) {
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("time", userBean.time);
+            dbHelper.getWritableDatabase().update("note", contentValues
+                    , "createmillis=?"
+                    , new String[]{userBean.createmillis + ""});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateModifyTime(FileBean userBean) {
+        try {
+            ContentValues contentValues = new ContentValues();
             contentValues.put("modifytime", userBean.modifytime);
             dbHelper.getWritableDatabase().update("note",contentValues
                     , "createmillis=?"

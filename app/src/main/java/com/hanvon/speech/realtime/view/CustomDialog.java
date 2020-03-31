@@ -66,9 +66,9 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
         Point size = new Point();
         d.getSize(size);
         p.width = (int)(size.x * 0.6);//是dialog的宽度为app界面的80%
-        p.height = (int)(size.y * 0.15);
+        p.height = (int)(size.y * 0.133);
         getWindow().setAttributes(p);
- 
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         //找到组件
         tv_title=findViewById(R.id.textTitle);
         tv_message=findViewById(R.id.textInfo);
@@ -85,13 +85,20 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
             tv_message.setVisibility(View.VISIBLE);
             tv_message.setText(message);
         }else {
-            tv_message.setVisibility(View.GONE);
+            tv_message.setVisibility(View.INVISIBLE);
         }
         if (!TextUtils.isEmpty(cancel)){
             bt_cancel.setVisibility(View.VISIBLE);
             bt_cancel.setText(cancel);
         }else {
-            bt_cancel.setVisibility(View.GONE);
+            bt_cancel.setVisibility(View.INVISIBLE);
+        }
+
+        if (!TextUtils.isEmpty(confirm)){
+            bt_confirm.setVisibility(View.VISIBLE);
+            bt_confirm.setText(confirm);
+        }else {
+            bt_confirm.setVisibility(View.INVISIBLE);
         }
  
         //为两个按钮添加点击事件

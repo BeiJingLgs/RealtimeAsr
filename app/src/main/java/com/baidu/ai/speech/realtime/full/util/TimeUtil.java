@@ -58,4 +58,90 @@ public class TimeUtil {
         return days + " days " + hours + " hours " + minutes + " minutes "
                 + seconds + " seconds ";
     }
+
+    /**
+     * 返回时分秒
+     * @param second
+     * @return
+     */
+    public static String secondToTime(long second) {
+        long hours = second / 3600;//转换小时数
+        second = second % 3600;//剩余秒数
+        long minutes = second / 60;//转换分钟
+        second = second % 60;//剩余秒数
+        if (0 < hours){
+            if (minutes == 0) {
+                return hours+"小时 ";
+            } else {
+                return hours+"小时 "+minutes+"分 ";
+            }
+        }else {
+            if (second == 0) {
+                return minutes+"分 ";
+            } else {
+                return minutes+"分 "+second+"秒";
+            }
+        }
+    }
+
+    /**
+     * 返回时分秒
+     * @param second
+     * @return
+     */
+    public static String hourToTime(long second) {
+        long hours = second / 24;//转换小时数
+        second = second % 24;//剩余秒数
+        long minutes = second / 60;//转换分钟
+        second = second % 60;//剩余秒数
+        if (0 < hours){
+            if (minutes == 0) {
+                return hours+"天 ";
+            } else {
+                return hours+"天 "+minutes+"小时";
+            }
+
+        }else {
+            return minutes+"小时";
+        }
+    }
+
+    public static String centToyuan(long second) {
+        double yuan = second / 100.0;
+        return yuan + "元";
+    }
+
+    //计算播放时间
+    public static String calculateTime(int time){
+        int minute;
+        int second;
+        if(time >= 60){
+            minute = time / 60;
+            second = time % 60;
+            //分钟再0~9
+            if(minute >= 0 && minute < 10){
+                //判断秒
+                if(second >= 0 && second < 10){
+                    return "0"+minute+":"+"0"+second;
+                }else {
+                    return "0"+minute+":"+second;
+                }
+            }else {
+                //分钟大于10再判断秒
+                if(second >= 0 && second < 10){
+                    return minute+":"+"0"+second;
+                }else {
+                    return minute+":"+second;
+                }
+            }
+        } else if(time < 60){
+            second = time;
+            if(second >= 0 && second < 10){
+                return "00:"+"0"+second;
+            }else {
+                return "00:"+ second;
+            }
+        }
+        return null;
+    }
 }

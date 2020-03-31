@@ -22,6 +22,7 @@ public class SharedPreferencesUtils {
     public static final String ISFIRST = "isFirst";
 	public static final String SESSION = "session";
 	public static final String TOKEN = "token";
+	public static final String LOGIN = "login";
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
      * @param context
@@ -71,7 +72,7 @@ public class SharedPreferencesUtils {
      * 清除所有数据
      * @param context
      */
-    public static void clear(Context context) {
+    public static void clearAll(Context context) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -82,7 +83,7 @@ public class SharedPreferencesUtils {
      * 清除指定数据
      * @param context
      */
-    public static void clearAll(Context context, String key) {
+    public static void clear(Context context, String key) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -171,5 +172,22 @@ public class SharedPreferencesUtils {
     	List<String>historyList = new ArrayList<String>(Arrays.asList(tmpHistory));
 		return historyList;
 	}
+
+
+	public static void saveLoginStatesSharePrefer(Context context, String state){
+		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString(LOGIN, state);
+		editor.commit();
+	}
+
+
+
+	public static String getLoginStatesprefer(Context context , String key){
+		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+		return sp.getString(key, "login");
+	}
+
+
 
 }
