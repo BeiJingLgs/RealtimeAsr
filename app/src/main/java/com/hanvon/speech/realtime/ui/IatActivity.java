@@ -1,23 +1,23 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -81,13 +81,12 @@ import com.xrz.SimplePen;
 
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -753,15 +752,15 @@ public class IatActivity extends BaseActivity {
             RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
-                    mIatLayout.setVisibility(View.GONE);
-                    mRecordLayout.setVisibility(View.VISIBLE);
-                    mRecognizeStatusTv.setText(R.string.recognizing);
-                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                     DialogUtil.getInstance().disWaitingDialog();
                     Gson gson2 = new Gson();
                     PackList c = gson2.fromJson(result, PackList.class);
                     Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
+                        mIatLayout.setVisibility(View.GONE);
+                        mRecordLayout.setVisibility(View.VISIBLE);
+                        mRecognizeStatusTv.setText(R.string.recognizing);
+                        mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                         startRecognize();
                     } else {
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
@@ -845,29 +844,10 @@ public class IatActivity extends BaseActivity {
         menuItem4.setOnClickListener(view12 -> {
             if (popupWindow != null) {
                 popupWindow.dismiss();
-                String pa = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
-                mNoteView.saveCanvasInfo(pa);
-                showShareDialog();
-                File[] files = new File(ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis()).listFiles();
-                LogUtils.printErrorLog("menuItem4", "files.length: " + files.length);
-                ArrayList<String> mPathList = new ArrayList<>();
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].getPath().endsWith("png")) {
-                        mPathList.add(files[i].getPath());
-                    }
-                }
-                ArrayList<String> mBase64Img = new ArrayList<>();
-                StringBuffer sb = new StringBuffer();
-                for (String path : mPathList) {
-                    sb.setLength(0);
-                    sb.append(Constant.PRE_HSUFFIX).append(ShareUtils.imageToBase64(path)).append(Constant.AFTER_HSUFFIX);
-                    mBase64Img.add(sb.toString());
-                }
-                String ht = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
-                ShareUtils.generateHtml(ht, mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(),
-                        mBase64Img);
+                index = 4;
+                String ht = generateShareHtml(mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(), true);
                 upLoadFile(ht);
-                LogUtils.printErrorLog("menuItem4", "mPathList.size(): " + mPathList.size());
+
             }
         });
         TextView menuItem5 = view.findViewById(R.id.popup_recog);
@@ -877,6 +857,17 @@ public class IatActivity extends BaseActivity {
 
                 RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
                 recognmizeImageAyncTask.execute();
+
+            }
+        });
+        TextView menuItem6 = view.findViewById(R.id.popup_mail);
+        menuItem6.setOnClickListener(view1 -> {
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+                index = 6;
+                //queryThird();
+                String ht = generateShareHtml(mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(), true);
+                upLoadFile(ht);
 
             }
         });
@@ -895,6 +886,77 @@ public class IatActivity extends BaseActivity {
         return popupWindow;
     }
 
+    /*private void queryThird() {
+
+        Uri uri_user = Uri.parse("content://cn.scu.myprovider/thirdApp");
+        ContentResolver resolver = getContentResolver();
+        Cursor cursor = resolver.query(uri_user, new String[]{"_id", "third"}, null, null, null);
+
+        if (cursor == null) {
+            LogUtils.printErrorLog(TAG, "cursor == null");
+            return;
+        }
+        Log.e(TAG, "cursor.getCount: " + cursor.getCount());
+        while (cursor.moveToNext()) {
+            LogUtils.printErrorLog(TAG, "cursor.getString(1): " + cursor.getString(1));
+        }
+        cursor.close();
+    }*/
+
+    private int index = 0;
+    private String generateShareHtml(String str, boolean img) {
+
+        showShareDialog();
+        ArrayList<String> mBase64Img = new ArrayList<>();
+        if (img)
+            mBase64Img.addAll(generateBase64Img());
+        String ht = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
+        ShareUtils.generateHtml(ht, str,
+                mBase64Img);
+        //LogUtils.printErrorLog("menuItem4", "mPathList.size(): " + mPathList.size());
+        return ht;
+    }
+
+    private ArrayList<String> generateBase64Img() {
+        String pa = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+        mNoteView.saveCanvasInfo(pa);
+        File[] files = new File(ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis()).listFiles();
+        LogUtils.printErrorLog("menuItem4", "files.length: " + files.length);
+        ArrayList<String> mPathList = new ArrayList<>();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getPath().endsWith("png")) {
+                mPathList.add(files[i].getPath());
+            }
+        }
+        ArrayList<String> mBase64Img = new ArrayList<>();
+        StringBuffer sb = new StringBuffer();
+        for (String path : mPathList) {
+            sb.setLength(0);
+            sb.append(Constant.PRE_HSUFFIX).append(ShareUtils.imageToBase64(path)).append(Constant.AFTER_HSUFFIX);
+            mBase64Img.add(sb.toString());
+        }
+        return mBase64Img;
+    }
+
+
+    private void sendToMail(String url){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        String[] addresses = {"guhongbo@hanwang.com.cn"};
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "测试邮件");
+        intent.putExtra(Intent.EXTRA_TEXT, "正文：这是一封测试邮件,地址：" + url);
+
+        /*File file = new File("/mnt/sdcard/1.png"); //附件文件地址
+        if (!file.exists())
+            return;
+        intent.putExtra(Intent.EXTRA_STREAM, getImageContentUri(this, file));*///Uri.parse("file:///mnt/sdcard/1.png"));
+        intent.setType("application/octet-stream");
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
     UpLoadDialog upLoadDialog;
 
     private void showShareDialog() {
@@ -903,6 +965,7 @@ public class IatActivity extends BaseActivity {
         upLoadDialog.setCancel(this.getResources().getString(R.string.cancel), new UpLoadDialog.IOnCancelListener() {
             @Override
             public void onCancel(UpLoadDialog dialog) {
+
                 upLoadDialog.dismiss();
             }
         });
@@ -928,8 +991,18 @@ public class IatActivity extends BaseActivity {
                 Gson gson2 = new Gson();
                 PayResultBean payResultBean = gson2.fromJson(result, PayResultBean.class);
                 if (TextUtils.equals(payResultBean.getCode(), Constant.SUCCESSCODE)) {
-                    Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
-                    upLoadDialog.setUpLoadStatus(bitmap);
+                    if (index == 4) {
+                        Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
+                        upLoadDialog.setUpLoadStatus(bitmap);
+                    } else if (index == 6) {
+                        upLoadDialog.dismiss();
+                        String url = payResultBean.getUrlBean().getUrl();
+                        sendToMail(url);
+                    } else {
+                        Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
+                        upLoadDialog.setUpLoadStatus(bitmap);
+                    }
+
                 } else {
                     ToastUtils.show(HvApplication.mContext, payResultBean.getMsg());
                     upLoadDialog.dismiss();
@@ -1294,7 +1367,15 @@ public class IatActivity extends BaseActivity {
 
             dialog.setInfo(result);
 
-
+            dialog.setPositiveButton(getString(R.string.share), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    String ht = generateShareHtml(result, false);
+                    upLoadFile(ht);
+                    //ToastUtils.show(getApplicationContext(), "分享");
+                }
+            });
             dialog.setNegativeButton(getString(R.string.cancel), new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {

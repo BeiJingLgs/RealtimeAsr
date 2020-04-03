@@ -461,6 +461,38 @@ public class CommonDialog {
 		btnRetry.setOnClickListener(listener);
 	}
 
+
+	public void setShareButton(String text, OnClickListener listener){
+		//btnType |= TYPE_RETRY;
+		btnOK = (Button) view.findViewById(R.id.btnOK);
+		btnOK.setVisibility(View.VISIBLE);
+		int changeLen = 4;
+		boolean beng = false;
+		if(Locale.getDefault().getDisplayLanguage().compareToIgnoreCase("English") == 0)
+		{
+			beng = true;
+			BTN_MAX_LEN = 20;
+			changeLen = 8;
+		}
+		if (text.length() > BTN_MAX_LEN) {
+			text = text.substring(0, BTN_MAX_LEN - 1) + "...";
+		}
+		// ������Ļ���Ҫ�����ؼ��ĳߴ�
+		if(text.length() > changeLen)
+		{
+			android.view.ViewGroup.LayoutParams  lp = btnRetry.getLayoutParams();
+			if(beng){
+				lp.width += 25;
+			}
+			else{
+				lp.width += (text.length() - changeLen) * 25;
+			}
+			btnOK.setLayoutParams(lp);
+		}
+		btnOK.setText(text);
+		btnOK.setOnClickListener(listener);
+	}
+
 	public final View getView() {
 		// TODO Auto-generated method stub
 		return view;

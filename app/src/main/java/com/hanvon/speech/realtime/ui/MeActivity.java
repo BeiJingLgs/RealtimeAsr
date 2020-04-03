@@ -151,11 +151,13 @@ public class MeActivity extends BaseActivity {
                     public void successData(String result) {
                         Gson gson2 = new Gson();
                         PackList c = gson2.fromJson(result, PackList.class);
-                        Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
+                        LogUtils.printErrorLog("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                             if (c.getPackBean().size() == 0) {
-                                ToastUtils.showLong(MeActivity.this, "当前已经没有可用时长");
+                                ToastUtils.showLong(MeActivity.this, getString(R.string.notime));
                             } else {
+                                if (c.getPackBean() == null)
+                                    return;
                                 TranslateBean.getInstance().setPackList(c.getPackBean());
                                 Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
                                 intent.putExtra("type", "PackBeen");
@@ -186,6 +188,8 @@ public class MeActivity extends BaseActivity {
                         OrderList c = gson.fromJson(result, OrderList.class);
                         Log.e("A", "onResponse: " + "c.getShopType().size()==: " + c.getOrder().size());
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                            if (c.getOrder() == null)
+                                return;
                             TranslateBean.getInstance().setOrderList(c.getOrder());
                             Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
                             intent.putExtra("type", "OrderBeen");
@@ -209,6 +213,8 @@ public class MeActivity extends BaseActivity {
                         DeviceBeanList c = gson2.fromJson(result, DeviceBeanList.class);
                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getDeviceBean().size());
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                            if (c.getDeviceBean() == null)
+                                return;
                             TranslateBean.getInstance().setDeviceList(c.getDeviceBean());
                             Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
                             intent.putExtra("type", "OrderBeen");
@@ -268,6 +274,8 @@ public class MeActivity extends BaseActivity {
                             if(c.getUsageBeen().size() == 0) {
                                 ToastUtils.showLong(MeActivity.this, "当前暂时没有使用记录");
                             } else {
+                                if (c.getUsageBeen() == null)
+                                    return;
                                 TranslateBean.getInstance().setUsageList(c.getUsageBeen());
                                 Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
                                 intent.putExtra("type", "UsageBeen");
@@ -292,6 +300,8 @@ public class MeActivity extends BaseActivity {
                         ShopTypeList c = gson2.fromJson(result, ShopTypeList.class);
                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getShopType().size());
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                            if (c.getShopType() == null)
+                                return;
                             TranslateBean.getInstance().setShopTypes(c.getShopType());
                             Intent intent = new Intent(MeActivity.this, PurchaseActivity.class);
                             intent.putExtra("type", "ShopType");

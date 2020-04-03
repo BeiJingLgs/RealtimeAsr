@@ -1,12 +1,8 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -15,19 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.ai.speech.realtime.R;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
-import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
-import com.hanvon.speech.realtime.util.DaoTimer;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
-
-import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 
@@ -93,6 +84,8 @@ public class RegisterActivity extends BaseActivity {
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                                 ToastUtils.show(RegisterActivity.this, c.getMsg());
                             } else {
+                                time.cancel();
+                                resetVerificationCode();
                                 ToastUtils.show(RegisterActivity.this, c.getMsg());
                             }
                         }
@@ -100,8 +93,7 @@ public class RegisterActivity extends BaseActivity {
                         @Override
                         public void failureData(String error) {
                             //Log.e("AA", "error: " + error + "错");
-                            get_mob.setText(getString(R.string.getVcode));
-                            get_mob.setClickable(true);
+                            resetVerificationCode();
                             time.onFinish();
                         }
                     });
@@ -114,6 +106,8 @@ public class RegisterActivity extends BaseActivity {
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                                 ToastUtils.show(RegisterActivity.this, c.getMsg());
                             } else {
+                                time.cancel();
+                                resetVerificationCode();
                                 ToastUtils.show(RegisterActivity.this, c.getMsg());
                             }
                         }
@@ -121,8 +115,7 @@ public class RegisterActivity extends BaseActivity {
                         @Override
                         public void failureData(String error) {
                             //Log.e("AA", "error: " + error + "错");
-                            get_mob.setText(getString(R.string.getVcode));
-                            get_mob.setClickable(true);
+                            resetVerificationCode();
                             time.onFinish();
                         }
                     });
@@ -191,6 +184,11 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
+    private void resetVerificationCode() {
+        get_mob.setText(getString(R.string.getVCode));
+        get_mob.setClickable(true);
+    }
+
     // 使用完EventHandler需注销，否则可能出现内存泄漏
     protected void onDestroy() {
         super.onDestroy();
@@ -212,8 +210,7 @@ public class RegisterActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            get_mob.setText(getString(R.string.getVcode));
-            get_mob.setClickable(true);
+            resetVerificationCode();
             //get_mob.setBackgroundColor(Color.parseColor("#4EB84A"));
 
         }

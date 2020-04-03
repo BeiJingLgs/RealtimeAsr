@@ -136,7 +136,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                 break;
             case R.id.ivpre_page:
                 if (Constant.PAGE_INDEX == 1) {
-                    ToastUtils.showLong(PurchaseActivity.this, "已经是第一页了");
+                    ToastUtils.showLong(PurchaseActivity.this, getString(R.string.first_page));
                     mPreBtn.setBackgroundResource(R.drawable.pre_page_grey);
                     return;
                 } else {
@@ -151,6 +151,8 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                             UsageBeenList c = gson2.fromJson(result, UsageBeenList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getUsageBeen().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                if(c.getUsageBeen() == null)
+                                    return;
                                 mUsageRecordList.clear();
                                 mUsageRecordList.addAll(c.getUsageBeen());
                                 mUsageRecordAdapter.notifyDataSetChanged();
@@ -172,6 +174,8 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                             PackList c = gson2.fromJson(result, PackList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                if(c.getPackBean() == null)
+                                    return;
                                 mPackList.clear();
                                 mPackList.addAll(c.getPackBean());
                                 mPackAdapter.notifyDataSetChanged();
@@ -194,6 +198,8 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                             OrderList c = gson2.fromJson(result, OrderList.class);
                             Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getOrder().size());
                             if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                                if(c.getOrder() == null)
+                                    return;
                                 mOrderList.clear();
                                 mOrderList.addAll(c.getOrder());
                                 mOrderAdapter.notifyDataSetChanged();
@@ -217,7 +223,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                     if (mUsageRecordList.size() == Constant.PAGE_SIZE) {
                         Constant.PAGE_INDEX++;
                     } else {
-                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                         return;
                     }
                     RetrofitManager.getInstance(this).getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
@@ -230,11 +236,12 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 if (c.getUsageBeen().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
-                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
                                     return;
                                 }
-
+                                if(c.getUsageBeen() == null)
+                                    return;
                                 mUsageRecordList.clear();
                                 mUsageRecordList.addAll(c.getUsageBeen());
                                 mUsageRecordAdapter.notifyDataSetChanged();
@@ -253,7 +260,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                     if (mPackList.size() == Constant.PAGE_SIZE) {
                         Constant.PAGE_INDEX++;
                     } else {
-                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                         return;
                     }
                     RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
@@ -266,10 +273,12 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 if (c.getPackBean().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
-                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
                                     return;
                                 }
+                                if(c.getPackBean() == null)
+                                    return;
                                 mPackList.clear();
                                 mPackList.addAll(c.getPackBean());
                                 mPackAdapter.notifyDataSetChanged();
@@ -288,7 +297,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                     if (mOrderList.size() == Constant.PAGE_SIZE) {
                         Constant.PAGE_INDEX++;
                     } else {
-                        ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                        ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                         return;
                     }
                     RetrofitManager.getInstance(this).getOrders(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
@@ -301,11 +310,12 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                                 if (c.getOrder().size() == Constant.PAGE_SIZE) {
                                     mPreBtn.setBackgroundResource(R.drawable.pre_page);
                                 } else {
-                                    ToastUtils.showLong(PurchaseActivity.this, "已经是最后一页了");
+                                    ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                                     mNextBtn.setBackgroundResource(R.drawable.next_page_grey);
                                     return;
                                 }
-
+                                if(c.getOrder() == null)
+                                    return;
                                 mOrderList.clear();
                                 mOrderList.addAll(c.getOrder());
                                 mOrderAdapter.notifyDataSetChanged();

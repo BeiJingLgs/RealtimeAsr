@@ -123,4 +123,5 @@
     <string name="recog_txt">录音记事识别文本.txt</string>
     <string name="tryagain">服务器出错了，请退出重试</string>
     <string name="noEditText">当前没有编辑内容</string>
+    <string name="notime">当前已经没有可用时长</string>
 </resources>

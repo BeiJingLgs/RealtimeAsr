@@ -127,4 +127,8 @@
     <string name="gift_package">赠送包</string>
     <string name="shop_package">购买包</string>
     <string name="used">已使用：&#160;&#160;</string>
+    <string name="notime">当前已经没有可用时长</string>
+    <string name="mail">邮箱</string>
+    <string name="last_page">已经是最后一页了</string>
+    <string name="first_page">已经是第一页了</string>
 </resources>
