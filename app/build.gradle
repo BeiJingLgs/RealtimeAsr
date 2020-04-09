@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.baidu.ai.speech.realtime"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 20
-        versionName "1.12"
+        targetSdkVersion 21
+        versionCode 14
+        versionName "1.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 

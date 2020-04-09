@@ -13,13 +13,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 允许访问网络状态（必须） -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 允许写手机存储（必须） -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- GUI自动填充验证码功能（非必须） -->
-    <uses-permission android:name="android.permission.READ_SMS" /> <!-- 从短信中读取验证码接口（非必须） -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <application
         android:name=".android.HvApplication"
         android:allowBackup="true"
@@ -78,18 +78,9 @@
             android:label="HtmlView"
             android:screenOrientation="behind"></activity>
 
-        <!--<provider
-            android:name="com.hanvon.speech.realtime.database.DataContentProvider"
-            android:authorities="cn.scu.myprovider"
-            android:exported="true"
-            android:permission="scut.carson_ho.PROVIDER" />-->
+
     </application>
 
-    <!--<permission
-        android:name="scut.carson_ho.Read"
-        android:protectionLevel="normal" />
-    <permission
-        android:name="scut.carson_ho.PROVIDER"
-        android:protectionLevel="normal" />-->
+
 
 </manifest>

@@ -117,7 +117,7 @@ public class HandWriteNoteView extends NoteView {
         Rect dirtyRect = new Rect();
         Path path = new Path();
         int border = mStrokeWidth;
-
+        canBeFresh = false;
 
         boolean bUp = false;
         if(lastPoint.isValid()) {
@@ -281,7 +281,7 @@ public class HandWriteNoteView extends NoteView {
                     canBeFresh = true;
                 }
             };
-            timer.schedule(timerTask, 1000);//延时2s
+            timer.schedule(timerTask, 2000);//延时2s
         }
 
         return new FlushInfo(dirtyRect);

@@ -91,6 +91,7 @@
             android:layout_marginRight="@dimen/margin_M"
             android:layout_marginBottom="@dimen/Margin_XS"
             android:text=""
+            android:textColor="@color/black"
             android:textSize="@dimen/Common_Text_Font_Size"
             android:textStyle="bold" />
 
@@ -163,6 +164,38 @@
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeM"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iat_play"
+            android:layout_below="@+id/time_tv"
+            android:id="@+id/volum_layout"
+            android:layout_marginLeft="@dimen/margin_M"
+            android:layout_marginRight="@dimen/Margin_XS"
+            android:layout_marginTop="@dimen/margin_M"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/Margin_XS"
+                android:background="@drawable/volume_down"
+                android:id="@+id/decre_volume"/>
+
+            <com.hanvon.speech.realtime.view.VolumeBar
+                android:id="@+id/ctrl_vol"
+                android:layout_marginLeft="@dimen/Margin_XS"
+                android:layout_marginTop="6dp"
+                android:layout_width="@dimen/w_player_vol"
+                android:layout_height="@dimen/h_player_vol" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/Margin_XS"
+                android:background="@drawable/volume_up"
+                android:id="@+id/increase_volume"/>
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -286,6 +319,7 @@
             android:layout_height="@dimen/mydialog_button_margin"
             android:layout_marginLeft="@dimen/Margin_S"
             android:layout_marginBottom="@dimen/Margin_S"
+            android:stateListAnimator="@null"
             android:background="@drawable/pre_page_2_grey" />
 
         <TextView
@@ -303,6 +337,8 @@
             android:layout_width="@dimen/mydialog_button_margin"
             android:layout_height="@dimen/mydialog_button_margin"
             android:layout_marginBottom="@dimen/Margin_S"
+
+            android:stateListAnimator="@null"
             android:background="@drawable/next_page_2" />
 
 

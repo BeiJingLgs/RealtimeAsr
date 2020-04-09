@@ -2,6 +2,8 @@ package com.hanvon.speech.realtime.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +27,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
             Manifest.permission.RECORD_AUDIO};
     //返回code
     public static final int OPEN_SET_REQUEST_CODE = 100;
+    public Intent mIntentDrop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +88,10 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
         mMenus.setOnClickListener(this);
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
+        mIntentDrop = new Intent();
     }
+
+
 
     @Override
     protected void onResume() {

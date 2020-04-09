@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.ui;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -77,6 +79,7 @@ import com.hanvon.speech.realtime.view.CommonDialog;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.HandWriteNoteView;
 import com.hanvon.speech.realtime.view.UpLoadDialog;
+import com.hanvon.speech.realtime.view.VolumeBar;
 import com.xrz.SimplePen;
 
 
@@ -86,7 +89,6 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -127,11 +129,11 @@ public class IatActivity extends BaseActivity {
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
     public CheckBox mCheckbox;
-    private ImageView mRecordStatusImg;
+    private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout;
     private boolean isNEW, isTips = false;
 
     private int nPageCount = 0; // 当前分类的页总数
@@ -153,9 +155,13 @@ public class IatActivity extends BaseActivity {
     private String mRecordFilePath, mTempPath, mPath;
     private int mAudioOffset;
     private AudioHandler mHandler;
-    private long mStartRecordTime, mUsageTime;
+    private long mStartRecordTime, mUsageRecordTime, mStartPlayTime, mUsagePlayTime;
     private int mDuration;
+    private VolumeBar mCtlVolBar;
+    private AudioManager mAudioManager;
+    private RecordReceiver recordReceiver;
 
+    private int index = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,6 +202,13 @@ public class IatActivity extends BaseActivity {
         mRecordLayout = view.findViewById(R.id.record_layout);
         mCheckbox = findViewById(R.id.checkbox);
         mRecordStatusImg = findViewById(R.id.suspendImg);
+        mIncreaseVolImg = findViewById(R.id.increase_volume);
+        mDecreaseVolImg = findViewById(R.id.decre_volume);
+        mCtlVolBar = findViewById(R.id.ctrl_vol);
+        mVolumLayout = findViewById(R.id.volum_layout);
+
+        mIncreaseVolImg.setOnClickListener(this);
+        mDecreaseVolImg.setOnClickListener(this);
         mRecordStatusImg.setOnClickListener(this);
         mEditBtn.setOnClickListener(this);
         mTextBegin.setOnClickListener(this);
@@ -218,8 +231,21 @@ public class IatActivity extends BaseActivity {
         mNoteView.setPen(pencil);
         mNoteView.setBackground(mBitmap);
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mIntentDrop = new Intent();
+        mIntentDrop.setAction("hanvon.intent.action.disabledropdown");
+        mIntentDrop.putExtra("hanvon_disabledropdown", 0);
+        mIntentDrop.setComponent(new ComponentName("hanvon.aebr.hvsettings", "hanvon.aebr.hvsettings.ScreencapBroadCastRecevier"));
+        sendBroadcast(mIntentDrop);
+    }
 
-    RecordReceiver recordReceiver;
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        LogUtils.printErrorLog(TAG, "==onNewIntent");
+    }
 
     private void initData() {
         recordReceiver = new RecordReceiver();
@@ -228,9 +254,18 @@ public class IatActivity extends BaseActivity {
         mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
         mBtFilter.addAction(ConstBroadStr.ACTION_HOME_PAGE);
         registerReceiver(recordReceiver, mBtFilter);
+
+        mIntentDrop = new Intent();
+        mIntentDrop.setAction("hanvon.intent.action.disabledropdown");
+        mIntentDrop.putExtra("hanvon_disabledropdown", 1);
+        mIntentDrop.setComponent(new ComponentName("hanvon.aebr.hvsettings", "hanvon.aebr.hvsettings.ScreencapBroadCastRecevier"));
+        sendBroadcast(mIntentDrop);
     }
     private void init() {
+        //Settings.System.putInt(getContentResolver(), "hanvon_isFullScreenAvtivity", 1);
         TAG = getLocalClassName();
+        mAudioManager = (AudioManager) HvApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
+        mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);;
         mHandler = new AudioHandler(this);
         mNoteView.setHandler(mHandler);
         mTotalResultList = new ArrayList<>();
@@ -241,6 +276,7 @@ public class IatActivity extends BaseActivity {
         mDuration = mFileBean.getDuration();
         Log.e("startRecognize", "203 mFileBean.getTime()(): " + mFileBean.getTime());
         if (mDuration == 0) {
+            mVolumLayout.setVisibility(View.GONE);
             mSeekBar.setVisibility(View.GONE);
         } else {
             mSeekBar.setMax(mDuration);
@@ -252,20 +288,23 @@ public class IatActivity extends BaseActivity {
         }
         // wwn 如果是新建，创建便签文件
         if (isNEW) {
-            mNotePageIndex = 0;
-            NoteBaseData.gTraFile = new TraFile();
-            String tmpName = mFileBean.getCreatemillis();
-            String dirPath = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/";
-            NoteBaseData.gTraFile.createNewTraFile(dirPath, tmpName);
-            // 添加一个新页
-            AddNoteNewEmptyPage(mNotePageIndex);
-            mNoteView.initialize((NoteBaseData.gTraFile.getPage(mNotePageIndex)).traces);
-            updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
+            createNewNote();
         } else {
             mNotePageIndex = 0;
             String tmpName = mFileBean.getCreatemillis();
             String pathName = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/" + tmpName + NoteBaseData.NOTE_SUFFIX;
             NoteBaseData.gTraFile = TraFile.readTraFile(false, pathName, this);
+
+            if(NoteBaseData.gTraFile == null) {
+                createNewNote();
+                ToastUtils.show(this, getString(R.string.destroy_file));
+                return;
+            }
+            if(NoteBaseData.gTraFile.pages == null) {
+                createNewNote();
+                ToastUtils.show(this, getString(R.string.destroy_file));
+                return;
+            }
 
             if (NoteBaseData.gTraFile.pages.size() > 0) {
                 updateNoteCurPage();
@@ -295,6 +334,18 @@ public class IatActivity extends BaseActivity {
                 freshResultPage();
             }
         }, 200);
+    }
+
+    private void createNewNote() {
+        mNotePageIndex = 0;
+        NoteBaseData.gTraFile = new TraFile();
+        String tmpName = mFileBean.getCreatemillis();
+        String dirPath = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/";
+        NoteBaseData.gTraFile.createNewTraFile(dirPath, tmpName);
+        // 添加一个新页
+        AddNoteNewEmptyPage(mNotePageIndex);
+        mNoteView.initialize((NoteBaseData.gTraFile.getPage(mNotePageIndex)).traces);
+        updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
     }
 
     private void initPermissions() {
@@ -345,9 +396,15 @@ public class IatActivity extends BaseActivity {
                     } else {
                         if (mDuration == 0)
                             return;
-                        if (mNoteView.canBeFresh()) {
-                            mTimeTv.setText(getResources().getString(R.string.progress) + (100 * mSeekBar.getProgress()) / mDuration + "%");
+                        LogUtils.printErrorLog(TAG, "mNoteView.canBeFresh(): " + mNoteView.canBeFresh());
+                        if (mNoteView.canBeFresh()) {//(100 * mSeekBar.getProgress()) / mDuration + "%"
+                           // mTimeTv.setText(getResources().getString(R.string.progress) + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
                             mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                            if (MediaPlayerManager.getInstance().getCurrentPosition() == 0) {
+                                mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                            } else {//mFileBean.setTime();
+                                mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                            }
                         }
                     }
                     break;
@@ -377,7 +434,13 @@ public class IatActivity extends BaseActivity {
             if (mNoteView.canBeFresh()) {
                 if (mDuration == 0)
                     return;
-                mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / mDuration + "%");
+                if (seekBar.getProgress() == 0) {
+                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                    LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
+                } else {
+                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                }
+                //mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / mDuration + "%");
             }
         }
     };
@@ -454,7 +517,7 @@ public class IatActivity extends BaseActivity {
 
     private void pauseRecognize() {
         if (isRecording) {
-            mUsageTime = System.currentTimeMillis() - mStartRecordTime + mUsageTime;
+            mUsageRecordTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
             close(false);
             mRecognizeStatusTv.setText(getString(R.string.pausing));
             MediaRecorderManager.getInstance().stop();
@@ -561,12 +624,14 @@ public class IatActivity extends BaseActivity {
                         mTimer.cancel();
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
+                    mUsagePlayTime = System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime;
                 } else {
                     Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
                     if (mRecordFilePath == null) {
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
+                    mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
                     playRecord();
                 }
@@ -609,19 +674,38 @@ public class IatActivity extends BaseActivity {
                     pauseRecognize();
                 }
                 break;
+            case R.id.increase_volume:
+                adjustVolume(true);
+                break;
+            case R.id.decre_volume:
+                adjustVolume(false);
+                break;
             default:
                 break;
         }
     }
 
+    public void adjustVolume(boolean up) {
+        if (up) {
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        } else {
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+        }
+        mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);;
+    }
+
     private void stopPlayRecord() {
         if (mTimer != null)
             mTimer.cancel();
+        mUsagePlayTime = 0;
+        Log.e("playRecord", "stopPlayRecord: " );
+        mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         MediaPlayerManager.getInstance().stop();
     }
 
     private void playRecord() {
+        mVolumLayout.setVisibility(View.VISIBLE);
         mSeekBar.setVisibility(View.VISIBLE);
         if (!MediaPlayerManager.getInstance().isPlaying()) {
             mAudioOffset = mSeekBar.getProgress();
@@ -636,6 +720,11 @@ public class IatActivity extends BaseActivity {
             mDuration = MediaPlayerManager.getInstance().getDuration();//获取音乐总时间
             if (mDuration == 0)
                 return;
+            if (mAudioOffset == 0) {
+                mStartPlayTime = System.currentTimeMillis();
+            } else {
+                mStartPlayTime = System.currentTimeMillis();
+            }
             mFileBean.setDuration(mDuration);
             DatabaseUtils.getInstance(this).updateDurationByContent(mFileBean);
             mSeekBar.setMax(mDuration);//将音乐总时间设置为Seekbar的最大值
@@ -666,7 +755,6 @@ public class IatActivity extends BaseActivity {
             createFile(tmpName);
             isRecording = true;
             mStartRecordTime = System.currentTimeMillis();
-            //mTextBegin.setText(R.string.text_end);
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -674,7 +762,7 @@ public class IatActivity extends BaseActivity {
                         start();
                         pollCheckStop();
                     } catch (IOException e) {
-                        ToastUtils.show(getApplicationContext(), "服务器出错了，请退出重试");
+                        ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
                     }
                 }
             });
@@ -713,9 +801,12 @@ public class IatActivity extends BaseActivity {
     private void uploadUsageTime() {
         DialogUtil.getInstance().showWaitingDialog(this);
         HashMap<String, String> map2 = new HashMap<>();
-        long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageTime;
+        long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
         Log.e("startRecognize", "tempTime(): " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
+        mTimeTv.setText(TimeUtil.calculateTime(((int)(mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+        mSeekBar.setVisibility(View.VISIBLE);
+
         Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
         DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
 
@@ -865,7 +956,6 @@ public class IatActivity extends BaseActivity {
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 index = 6;
-                //queryThird();
                 String ht = generateShareHtml(mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(), true);
                 upLoadFile(ht);
 
@@ -886,24 +976,8 @@ public class IatActivity extends BaseActivity {
         return popupWindow;
     }
 
-    /*private void queryThird() {
 
-        Uri uri_user = Uri.parse("content://cn.scu.myprovider/thirdApp");
-        ContentResolver resolver = getContentResolver();
-        Cursor cursor = resolver.query(uri_user, new String[]{"_id", "third"}, null, null, null);
 
-        if (cursor == null) {
-            LogUtils.printErrorLog(TAG, "cursor == null");
-            return;
-        }
-        Log.e(TAG, "cursor.getCount: " + cursor.getCount());
-        while (cursor.moveToNext()) {
-            LogUtils.printErrorLog(TAG, "cursor.getString(1): " + cursor.getString(1));
-        }
-        cursor.close();
-    }*/
-
-    private int index = 0;
     private String generateShareHtml(String str, boolean img) {
 
         showShareDialog();
@@ -913,7 +987,6 @@ public class IatActivity extends BaseActivity {
         String ht = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
         ShareUtils.generateHtml(ht, str,
                 mBase64Img);
-        //LogUtils.printErrorLog("menuItem4", "mPathList.size(): " + mPathList.size());
         return ht;
     }
 
@@ -941,19 +1014,14 @@ public class IatActivity extends BaseActivity {
 
     private void sendToMail(String url){
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        String[] addresses = {"guhongbo@hanwang.com.cn"};
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "测试邮件");
-        intent.putExtra(Intent.EXTRA_TEXT, "正文：这是一封测试邮件,地址：" + url);
-
-        /*File file = new File("/mnt/sdcard/1.png"); //附件文件地址
-        if (!file.exists())
-            return;
-        intent.putExtra(Intent.EXTRA_STREAM, getImageContentUri(this, file));*///Uri.parse("file:///mnt/sdcard/1.png"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "录音记事邮件分享");
+        intent.putExtra(Intent.EXTRA_TEXT, "敬启者,\n下面是语音记事文本内容：\n" + mFileBean.getContent()
+                + " \n\n请打开下面链接查看附件内容：\n" + url);
         intent.setType("application/octet-stream");
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
+        } else {
+            ToastUtils.show(this, getString(R.string.unmailsetting));
         }
     }
 
@@ -1218,6 +1286,8 @@ public class IatActivity extends BaseActivity {
      * @return 返回是否保存了文件
      */
     protected boolean saveCurTraNoteFile() {
+        if (mNoteView == null)
+            return true;
         NoteBaseData.gTraFile.setWidth(mNoteView.getWidth());
         NoteBaseData.gTraFile.setHeight(mNoteView.getHeight());
         isTraNoteModified = true;
@@ -1423,17 +1493,22 @@ public class IatActivity extends BaseActivity {
                 if (grantResults.length > 0) {
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            ToastUtils.show(getApplicationContext(), "未拥有相应权限: " + strings[1]);
+                            LogUtils.printErrorLog("onRequestPermissionsResult", "PERMISSION_GRANTED: ");
+
+                            ToastUtils.show(getApplicationContext(), getString(R.string.unpermission) + strings[1]);
                             return;
                         } else {
                             if (i == 1) {
                                 checkUsageTime();
+
+                                LogUtils.printErrorLog("onRequestPermissionsResult", "checkUsageTime: ");
                             }
                         }
                     }
                     //拥有权限执行操作
                 } else {
-                    ToastUtils.show(getApplicationContext(), "未拥有相应权限: ");
+                    LogUtils.printErrorLog("onRequestPermissionsResult", "未拥有相应权限: ");
+                    ToastUtils.show(getApplicationContext(), getString(R.string.unpermission));
                 }
         }
     }

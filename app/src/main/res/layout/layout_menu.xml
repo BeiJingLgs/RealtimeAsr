@@ -37,12 +37,10 @@
         android:text="@string/recog" />
 
     <View
-        style="@style/view_line"
-        android:visibility="gone"/>
+        style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_mail"
         style="@style/menu_item"
-        android:visibility="gone"
         android:text="@string/mail" />
 
 </LinearLayout>

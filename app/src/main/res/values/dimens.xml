@@ -144,4 +144,11 @@
     <dimen name="PaddingXXL">3dp</dimen>
     <dimen name="navigate_menu_width">467dp</dimen>
     <dimen name="buttonW">150dp</dimen>
+
+    <dimen name="volbar_width">11.3dp</dimen>
+    <dimen name="volbar_height">31.5dp</dimen>
+    <dimen name="volbar_space">5.6dp</dimen>
+
+    <dimen name="h_player_vol">39.4dp</dimen>
+    <dimen name="w_player_vol">338dp</dimen>
 </resources>

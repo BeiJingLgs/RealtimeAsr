@@ -1,5 +1,6 @@
 package com.hanvon.speech.realtime.util;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -130,5 +131,7 @@ public class MediaPlayerManager {
         }
         else return 0;
     }
+
+
 
 }
