@@ -13,7 +13,7 @@
     <string name="iat_stop">暫停播放</string>
     <!-- 提示安装语音+对话框 -->
 
-   <string name="no_trans">還沒有創建文件哦</string>
+    <string name="no_trans">還沒有創建文件哦</string>
     <string name="cancel">取消</string>
     <string name="get_again">再次獲取</string>
     <string name="register">註&#160;&#160;冊</string>
@@ -121,4 +121,17 @@
     <string name="recog_txt">錄音記事識別文本.txt</string>
     <string name="tryagain">服務器出錯了，請退出重試</string>
     <string name="noEditText">当前没有编辑内容</string>
+    <string name="close">關閉</string>
+    <string name="gift_package">贈送包</string>
+    <string name="shop_package">購買包</string>
+    <string name="used">已使用：&#160;&#160;</string>
+    <string name="notime">當前已經沒有可用時長</string>
+    <string name="mail">郵箱</string>
+    <string name="last_page">已經是最後壹頁了</string>
+    <string name="first_page">已經是第壹頁了</string>
+    <string name="destroy_file">文件損壞，無法打開</string>
+
+    <string name="unpermission">未擁有相應權限</string>
+
+    <string name="unmailsetting">郵件客戶端未進行配置，請先進行配置</string>
 </resources>

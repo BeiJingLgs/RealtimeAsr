@@ -123,5 +123,17 @@
     <string name="recog_txt">录音记事识别文本.txt</string>
     <string name="tryagain">服务器出错了，请退出重试</string>
     <string name="noEditText">当前没有编辑内容</string>
+    <string name="close">关闭</string>
     <string name="notime">当前已经没有可用时长</string>
+    <string name="gift_package">赠送包</string>
+    <string name="shop_package">购买包</string>
+    <string name="used">已使用：&#160;&#160;</string>
+    <string name="mail">邮箱</string>
+    <string name="last_page">已经是最后一页了</string>
+    <string name="first_page">已经是第一页了</string>
+    <string name="destroy_file">文件损坏，无法打开</string>
+
+    <string name="unpermission">未拥有相应权限</string>
+
+    <string name="unmailsetting">邮件客户端未进行配置，请先进行配置</string>
 </resources>

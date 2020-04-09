@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">录音记事</string>
+    <string name="app_name">语音记录</string>
 
 
     <!-- 听写 -->
@@ -122,18 +122,16 @@
     <string name="save_to_local">Save to local</string>
     <string name="recog_txt">Recognition.txt</string>
     <string name="tryagain">Server error, please exit and try again</string>
-    <string name="close">关闭</string>
-    <string name="noEditText">当前没有编辑内容</string>
-    <string name="gift_package">赠送包</string>
-    <string name="shop_package">购买包</string>
-    <string name="used">已使用：&#160;&#160;</string>
-    <string name="notime">当前已经没有可用时长</string>
-    <string name="mail">邮箱</string>
-    <string name="last_page">已经是最后一页了</string>
-    <string name="first_page">已经是第一页了</string>
-    <string name="destroy_file">文件损坏，无法打开</string>
-
-    <string name="unpermission">未拥有相应权限</string>
-
-    <string name="unmailsetting">邮件客户端未进行配置，请先进行配置</string>
+    <string name="close">Close</string>
+    <string name="noEditText">There are currently no edits</string>
+    <string name="gift_package">Gift package</string>
+    <string name="shop_package">Purchase package</string>
+    <string name="used">Used&#160;&#160;</string>
+    <string name="notime">There is no available time</string>
+    <string name="mail">Mail</string>
+    <string name="last_page">It is the last page</string>
+    <string name="first_page">It is the first page</string>
+    <string name="destroy_file">File is corrupt and cannot be opened</string>
+    <string name="unpermission">No corresponding permission</string>
+    <string name="unmailsetting">Mail client is not configured, please configure first</string>
 </resources>

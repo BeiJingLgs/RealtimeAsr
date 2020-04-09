@@ -1014,8 +1014,8 @@ public class IatActivity extends BaseActivity {
 
     private void sendToMail(String url){
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "录音记事邮件分享");
-        intent.putExtra(Intent.EXTRA_TEXT, "敬启者,\n下面是语音记事文本内容：\n" + mFileBean.getContent()
+        intent.putExtra(Intent.EXTRA_SUBJECT, "语音记录邮件分享");
+        intent.putExtra(Intent.EXTRA_TEXT, "敬启者,\n下面是语音记录文本内容：\n" + mFileBean.getContent()
                 + " \n\n请打开下面链接查看附件内容：\n" + url);
         intent.setType("application/octet-stream");
         if (intent.resolveActivity(getPackageManager()) != null) {
