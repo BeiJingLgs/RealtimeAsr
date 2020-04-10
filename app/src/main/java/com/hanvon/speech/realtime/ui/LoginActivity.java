@@ -175,7 +175,7 @@ public class LoginActivity extends BaseActivity {
                                 }
                             });
                 } else {
-                    if (TextUtils.isEmpty(user_phone.getText().toString())) {
+                    if (TextUtils.isEmpty(mUserPhoneEd.getText().toString())) {
                         ToastUtils.show(this, getString(R.string.noPhone2));
                         return;
                     }

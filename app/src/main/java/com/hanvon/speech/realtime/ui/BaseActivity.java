@@ -46,6 +46,12 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
             //拥有权限执行操作
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     public boolean lacksPermission() {
         for (String permission : permissions) {
             //判断是否缺少权限，true=缺少权限

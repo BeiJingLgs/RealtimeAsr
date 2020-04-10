@@ -78,8 +78,11 @@ import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.CommonDialog;
 import com.hanvon.speech.realtime.view.HVTextView;
 import com.hanvon.speech.realtime.view.HandWriteNoteView;
+import com.hanvon.speech.realtime.view.MyRuber;
 import com.hanvon.speech.realtime.view.UpLoadDialog;
 import com.hanvon.speech.realtime.view.VolumeBar;
+import com.xrz.Pencil;
+import com.xrz.Rubber;
 import com.xrz.SimplePen;
 
 
@@ -186,6 +189,7 @@ public class IatActivity extends BaseActivity {
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
+        mRecogResultTv.getPaint().setAntiAlias(true);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
@@ -234,6 +238,8 @@ public class IatActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        LogUtils.printErrorLog(TAG, "===onStop");
         mIntentDrop = new Intent();
         mIntentDrop.setAction("hanvon.intent.action.disabledropdown");
         mIntentDrop.putExtra("hanvon_disabledropdown", 0);
@@ -253,6 +259,7 @@ public class IatActivity extends BaseActivity {
         mBtFilter.addAction(ConstBroadStr.SHOW_BACKLOGO);//ConstBroadStr.UPDATERECOG
         mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
         mBtFilter.addAction(ConstBroadStr.ACTION_HOME_PAGE);
+        mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);
         registerReceiver(recordReceiver, mBtFilter);
 
         mIntentDrop = new Intent();
@@ -262,7 +269,6 @@ public class IatActivity extends BaseActivity {
         sendBroadcast(mIntentDrop);
     }
     private void init() {
-        //Settings.System.putInt(getContentResolver(), "hanvon_isFullScreenAvtivity", 1);
         TAG = getLocalClassName();
         mAudioManager = (AudioManager) HvApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
         mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);;
@@ -278,6 +284,7 @@ public class IatActivity extends BaseActivity {
         if (mDuration == 0) {
             mVolumLayout.setVisibility(View.GONE);
             mSeekBar.setVisibility(View.GONE);
+            mTimeTv.setVisibility(View.INVISIBLE);
         } else {
             mSeekBar.setMax(mDuration);
         }
@@ -327,6 +334,7 @@ public class IatActivity extends BaseActivity {
         IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
         }.getType()));
         mRecogResultTv.setText(mFileBean.getContent());
+
         mRecogResultTv.getPageCount();
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -360,6 +368,8 @@ public class IatActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
+
+                LogUtils.printErrorLog(TAG, "===SHOW_BACKLOGO");
                 stopPlayRecord();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh()) {
@@ -367,6 +377,9 @@ public class IatActivity extends BaseActivity {
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
+                LogUtils.printErrorLog(TAG, "HIDE_BACKLOGO");
+                //updateNoteCurPage();
             }
         }
     }
@@ -398,11 +411,10 @@ public class IatActivity extends BaseActivity {
                             return;
                         LogUtils.printErrorLog(TAG, "mNoteView.canBeFresh(): " + mNoteView.canBeFresh());
                         if (mNoteView.canBeFresh()) {//(100 * mSeekBar.getProgress()) / mDuration + "%"
-                           // mTimeTv.setText(getResources().getString(R.string.progress) + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
                             mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
                             if (MediaPlayerManager.getInstance().getCurrentPosition() == 0) {
                                 mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
-                            } else {//mFileBean.setTime();
+                            } else {
                                 mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
                             }
                         }
@@ -416,13 +428,20 @@ public class IatActivity extends BaseActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mAudioOffset = seekBar.getProgress();
-            logger.info("===onStopTrackingTouch seekBar.mAudioOffset(): " + mAudioOffset);
+            mUsagePlayTime = (mFileBean.getTime() * seekBar.getProgress()) / mFileBean.getDuration();
+            mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+
+            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch seekBar.mAudioOffset(): " + mAudioOffset);
+            LogUtils.printErrorLog(TAG, "===seekBar.getProgress()(): " + seekBar.getProgress());
+            LogUtils.printErrorLog(TAG, "===mFileBean.getTime()(): " + mFileBean.getTime());
+            LogUtils.printErrorLog(TAG, "===mFileBean.getDuration()(): " + mFileBean.getDuration());
+            LogUtils.printErrorLog(TAG, "===seekBar.getProgress()(): " + (mFileBean.getTime() * seekBar.getProgress() / mFileBean.getDuration()));
             isSeekbarChaning = false;
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-            logger.info("===onStartTrackingTouch: ");
+            LogUtils.printErrorLog(TAG, "===onStartTrackingTouch: ");
             stopPlayRecord();
             isSeekbarChaning = true;
             mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
@@ -430,17 +449,14 @@ public class IatActivity extends BaseActivity {
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            logger.info("===onProgressChanged: " + seekBar.getProgress());
+            LogUtils.printErrorLog(TAG, "===onProgressChanged: " + seekBar.getProgress());
             if (mNoteView.canBeFresh()) {
                 if (mDuration == 0)
                     return;
                 if (seekBar.getProgress() == 0) {
                     mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
                     LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
-                } else {
-                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
                 }
-                //mTimeTv.setText(getResources().getString(R.string.progress) + (100 * seekBar.getProgress()) / mDuration + "%");
             }
         }
     };
@@ -698,7 +714,6 @@ public class IatActivity extends BaseActivity {
         if (mTimer != null)
             mTimer.cancel();
         mUsagePlayTime = 0;
-        Log.e("playRecord", "stopPlayRecord: " );
         mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         MediaPlayerManager.getInstance().stop();
@@ -707,6 +722,7 @@ public class IatActivity extends BaseActivity {
     private void playRecord() {
         mVolumLayout.setVisibility(View.VISIBLE);
         mSeekBar.setVisibility(View.VISIBLE);
+        mTimeTv.setVisibility(View.VISIBLE);
         if (!MediaPlayerManager.getInstance().isPlaying()) {
             mAudioOffset = mSeekBar.getProgress();
             Log.e("playRecord", "mAudioOffset: " + mAudioOffset);
@@ -734,7 +750,14 @@ public class IatActivity extends BaseActivity {
                 public void run() {
                     if (!isSeekbarChaning) {
                         if (mNoteView.canBeFresh()) {
-                            mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                }
+                            });
+
                         }
                     }
                 }
@@ -806,7 +829,7 @@ public class IatActivity extends BaseActivity {
         mFileBean.setTime(mFileBean.getTime() + tempTime);
         mTimeTv.setText(TimeUtil.calculateTime(((int)(mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
         mSeekBar.setVisibility(View.VISIBLE);
-
+        mTimeTv.setVisibility(View.VISIBLE);
         Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
         DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
 
@@ -924,9 +947,16 @@ public class IatActivity extends BaseActivity {
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 if (mNoteView.penType == mNoteView.TP_PEN) {
+
                     mNoteView.penType = mNoteView.TP_ERASER;
+
+                    MyRuber rubber = new MyRuber();
+                    mNoteView.setPen(rubber);
                 } else {
+
                     mNoteView.penType = mNoteView.TP_PEN;
+                    Pencil pencil = new Pencil();
+                    mNoteView.setPen(pencil);
                 }
 
             }
@@ -945,7 +975,7 @@ public class IatActivity extends BaseActivity {
         menuItem5.setOnClickListener(view1 -> {
             if (popupWindow != null) {
                 popupWindow.dismiss();
-
+                index = 4;
                 RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
                 recognmizeImageAyncTask.execute();
 
@@ -1304,6 +1334,11 @@ public class IatActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
+    }
 
     /**
      * 保存当前页的笔迹信息

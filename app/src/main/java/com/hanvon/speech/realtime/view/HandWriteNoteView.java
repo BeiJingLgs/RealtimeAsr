@@ -8,10 +8,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.Surface;
 
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.Record;
@@ -21,6 +24,8 @@ import com.hanvon.speech.realtime.util.LogUtils;
 import com.xrz.FlushInfo;
 import com.xrz.NoteView;
 import com.xrz.PenPoint;
+import com.xrz.Pencil;
+import com.xrz.Rubber;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,6 +44,7 @@ public class HandWriteNoteView extends NoteView {
     private Context mContext;
     private PenPoint lastPoint = new PenPoint();
     private PenPoint prevPoint = new PenPoint(); // 接收到的前一个点。
+    private PenPoint downPoint = new PenPoint(); //
     private Paint paint = new Paint();
     private int mStrokeWidth = 5;
     private int penColor = Color.BLACK;
@@ -82,6 +88,7 @@ public class HandWriteNoteView extends NoteView {
     @Override
     public void onCreated() {
         init();
+        updateForeground(getWidth(), getHeight());
         super.onCreated();
     }
 
@@ -103,7 +110,9 @@ public class HandWriteNoteView extends NoteView {
         paint.setAntiAlias(true);
         paint.setDither(true);
     }
-
+    public void setPenType (int type) {
+        penType = type;
+    }
     /**
      *
      * @param canvases canvases need to draw
@@ -114,7 +123,7 @@ public class HandWriteNoteView extends NoteView {
      */
     @Override
     public FlushInfo onDraw(Canvas[] canvases, LinkedList<PenPoint> points) {
-        Rect dirtyRect = new Rect();
+        Rect dirtyRect = null;
         Path path = new Path();
         int border = mStrokeWidth;
         canBeFresh = false;
@@ -127,28 +136,47 @@ public class HandWriteNoteView extends NoteView {
             if (p.getToolType() == 2)
                 continue;
 
-            if(p.isOutside()){
-                canBeFresh = true;
+            if (p.getEventType() == NoteView.ACTION_LEAVE || p.getEventType() == NoteView.ACTION_NEAR){
                 continue;
             }
 
-            if (p.getToolType() == 1 && penType == TP_PEN) {
-                // 橡皮头的范围
-                m_penErase = true;
-                penType = TP_ERASER; // 临时改，up的时候再改回去
+            if(p.isOutside()){
+                canBeFresh = true;
+//                continue;
             }
+
+//            if (p.getToolType() == 1 && penType == TP_PEN) {
+//                // 橡皮头的范围
+//                m_penErase = true;
+//                penType = TP_ERASER; // 临时改，up的时候再改回去
+//            }
 
             int x = p.getX();
             int y = p.getY();
+
+            if (p.getToolType() == 1 && penType != TP_ERASER){
+                Rubber rubber = new Rubber();
+                setPen(rubber);
+                setPenType(TP_ERASER);
+            }
+
+            if (lastPoint.getX() != 0 || lastPoint.getY() != 0) {
+                if (dirtyRect == null)
+                    dirtyRect = new Rect();
+                dirtyRect.union(
+                        Math.min(lastPoint.getX(), x) - border,
+                        Math.min(lastPoint.getY(), y) - border,
+                        Math.max(lastPoint.getX(), x) + border,
+                        Math.max(lastPoint.getY(), y) + border);
+            }
             switch (p.getEventType()) {
                 case NoteView.ACTION_DOWN:
                     bUp = false;
                     path.moveTo(x, y);
-                    lastPoint = p;
                     bPenDown = true;
                     lastPoint = p;
-
-                    if(penType == TP_PEN && p.getToolType() == 0 && !p.isOutside()) {
+                    downPoint = p;
+                    if(penType == TP_PEN && p.getToolType() == 0) {
                         if (mCurTrace != null) {
                             mCurTrace.clear();
                         }else{
@@ -176,8 +204,8 @@ public class HandWriteNoteView extends NoteView {
                     if (!bPenDown){
                         path.moveTo(x, y);
                         lastPoint = p;
-
-                        if(penType == TP_PEN && p.getToolType() == 0 && !p.isOutside()) {
+                        downPoint = p;
+                        if(penType == TP_PEN && p.getToolType() == 0) {
                             if (mCurTrace != null) {
                                 mCurTrace.clear();
                             }else{
@@ -191,7 +219,7 @@ public class HandWriteNoteView extends NoteView {
                     }
                     lastPoint = p;
 
-                    if(mCurTrace != null && penType == TP_PEN && p.getToolType() == 0 && !p.isOutside()) {
+                    if(mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pmove = new Point(p.getX(), p.getY());
                         mCurTrace.addPoint(pmove);
                     }
@@ -204,7 +232,7 @@ public class HandWriteNoteView extends NoteView {
                         bPenDown = false;
                     }
                     lastPoint = p;
-                    if(mCurTrace != null && penType == TP_PEN && p.getToolType() == 0 && !p.isOutside()){
+                    if(mCurTrace != null && penType == TP_PEN && p.getToolType() == 0){
                         Point pup = new Point(p.getX(), p.getY());
                         mCurTrace.addPoint(pup);
                         mTracePage.add(mCurTrace);
@@ -222,15 +250,22 @@ public class HandWriteNoteView extends NoteView {
                     throw new IllegalStateException("Unexpected value: " + p.getEventType());
             }
 
-            dirtyRect.union(
-                    Math.min(lastPoint.getX(), x) - border,
-                    Math.min(lastPoint.getY(), y) - border,
-                    Math.max(lastPoint.getX(), x) + border,
-                    Math.max(lastPoint.getY(), y) + border);
+           /* if(penType == TP_PEN && downPoint.getToolType() == 0){
+//                    drawMode == NoteView.DRAW_PEN_MODE && p.getToolType() == 0) {
+                savePoints(p.getX(), p.getY(), pslEvent);
+            }*/
+
+            // 笔末端橡皮擦，抬笔时切换为笔状态
+            if (p.getEventType() == NoteView.ACTION_UP && p.getToolType() == 1){
+                Pencil pencil = new Pencil();
+                setPen(pencil);
+                setPenType(TP_PEN);
+            }
         }
 
         try {
-            if( penType == TP_PEN  && lastPoint.getToolType() != 1) {
+            if( penType == TP_PEN  && downPoint.getToolType() != 1) {
+                LogUtils.printErrorLog(TAG, "canvases: ");
                 for (Canvas canvas : canvases) {
                     canvas.drawPath(path, paint);
                 }
@@ -238,25 +273,43 @@ public class HandWriteNoteView extends NoteView {
             }else{
                 // 橡皮,线条擦除
                 if (prevPoint.isValid()){
-                   boolean bErase = eraseTrace(prevPoint.getX(),prevPoint.getY(),
+                    RectF rect = eraseTrace(prevPoint.getX(),prevPoint.getY(),
                             lastPoint.getX(), lastPoint.getY());
 
-                    if (bErase){
-                        // 重新加载psl批注层
-                        updateForeground(this.getHeight(),this.getWidth());
+                    if (rect!= null && rect.height() > 0 && rect.width() > 0){
+
+                        canvases[0].drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                        drawPostil(canvases[0]);
+
+                        Rect rt = new Rect((int)rect.left-border, (int)rect.top - border,
+                                (int)rect.right + border, (int)rect.bottom + border);
+
+                        dirtyRect.set(Math.min(rt.left, rt.right), Math.min(rt.top, rt.bottom),
+                                Math.max(rt.left, rt.right), Math.max(rt.top, rt.bottom));
                     }
+                    else{
+                        dirtyRect = null;
+                    }
+
+                } else {
+                    dirtyRect = null;
                 }
 
                 if (bPenDown)
                     prevPoint = lastPoint;
                 else {
                     prevPoint.reset();
+                    if (lastPoint != null && lastPoint.getToolType() == 1 && dirtyRect != null) {
+                        LogUtils.printErrorLog(TAG, "updateForeground: ");
+                        updateForeground(this.getHeight(),this.getWidth());
+                    }
+
                 }
 
-                if(bUp && m_penErase){
-                    penType = m_oldstrokeType;
-                    m_penErase = false;
-                }
+//                if(bUp && m_penErase){
+//                    penType = m_oldstrokeType;
+//                    m_penErase = false;
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -283,7 +336,6 @@ public class HandWriteNoteView extends NoteView {
             };
             timer.schedule(timerTask, 2000);//延时2s
         }
-
         return new FlushInfo(dirtyRect);
     }
 
@@ -291,11 +343,94 @@ public class HandWriteNoteView extends NoteView {
     public void setHandler(Handler mhandler) {
         this.handler = mhandler;
     }
+    /*
+       绘制批注内容到canvas中
+        */
+    public void drawPostil(Canvas canvas){
+        Path path;
+        int nTracecount = mTracePage.size();
+        for (int i = 0; i < nTracecount; i++) {
+            Trace trace = mTracePage.get(i);
+            if (trace == null || trace.getCount() == 0)
+                continue;
 
-    private boolean eraseTrace(int pt1x, int pt1y, int pt2x, int pt2y){
+            path = new Path();
+            path.moveTo(trace.getAt(0).x, trace.getAt(0).y);
+
+            for (int j = 0; j < trace.getCount(); j++) {
+                path.lineTo(trace.getAt(j).x, trace.getAt(j).y);
+
+            }
+            canvas.drawPath(path, paint);
+        }
+
+    }
+
+    private int getDegree(int surfaceRotate){
+        switch (surfaceRotate) {
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
+        }
+        return 0;
+    }
+
+    private int screenRotate = Surface.ROTATION_0;
+    private int noteviewRotate = Surface.ROTATION_90;
+    private Rect rotateRect(Rect rect){
+        int screenDegree = getDegree(screenRotate);
+        int writeOriDegree = getDegree(noteviewRotate);
+
+        if ((screenDegree -writeOriDegree) == 0){
+            return rect;
+        }
+        else if ((screenDegree - writeOriDegree) == -90 || (screenDegree - writeOriDegree) == 270){
+            return new Rect(rect.top, getWidth() - rect.right, rect.bottom, getWidth() - rect.left);
+        }
+        else if ((screenDegree - writeOriDegree) == 90 || (screenDegree - writeOriDegree) == -270){
+            return new Rect(getHeight() - rect.bottom, rect.left, getHeight() - rect.top, rect.right);
+        }
+        else if ((screenDegree - writeOriDegree) == 180 || (screenDegree - writeOriDegree) == -180){
+            return new Rect(getWidth() - rect.right, getHeight() - rect.bottom,
+                    getWidth() - rect.left, getHeight() - rect.top);
+        }
+        return rect;
+    }
+
+    private void rotateCanvasToClient(Canvas canvas){
+        int screenDegree = getDegree(screenRotate);
+//        int writeOriDegree = getDegree(noteviewRotate);
+//        canvas.rotate(screenDegree - writeOriDegree, getWidth()/2, getHeight()/2);
+        if (screenDegree == 0){
+            canvas.rotate(-90);
+            canvas.translate(-getWidth(), 0);
+        }
+        else if (screenDegree == 270){
+            canvas.rotate(180, getWidth()/2, getHeight()/2);
+        }
+    }
+
+    private void rotateCanvasToWrite(Canvas canvas){
+        int screenDegree = getDegree(screenRotate);
+//        int writeOriDegree = getDegree(noteviewRotate);
+//        canvas.rotate(writeOriDegree - screenDegree, getWidth()/2, getHeight()/2);
+        if (screenDegree == 0){
+            canvas.translate(getWidth(), 0);
+            canvas.rotate(90);
+        }
+        else if (screenDegree == 270){
+            canvas.rotate(180, getWidth()/2, getHeight()/2);
+        }
+    }
+    private RectF eraseTrace(int pt1x, int pt1y, int pt2x, int pt2y){
 
         if(pt1x == pt2x && pt1y == pt2y){
-            return false;
+            return null;
         }
 
         boolean berase = false;
@@ -347,19 +482,24 @@ public class HandWriteNoteView extends NoteView {
             curQuad[3] = new Point(Math.max((x1 - 5),0), Math.min((y1 + 5),getWidth()));
         }
 
+        RectF rtDirty = new RectF();
+        RectF rtBorder;
         // 判断四边形和笔迹相交
         intersect = Trace.getIntersect2(mTracePage, curQuad);
         if (intersect != null && intersect.size() > 0) {
             // 删除相交的笔迹
             for (int i = intersect.size() - 1; i >= 0; i--) {
+                rtBorder = new RectF();
                 int delIdx = intersect.get(i);
                 if (delIdx < mTracePage.size()) {
+                    rtBorder = mTracePage.get(delIdx).getBorderRectF();
+                    rtDirty.union(rtBorder);
                     mTracePage.remove(delIdx);
                     berase = true;
                 }
             }
         }
-        return berase;
+        return rtDirty;
     }
 
     //Bitmap m_foreBitmap;
@@ -388,9 +528,7 @@ public class HandWriteNoteView extends NoteView {
 
             }
             canvas.drawPath(path, paint);
-            //MemoOperateJni.getImageInfo(m_pixels, m_height, m_width, curPicPath);
         }
-       // m_foreBitmap = Bitmap.createBitmap(bmp);
         setForeground(bmp);
     }
 

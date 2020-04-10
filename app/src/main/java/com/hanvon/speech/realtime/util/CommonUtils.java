@@ -255,7 +255,9 @@ public class CommonUtils {
 			try {
 				fwriter.flush();
 				fwriter.close();
-				ToastUtils.show( getApplicationContext(), getApplicationContext().getString(R.string.saveTo) + filePath);
+                filePath = filePath.substring(20, filePath.length());
+				String path = getApplicationContext().getString(R.string.saveTo) + filePath;
+				ToastUtils.show( getApplicationContext(), path);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

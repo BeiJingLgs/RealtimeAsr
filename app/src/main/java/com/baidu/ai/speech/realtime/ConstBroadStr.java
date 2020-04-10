@@ -49,4 +49,5 @@ public class ConstBroadStr {
     public static final String SHOW_BACKLOGO = "android.intent.action.SHOW_BACKLOGO";
     public static final String UPDATERECOG = "com.hanvon.realtime.UPDATERECOG";
     public static final String ACTION_HOME_PAGE = "intent.hanvon.homepage";
+    public static final String HIDE_BACKLOGO = "android.intent.action.HIDE_BACKLOGO";
 }

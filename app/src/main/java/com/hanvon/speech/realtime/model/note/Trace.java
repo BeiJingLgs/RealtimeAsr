@@ -2,6 +2,7 @@ package com.hanvon.speech.realtime.model.note;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -282,6 +283,29 @@ public class Trace {
 		Point pt = points.get(0);
 
 		Rect rt = new Rect(pt.x, pt.y, pt.x, pt.y);
+
+		for (int i = 1; i < points.size(); i++) {
+			rt.left = Math.min(rt.left, points.get(i).x);
+			rt.top = Math.min(rt.top, points.get(i).y);
+			rt.right = Math.max(rt.right, points.get(i).x);
+			rt.bottom = Math.max(rt.bottom, points.get(i).y);
+		}
+		return rt;
+	}
+
+	/**
+	 * 获取笔迹的外接矩形
+	 *
+	 * @return 外接矩形
+	 */
+	public RectF getBorderRectF() {
+		// TODO Auto-generated method stub
+		if (points == null || points.size() == 0) {
+			return null;
+		}
+		Point pt = points.get(0);
+
+		RectF rt = new RectF(pt.x, pt.y, pt.x, pt.y);
 
 		for (int i = 1; i < points.size(); i++) {
 			rt.left = Math.min(rt.left, points.get(i).x);

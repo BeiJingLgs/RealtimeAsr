@@ -88,9 +88,9 @@
     <string name="recognizing">录制中</string>
     <string name="version_update">检查升级</string>
     <string name="version_latest">当前已是最新版本</string>
-    <string name="check_version_updata1">检测到语音记事新版本V</string>
+    <string name="check_version_updata1">检测到语音记录新版本V</string>
     <string name="check_version_updata2">，确认是否更新</string>
-    <string name="downing_apk">录音记事正在下载</string>
+    <string name="downing_apk">语音记录正在下载</string>
     <string name="downapk_fail">下载失败</string>
     <string name="net_work_try_again_toast">再试一次</string>
     <string name="dialog_hint">版本更新</string>
@@ -118,7 +118,7 @@
     <string name="processing">正在识别处理，请稍候……</string>
     <string name="recog_picpath">/我的文档/在线识别/录音记事在线识别/</string>
     <string name="recog">识&#160;&#160;别</string>
-    <string name="saveTo">保存到</string>
+    <string name="saveTo">保存到:</string>
     <string name="save_to_local">保存到本地</string>
     <string name="recog_txt">录音记事识别文本.txt</string>
     <string name="tryagain">服务器出错了，请退出重试</string>
@@ -128,7 +128,7 @@
     <string name="gift_package">赠送包</string>
     <string name="shop_package">购买包</string>
     <string name="used">已使用：&#160;&#160;</string>
-    <string name="mail">邮箱</string>
+    <string name="mail">发邮件</string>
     <string name="last_page">已经是最后一页了</string>
     <string name="first_page">已经是第一页了</string>
     <string name="destroy_file">文件损坏，无法打开</string>

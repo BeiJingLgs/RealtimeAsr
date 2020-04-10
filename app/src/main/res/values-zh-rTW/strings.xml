@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">錄音記事</string>
+    <string name="app_name">錄音記录</string>
     <!-- 听写 -->
     <string name="text_record">錄音</string>
     <string name="text_begin">開始錄制</string>
