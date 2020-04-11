@@ -410,12 +410,16 @@ public class IatActivity extends BaseActivity {
                         if (mDuration == 0)
                             return;
                         LogUtils.printErrorLog(TAG, "mNoteView.canBeFresh(): " + mNoteView.canBeFresh());
+                        LogUtils.printErrorLog(TAG, "MediaPlayerManager.getInstance().getCurrentPosition(): " + MediaPlayerManager.getInstance().getCurrentPosition());
                         if (mNoteView.canBeFresh()) {//(100 * mSeekBar.getProgress()) / mDuration + "%"
-                            mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
-                            if (MediaPlayerManager.getInstance().getCurrentPosition() == 0) {
-                                mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
-                            } else {
-                                mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+
+                            if (MediaPlayerManager.getInstance().isPlaying()) {
+                                mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
+                                if (MediaPlayerManager.getInstance().getCurrentPosition() == 0) {
+                                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                } else {
+                                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                }
                             }
                         }
                     }
@@ -428,14 +432,14 @@ public class IatActivity extends BaseActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mAudioOffset = seekBar.getProgress();
+            //MediaPlayerManager.getInstance().seekTo(mAudioOffset);
+            if ( mFileBean.getDuration() == 0)
+                return;
             mUsagePlayTime = (mFileBean.getTime() * seekBar.getProgress()) / mFileBean.getDuration();
             mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
 
-            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch seekBar.mAudioOffset(): " + mAudioOffset);
-            LogUtils.printErrorLog(TAG, "===seekBar.getProgress()(): " + seekBar.getProgress());
-            LogUtils.printErrorLog(TAG, "===mFileBean.getTime()(): " + mFileBean.getTime());
-            LogUtils.printErrorLog(TAG, "===mFileBean.getDuration()(): " + mFileBean.getDuration());
-            LogUtils.printErrorLog(TAG, "===seekBar.getProgress()(): " + (mFileBean.getTime() * seekBar.getProgress() / mFileBean.getDuration()));
+            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch (): " );
+            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch mUsagePlayTime(): " + mUsagePlayTime);
             isSeekbarChaning = false;
         }
 
@@ -455,7 +459,8 @@ public class IatActivity extends BaseActivity {
                     return;
                 if (seekBar.getProgress() == 0) {
                     mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
-                    LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
+                    //LogUtils.printErrorLog(TAG, "seekBar.getProgress(): ");
+                    //LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
                 }
             }
         }
@@ -647,6 +652,7 @@ public class IatActivity extends BaseActivity {
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
+
                     mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
                     playRecord();
@@ -828,8 +834,10 @@ public class IatActivity extends BaseActivity {
         Log.e("startRecognize", "tempTime(): " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
         mTimeTv.setText(TimeUtil.calculateTime(((int)(mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
-        mSeekBar.setVisibility(View.VISIBLE);
-        mTimeTv.setVisibility(View.VISIBLE);
+        if ((int)(mUsagePlayTime) / 1000 > 0) {
+            mSeekBar.setVisibility(View.VISIBLE);
+            mTimeTv.setVisibility(View.VISIBLE);
+        }
         Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
         DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
 

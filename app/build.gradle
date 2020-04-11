@@ -8,8 +8,8 @@ android {
         applicationId "com.baidu.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 15
-        versionName "1.15"
+        versionCode 16
+        versionName "1.16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 

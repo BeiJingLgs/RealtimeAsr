@@ -88,7 +88,7 @@ public class HandWriteNoteView extends NoteView {
     @Override
     public void onCreated() {
         init();
-        updateForeground(getWidth(), getHeight());
+        updateForeground(getHeight(), getWidth());
         super.onCreated();
     }
 
@@ -142,7 +142,7 @@ public class HandWriteNoteView extends NoteView {
 
             if(p.isOutside()){
                 canBeFresh = true;
-//                continue;
+                //continue;
             }
 
 //            if (p.getToolType() == 1 && penType == TP_PEN) {
@@ -306,10 +306,6 @@ public class HandWriteNoteView extends NoteView {
 
                 }
 
-//                if(bUp && m_penErase){
-//                    penType = m_oldstrokeType;
-//                    m_penErase = false;
-//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -328,10 +324,12 @@ public class HandWriteNoteView extends NoteView {
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    Message message = new Message();
-                    message.what = 1;
-                    handler.sendMessage(message);
-                    canBeFresh = true;
+                    if (!lastPoint.isOutside()) {
+                        Message message = new Message();
+                        message.what = 1;
+                        handler.sendMessage(message);
+                        canBeFresh = true;
+                    }
                 }
             };
             timer.schedule(timerTask, 2000);//延时2s
@@ -366,67 +364,7 @@ public class HandWriteNoteView extends NoteView {
 
     }
 
-    private int getDegree(int surfaceRotate){
-        switch (surfaceRotate) {
-            case Surface.ROTATION_0:
-                return 0;
-            case Surface.ROTATION_90:
-                return 90;
-            case Surface.ROTATION_180:
-                return 180;
-            case Surface.ROTATION_270:
-                return 270;
-        }
-        return 0;
-    }
 
-    private int screenRotate = Surface.ROTATION_0;
-    private int noteviewRotate = Surface.ROTATION_90;
-    private Rect rotateRect(Rect rect){
-        int screenDegree = getDegree(screenRotate);
-        int writeOriDegree = getDegree(noteviewRotate);
-
-        if ((screenDegree -writeOriDegree) == 0){
-            return rect;
-        }
-        else if ((screenDegree - writeOriDegree) == -90 || (screenDegree - writeOriDegree) == 270){
-            return new Rect(rect.top, getWidth() - rect.right, rect.bottom, getWidth() - rect.left);
-        }
-        else if ((screenDegree - writeOriDegree) == 90 || (screenDegree - writeOriDegree) == -270){
-            return new Rect(getHeight() - rect.bottom, rect.left, getHeight() - rect.top, rect.right);
-        }
-        else if ((screenDegree - writeOriDegree) == 180 || (screenDegree - writeOriDegree) == -180){
-            return new Rect(getWidth() - rect.right, getHeight() - rect.bottom,
-                    getWidth() - rect.left, getHeight() - rect.top);
-        }
-        return rect;
-    }
-
-    private void rotateCanvasToClient(Canvas canvas){
-        int screenDegree = getDegree(screenRotate);
-//        int writeOriDegree = getDegree(noteviewRotate);
-//        canvas.rotate(screenDegree - writeOriDegree, getWidth()/2, getHeight()/2);
-        if (screenDegree == 0){
-            canvas.rotate(-90);
-            canvas.translate(-getWidth(), 0);
-        }
-        else if (screenDegree == 270){
-            canvas.rotate(180, getWidth()/2, getHeight()/2);
-        }
-    }
-
-    private void rotateCanvasToWrite(Canvas canvas){
-        int screenDegree = getDegree(screenRotate);
-//        int writeOriDegree = getDegree(noteviewRotate);
-//        canvas.rotate(writeOriDegree - screenDegree, getWidth()/2, getHeight()/2);
-        if (screenDegree == 0){
-            canvas.translate(getWidth(), 0);
-            canvas.rotate(90);
-        }
-        else if (screenDegree == 270){
-            canvas.rotate(180, getWidth()/2, getHeight()/2);
-        }
-    }
     private RectF eraseTrace(int pt1x, int pt1y, int pt2x, int pt2y){
 
         if(pt1x == pt2x && pt1y == pt2y){
@@ -576,23 +514,6 @@ public class HandWriteNoteView extends NoteView {
         }
     }
 
-    public void saveBitmap(String name,Bitmap bitmap) {
-        FileOutputStream out = null;
-        try {
-            out = mContext.openFileOutput(name, Context.MODE_PRIVATE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 保存当前画布的所有信息到图像
