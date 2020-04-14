@@ -23,6 +23,8 @@ public class SharedPreferencesUtils {
 	public static final String SESSION = "session";
 	public static final String TOKEN = "token";
 	public static final String LOGIN = "login";
+
+	public static final String USAGETIME = "usage_time";
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
      * @param context
@@ -37,10 +39,24 @@ public class SharedPreferencesUtils {
         editor.commit();
     }
 
+	public static void saveUsageTimeSharePrefer(Context context , String key, long object){
+
+		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putLong(key, object);
+		editor.commit();
+	}
+
+	public static long getUsageTimeSharedprefer(Context context , String key){
+		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+		return sp.getLong(key,  0);
+
+	}
+
 
     /**
      * 得到保存数据的方法，我们根据默认值得到保存的数据的具体类型，然后调用相对于的方法获取值
-     * @param context
+     * @param context editor.putLong("height", 175L);
      * @param key
      * @param defaultObject
      * @return

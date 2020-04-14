@@ -72,6 +72,7 @@ import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.model.PictureReco;
 import com.hanvon.speech.realtime.bean.RecoResult;
 import com.hanvon.speech.realtime.util.ShareUtils;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.ZXingUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
@@ -254,6 +255,9 @@ public class IatActivity extends BaseActivity {
     }
 
     private void initData() {
+        mUsageRecordTime = SharedPreferencesUtils.getUsageTimeSharedprefer(this, SharedPreferencesUtils.USAGETIME);
+        SharedPreferencesUtils.clear(this, SharedPreferencesUtils.USAGETIME);
+        //LogUtils.printErrorLog(TAG, "==mUsagePlayTime: " + mUsageRecordTime);
         recordReceiver = new RecordReceiver();
         IntentFilter mBtFilter = new IntentFilter();
         mBtFilter.addAction(ConstBroadStr.SHOW_BACKLOGO);//ConstBroadStr.UPDATERECOG
@@ -851,6 +855,7 @@ public class IatActivity extends BaseActivity {
                 if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                     ToastUtils.show(IatActivity.this, c.getMsg());
                 } else {
+                    SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
                     ToastUtils.show(IatActivity.this, c.getMsg());
                 }
             }
@@ -858,6 +863,7 @@ public class IatActivity extends BaseActivity {
             @Override
             public void failureData(String error) {
                 Log.e("AA", "error: " + error);
+                SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
                 DialogUtil.getInstance().disWaitingDialog();
             }
         });
@@ -1345,7 +1351,12 @@ public class IatActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
-        LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
+        if (isRecording) {
+            long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
+            SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
+            LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
+        }
+
     }
 
     /**
@@ -1380,11 +1391,14 @@ public class IatActivity extends BaseActivity {
         mNoteView.setInputEnabled(false);
         // TODO Auto-generated method stub
         // 保存当前页
-        saveNoteCurTracePage();
+
+        //NoteBaseData.gTraFile.pages.get(1).traces.get(1);
         // 如果当前页最后一页
         if (mNotePageIndex == NoteBaseData.gTraFile.getCount() - 1) {
             // 新建页
             AddNoteNewEmptyPage(mNotePageIndex + 1);
+        } else {
+            saveNoteCurTracePage();
         }
         mNotePageIndex++;
         // 刷新便笺的页面
