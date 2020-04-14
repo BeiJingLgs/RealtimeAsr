@@ -4,17 +4,31 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.hanvon.speech.realtime.adapter.JumpAdapter;
+import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.view.CommonDialog;
 import com.hanvon.speech.realtime.view.CustomDialog;
 import com.hanvon.speech.realtime.view.NetWorkDialog;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class DialogUtil {
     CustomDialog customDialog;
@@ -147,5 +161,127 @@ public class DialogUtil {
         if (processDialog.isShowing()) {
             processDialog.dismiss();
         }
+    }
+
+
+    protected PopupWindow popPageJump = null;
+    protected View viewPageJump = null;
+    protected ImageButton btnPrevTen = null;
+    protected ImageButton btnNextTen = null;
+    protected ListView listPageJump = null;
+    protected JumpAdapter listApapter = null;
+    protected int jumpCurPage = 0;
+    protected int jumpPageCount = 0;
+    public static final int PAGE_JMP_BLOCK_SIZE = 10;
+    public NoteChanged noteChanged;
+    /**
+     * 页面跳转
+     */
+    protected void pageJump(int mNotePageIndex) {
+        // 退出二值模式
+
+
+    }
+
+
+    private View.OnClickListener onPageJumpClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            // TODO Auto-generated method stub
+            switch (view.getId()) {
+                case R.id.btn_prev_ten:
+                    if (jumpCurPage > 0) {
+                        modifyPageJumpBtnState(--jumpCurPage, NoteBaseData.gTraFile.getCount());
+                    }
+                    break;
+                case R.id.btn_next_ten:
+                    if (jumpCurPage < jumpPageCount - 1) {
+                        modifyPageJumpBtnState(++jumpCurPage, NoteBaseData.gTraFile.getCount());
+                    }
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 修改btn的状态
+     *
+     * @param pageIndex
+     *            第几页
+     * @param count
+     *            总共有多少页
+     */
+    protected void modifyPageJumpBtnState(int pageIndex, int count) {
+        btnPrevTen.setClickable(true);
+        btnPrevTen.setImageResource(R.drawable.prev_ten_page);
+        btnNextTen.setClickable(true);
+        btnNextTen.setImageResource(R.drawable.next_ten_page);
+        if (pageIndex == 0) {
+            btnPrevTen.setClickable(false);
+            btnPrevTen.setImageResource(R.drawable.prev_ten_page_grey);
+        }
+        if (pageIndex == jumpPageCount - 1) {
+            btnNextTen.setClickable(false);
+            btnNextTen.setImageResource(R.drawable.next_ten_page_grey);
+        }
+        listApapter.updatePage(pageIndex);
+    }
+    public void showJumpDialog(Context context, int mNotePageIndex) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        viewPageJump = inflater.inflate(R.layout.popup_page_jump, null);
+
+        int width = HvApplication.mContext.getResources().getDimensionPixelSize(R.dimen.dialog_button_mid);
+        popPageJump = new PopupWindow(viewPageJump, width, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popPageJump.setBackgroundDrawable(new BitmapDrawable());
+
+        final int count = NoteBaseData.gTraFile.getCount();
+
+        btnPrevTen = (ImageButton) viewPageJump.findViewById(R.id.btn_prev_ten);
+        btnPrevTen.setOnClickListener(onPageJumpClick);
+
+        btnNextTen = (ImageButton) viewPageJump.findViewById(R.id.btn_next_ten);
+        btnNextTen.setOnClickListener(onPageJumpClick);
+
+        listPageJump = (ListView) viewPageJump.findViewById(R.id.listPage);
+
+        listApapter = new JumpAdapter(HvApplication.mContext, mNotePageIndex, count);
+        listPageJump.setAdapter(listApapter);
+
+        jumpCurPage = mNotePageIndex / PAGE_JMP_BLOCK_SIZE;
+        jumpPageCount = (count + PAGE_JMP_BLOCK_SIZE - 1) / PAGE_JMP_BLOCK_SIZE;
+        modifyPageJumpBtnState(jumpCurPage, count);
+
+        int gravity = Gravity.BOTTOM | Gravity.LEFT;
+        popPageJump.showAtLocation(viewPageJump, gravity, 72,
+                95);
+        popPageJump.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                // TODO Auto-generated method stub
+                // mNoteView.setInputEnabled(true);
+            }
+        });
+
+        listPageJump.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                popPageJump.dismiss();
+                if (id < count) {
+                    //jumpToPage((int) id);
+                    noteChanged.notifyNoteChanged((int) id);
+                }
+            }
+        });
+    }
+
+    public void regListener(NoteChanged ml) {
+        this.noteChanged = ml;
+    }
+
+    public interface NoteChanged {
+        void notifyNoteChanged(int i);
     }
 }

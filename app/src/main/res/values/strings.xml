@@ -134,4 +134,6 @@
     <string name="destroy_file">File is corrupt and cannot be opened</string>
     <string name="unpermission">No corresponding permission</string>
     <string name="unmailsetting">Mail client is not configured, please configure first</string>
+
+    <string name="page_jump_info">第   %d   页</string>
 </resources>

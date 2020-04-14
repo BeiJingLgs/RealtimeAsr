@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_page_jump"
+    android:layout_width="@dimen/toolbar_pagetext_W"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/page_jump_back" >
+
+    <ImageButton
+        android:id="@+id/btn_prev_ten"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/page_jump_btn_h"
+        android:background="@null"
+        android:clickable="true"
+        android:src="@drawable/prev_ten_page" />
+    
+    <ImageView 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"/>
+
+    <ListView
+        android:id="@+id/listPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
+    
+     <ImageView 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"/>  
+        
+    <ImageButton
+        android:id="@+id/btn_next_ten"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/page_jump_btn_h"
+        android:background="@null"
+        android:clickable="true"
+        android:src="@drawable/next_ten_page"  />
+
+</LinearLayout>

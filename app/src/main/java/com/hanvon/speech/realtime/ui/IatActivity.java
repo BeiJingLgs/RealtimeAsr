@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -20,17 +21,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import android.view.ViewGroup.LayoutParams;
 
 import androidx.core.app.ActivityCompat;
 
@@ -46,6 +52,7 @@ import com.baidu.ai.speech.realtime.full.download.Result;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hanvon.speech.realtime.adapter.JumpAdapter;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
@@ -108,7 +115,7 @@ import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
-public class IatActivity extends BaseActivity {
+public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
 
     // ============== 以下参数请勿修改 ================
 
@@ -231,6 +238,7 @@ public class IatActivity extends BaseActivity {
         mNotePageInfo = (TextView) findViewById(R.id.note_pg_info);
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
+        mNotePageInfo.setOnClickListener(this);
         mNoteView.setZOrderOnTop(true);
         SimplePen pencil = new SimplePen();
         mNoteView.setPen(pencil);
@@ -366,6 +374,11 @@ public class IatActivity extends BaseActivity {
         } else {
             checkUsageTime();
         }
+    }
+
+    @Override
+    public void notifyNoteChanged(int i) {
+        jumpToPage(i);
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -705,6 +718,13 @@ public class IatActivity extends BaseActivity {
                 break;
             case R.id.decre_volume:
                 adjustVolume(false);
+                break;
+            case R.id.note_pg_info:
+                //pageJump();
+                saveNoteCurTracePage();
+                DialogUtil dialogUtil = DialogUtil.getInstance();
+                dialogUtil.regListener(this);
+                dialogUtil.showJumpDialog(this, mNotePageIndex);
                 break;
             default:
                 break;
@@ -1412,6 +1432,27 @@ public class IatActivity extends BaseActivity {
         }, 500);
     }
 
+    /***
+     * 跳转到下一页
+     */
+    public void jumpToPage(int index) {
+        mNoteView.setInputEnabled(false);
+
+
+        if (index >= NoteBaseData.gTraFile.getCount())
+            return;
+        mNotePageIndex = index;
+        // 刷新便笺的页面
+        updateNoteCurPage();
+        new Handler().postDelayed(new Runnable() {
+
+            public void run() {
+                mNoteView.setInputEnabled(true);
+            }
+
+        }, 500);
+    }
+
     /**
      * 跳转到上一页
      */
@@ -1433,6 +1474,8 @@ public class IatActivity extends BaseActivity {
 
         }, 500);
     }
+
+
 
 
     private class RecognmizeImageAyncTask extends AsyncTask<Void, Void, String> {

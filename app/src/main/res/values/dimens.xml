@@ -151,4 +151,9 @@
 
     <dimen name="h_player_vol">39.4dp</dimen>
     <dimen name="w_player_vol">338dp</dimen>
+
+    <dimen name="toolbar_pagetext_W">90.1dp</dimen>
+    <dimen name="page_jump_btn_h">56.3dp</dimen>
+
+    <dimen name="page_jump_item_h">67.6dp</dimen>
 </resources>
