@@ -2,6 +2,7 @@ package com.baidu.ai.speech.realtime.full.util;
 
 
 import android.content.Intent;
+import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -105,6 +106,9 @@ public class Stat {
 
     public static void analiseResult(Result result) {
         if (result.getType().equals(Result.TYPE_FIN_TEXT) && result.getResult() != null) {
+            if (TextUtils.isEmpty(result.getResult())) {
+                return;
+            }
             IatResults.addResult(result);
             Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
             HvApplication.getContext().sendBroadcast(intent);

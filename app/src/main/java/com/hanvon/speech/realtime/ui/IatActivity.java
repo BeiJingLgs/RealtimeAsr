@@ -1485,7 +1485,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
             // TODO Auto-generated method stub
             super.onPreExecute();
             mPath = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
-
             DialogUtil.getInstance().showRecogDialog(IatActivity.this);
         }
 
