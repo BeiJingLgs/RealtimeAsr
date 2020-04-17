@@ -9,18 +9,21 @@
     <TextView
         android:id="@+id/popup_savePic"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/save" />
     <View
        style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_delete"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/delete2" />
     <View
         style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_rubber"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/errase" />
 
 
@@ -29,18 +32,21 @@
     <TextView
         android:id="@+id/popup_recog"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/recog" />
     <View
         style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_share"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/share" />
     <View
         style="@style/view_line"/>
     <TextView
         android:id="@+id/popup_mail"
         style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
         android:text="@string/mail" />
 
 </LinearLayout>

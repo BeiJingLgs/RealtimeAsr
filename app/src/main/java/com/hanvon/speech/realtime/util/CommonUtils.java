@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -37,6 +38,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.baidu.ai.speech.realtime.R;
+import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.ui.IatActivity;
 
@@ -261,6 +263,65 @@ public class CommonUtils {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
+		}
+	}
+
+	public static void setOnValidate(boolean isValidate, Context context) {
+    	setScreenOffValidation(isValidate, context);
+    	setSleepValidation(context, isValidate);
+	}
+
+	/**
+	 * 设置是否允许锁屏
+	 */
+	public static void setScreenOffValidation(boolean isValidate, Context context) {
+		if (context == null) {
+			context = HvApplication.mContext;
+		}
+
+		if (isValidate) {
+			reLock(context);
+		} else {
+			unLock(context);
+		}
+	}
+
+	private static void unLock(Context context) {
+		hvLockscreenUtils.setLockEnable(context, false);
+	}
+
+	private static void reLock(Context context) {
+		hvLockscreenUtils.setLockEnable(context, true);
+	}
+
+	// forbidden to sleep, add by cs 20180125
+	private static void unsleep(Context mContext) {
+		// forbidden to sleep,add by cs 20180125
+		Intent intentUnsleep = new Intent();
+		intentUnsleep.setAction("hanvon.intent.action.sysunsleep");
+		mContext.sendBroadcast(intentUnsleep);
+	}
+
+	// allow to sleep, add by cs 20180125
+	private static void resleep(Context mContext) {
+		// allow to sleep,add by cs 20180125
+		Intent intentUnsleep = new Intent();
+		intentUnsleep.setAction("hanvon.intent.action.sysresleep");
+		mContext.sendBroadcast(intentUnsleep);
+	}
+
+	/**
+	 * 设置是否允许休眠
+	 */
+	public static void setSleepValidation(Context mContext, boolean isValidate) {
+		if (mContext == null) {
+			mContext = HvApplication.mContext;
+		}
+
+		if (isValidate) {
+			resleep(mContext);
+		} else {
+			unsleep(mContext);
 		}
 	}
 }

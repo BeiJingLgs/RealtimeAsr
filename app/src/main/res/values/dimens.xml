@@ -156,4 +156,5 @@
     <dimen name="page_jump_btn_h">56.3dp</dimen>
 
     <dimen name="page_jump_item_h">67.6dp</dimen>
+    <dimen name="Meui_Width">45dp</dimen>
 </resources>

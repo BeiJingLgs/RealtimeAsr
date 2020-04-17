@@ -44,8 +44,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
-        android:paddingLeft="@dimen/margin_other"
-        android:paddingRight="@dimen/margin_other"
         android:background="@color/personal_item_default"
         android:visibility="gone"
         android:src="@drawable/wodedangxuan" />

@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -81,6 +82,7 @@ import com.hanvon.speech.realtime.bean.RecoResult;
 import com.hanvon.speech.realtime.util.ShareUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
+import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.ZXingUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 import com.hanvon.speech.realtime.view.CommonDialog;
@@ -385,8 +387,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
-
                 LogUtils.printErrorLog(TAG, "===SHOW_BACKLOGO");
+                if (isRecording) {
+                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
+                    pauseRecognize();
+                }
                 stopPlayRecord();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh()) {
@@ -450,7 +455,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         public void onStopTrackingTouch(SeekBar seekBar) {
             mAudioOffset = seekBar.getProgress();
             //MediaPlayerManager.getInstance().seekTo(mAudioOffset);
-            if ( mFileBean.getDuration() == 0)
+            if (mFileBean.getDuration() == 0)
                 return;
             mUsagePlayTime = (mFileBean.getTime() * seekBar.getProgress()) / mFileBean.getDuration();
             mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
@@ -576,6 +581,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
 
     private void continueRecognize() {
         if (!isRecording) {
+            CommonUtils.setOnValidate(false, this);
             String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
                 if (mCheckbox.isChecked()) {
@@ -660,6 +666,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     if (mTimer != null)
                         mTimer.cancel();
+                    CommonUtils.setOnValidate(true, this);
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                     mUsagePlayTime = System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime;
@@ -669,7 +676,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
-
+                    CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
                     playRecord();
@@ -706,6 +713,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                 break;
             case R.id.suspendImg:
                 if (!isRecording) {
+                    if (!WifiUtils.isWifiOpened()) {
+                        DialogUtil.getInstance().showNetWorkDialog(this);
+                        return;
+                    }
+                    if (WifiUtils.getWifiConnectState(HvApplication.getContext()) == NetworkInfo.State.DISCONNECTED) {
+                        ToastUtils.show(this, getString(R.string.checkNeterror));
+                        LogUtils.printErrorLog(TAG, "getWifiConnectState: 网络未连接");
+                        return;
+                    }
                     continueRecognize();
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                 } else {
@@ -799,6 +815,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
 
     private void startRecognize() {
         if (!isRecording) {
+            CommonUtils.setOnValidate(false, this);
             String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
                 if (mCheckbox.isChecked()) {
@@ -1032,7 +1049,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
             menuItem3.setText(getString(R.string.pen));
         }
         popupWindow.setContentView(view);
-        popupWindow.setWidth(240);
+        popupWindow.setWidth((int)(CommonUtils.getScreenWidth(this) / 5.8));
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
         popupWindow.setTouchable(true);
@@ -1281,6 +1298,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
      * @param isRemoveRunners 是否设置为null
      */
     private void close(boolean isRemoveRunners) {
+        CommonUtils.setOnValidate(true, this);
         logger.info("try to close");
         try {
             is.close();
