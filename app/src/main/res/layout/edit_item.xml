@@ -15,8 +15,8 @@
         android:textStyle="bold"
         android:paddingLeft="@dimen/Margin_XS"
         android:paddingRight="@dimen/Margin_XS"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
+        android:paddingTop="@dimen/dialog_separator_H"
+        android:paddingBottom="@dimen/dialog_separator_H"
         android:background="@drawable/button_w_edge"
         android:textSize="@dimen/textSizeM"
         />
@@ -39,9 +39,9 @@
         android:layout_marginTop="-13dp"
         android:paddingLeft="@dimen/Margin_XS"
         android:paddingRight="@dimen/Margin_XS"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:textSize="26sp"
+        android:paddingTop="@dimen/length_3dp"
+        android:paddingBottom="@dimen/length_3dp"
+        android:textSize="@dimen/Third_Title_Font_Size"
         />
 
 </RelativeLayout>

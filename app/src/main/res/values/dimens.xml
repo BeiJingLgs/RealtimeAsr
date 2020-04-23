@@ -12,6 +12,7 @@
     <dimen name="Margin_L">19dp</dimen>
     <dimen name="Margin_S">15dp</dimen>
     <dimen name="Margin_XS">8dp</dimen>
+    <dimen name="Margin_L2">16dp</dimen>
     <dimen name="Margin_XSSSSS">10dp</dimen>
     <dimen name="Margin_XXS">19dp</dimen>
     <dimen name="mydialog_title_height">50dp</dimen>
@@ -149,12 +150,31 @@
     <dimen name="volbar_height">31.5dp</dimen>
     <dimen name="volbar_space">5.6dp</dimen>
 
-    <dimen name="h_player_vol">39.4dp</dimen>
-    <dimen name="w_player_vol">338dp</dimen>
+    <dimen name="h_player_vol">26dp</dimen>
+    <dimen name="w_player_vol">180dp</dimen>
 
     <dimen name="toolbar_pagetext_W">90.1dp</dimen>
-    <dimen name="page_jump_btn_h">56.3dp</dimen>
+    <dimen name="page_jump_btn_h">40dp</dimen>
 
-    <dimen name="page_jump_item_h">67.6dp</dimen>
+    <dimen name="page_jump_item_h">40dp</dimen>
     <dimen name="Meui_Width">45dp</dimen>
+
+    <dimen name="image_margin_left">200dp</dimen>
+    <dimen name="image_margin_top">50dp</dimen>
+    <dimen name="image_margin_left2">150dp</dimen>
+
+    <dimen name="image_width">180dp</dimen>
+    <dimen name="textView_w">228.5dp</dimen>
+    <dimen name="pre_button_w">22dp</dimen>
+    <dimen name="pre_button_h">40dp</dimen>
+    <dimen name="Margin_sp">15dp</dimen>
+
+    <dimen name="handwriteTv_h">720dp</dimen>
+    <dimen name="Margin_sp2">0dp</dimen>
+    <dimen name="Margin_top">500dp</dimen>
+    <dimen name="Margin_top_left">50dp</dimen>
+    <dimen name="Margin_left">280dp</dimen>
+    <dimen name="Margin_l">0dp</dimen>
+
+    <dimen name="Margin_top2">6.5dp</dimen>
 </resources>

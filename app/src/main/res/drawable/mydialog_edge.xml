@@ -6,7 +6,7 @@
         android:startColor="@android:color/white" />
  -->
     <stroke
-        android:width="2dp"
+        android:width="@dimen/dialog_separator_H"
         android:color="@android:color/black" />
 
     <corners android:radius="6dp" />

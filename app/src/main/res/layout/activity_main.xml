@@ -17,7 +17,7 @@
         android:layout_marginTop="@dimen/Margin_XS"
         android:layout_marginLeft="@dimen/Margin_XS"
         android:layout_marginRight="@dimen/Margin_XS"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/Margin_XS"
         android:visibility="gone">
 
 
@@ -25,8 +25,8 @@
             android:id="@+id/suspendImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginLeft="@dimen/image_margin_left"
+            android:layout_marginTop="@dimen/image_margin_top"
             android:layout_marginRight="@dimen/margin_M"
             android:layout_marginBottom="@dimen/margin_M"
             android:background="@drawable/ps_pause" />
@@ -51,15 +51,16 @@
             android:layout_below="@+id/recording"
             android:layout_marginLeft="@dimen/margin_M"
             android:layout_toRightOf="@+id/suspendImg"
+            android:layout_marginBottom="@dimen/Margin_l"
             android:background="@drawable/acoustic_wave" />
 
 
         <Button
             android:id="@+id/suspendRecord"
-            android:layout_width="180dp"
+            android:layout_width="@dimen/image_width"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginLeft="@dimen/image_margin_left2"
+            android:layout_marginTop="@dimen/image_margin_top"
             android:layout_toRightOf="@+id/recording_img"
             android:background="@drawable/button_circle_edge"
             android:padding="@dimen/margin_m"
@@ -113,7 +114,7 @@
             android:layout_below="@+id/time_tv"
             android:layout_margin="@dimen/Margin_XS"
             android:background="@drawable/button_w_edge"
-            android:padding="@dimen/Margin_XS"
+            android:padding="@dimen/Margin_sp"
             android:stateListAnimator="@null"
             android:text="@string/text_begin"
             android:textColor="@color/black"
@@ -128,7 +129,7 @@
             android:layout_margin="@dimen/Margin_XS"
             android:layout_toRightOf="@+id/text_begin"
             android:background="@drawable/button_w_edge"
-            android:padding="@dimen/Margin_XS"
+            android:padding="@dimen/Margin_sp"
             android:stateListAnimator="@null"
             android:text="@string/text_edit"
             android:textColor="@color/black"
@@ -142,7 +143,7 @@
             android:layout_margin="@dimen/Margin_XS"
             android:layout_toRightOf="@+id/text_edit"
             android:background="@drawable/button_w_edge"
-            android:padding="@dimen/Margin_XS"
+            android:padding="@dimen/Margin_sp"
             android:stateListAnimator="@null"
             android:text="@string/iat_play"
             android:textColor="@color/black"
@@ -178,13 +179,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/Margin_XS"
+                android:layout_marginRight="@dimen/Margin_sp"
                 android:background="@drawable/volume_down"
                 android:id="@+id/decre_volume"/>
 
             <com.hanvon.speech.realtime.view.VolumeBar
                 android:id="@+id/ctrl_vol"
-                android:layout_marginLeft="@dimen/Margin_XS"
+                android:layout_marginLeft="@dimen/Margin_sp"
                 android:layout_marginTop="6dp"
                 android:layout_width="@dimen/w_player_vol"
                 android:layout_height="@dimen/h_player_vol" />
@@ -213,8 +214,8 @@
 
         <Button
             android:id="@+id/result_ivpre_page"
-            android:layout_width="22dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/pre_button_w"
+            android:layout_height="@dimen/pre_button_h"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="@dimen/marginTop"
             android:background="@drawable/arrow_left_gray"
@@ -225,9 +226,9 @@
         <com.hanvon.speech.realtime.view.HVTextView
             android:id="@+id/iatContent_tv"
             android:layout_width="@dimen/content_tv_h"
-            android:layout_height="228.5dp"
+            android:layout_height="@dimen/textView_w"
             android:layout_marginLeft="@dimen/margin_s"
-            android:layout_marginTop="16.5dp"
+            android:layout_marginTop="@dimen/Margin_top2"
             android:layout_marginRight="@dimen/margin_s"
             android:layout_marginBottom="@dimen/Margin_XSSSSS"
             android:hint="@string/content"
@@ -238,8 +239,8 @@
 
         <Button
             android:id="@+id/result_ivnext_page"
-            android:layout_width="22dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/pre_button_w"
+            android:layout_height="@dimen/pre_button_h"
             android:layout_marginTop="@dimen/marginTop"
             android:layout_marginRight="10dp"
             android:background="@drawable/arrow_right_gray"
@@ -250,7 +251,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/length_3dp"
+        android:layout_height="@dimen/Separate_Line_H"
         android:layout_marginTop="@dimen/Margin_XS"
         android:background="@color/black" />
 
@@ -286,8 +287,8 @@
         <!-- </ScrollView>-->
         <Button
             android:id="@+id/ivnext_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/dialog_margin_small"
+            android:layout_height="@dimen/Button_H2"
             android:layout_marginTop="@dimen/bar_more_width_port"
             android:background="@drawable/arrow_right_gray"
             android:clickable="true"
@@ -298,7 +299,7 @@
     <LinearLayout
         android:id="@+id/write_layout"
         android:layout_width="match_parent"
-        android:layout_height="720dp"
+        android:layout_height="@dimen/handwriteTv_h"
         android:padding="@dimen/Margin_XS">
 
         <com.hanvon.speech.realtime.view.HandWriteNoteView
@@ -337,7 +338,6 @@
             android:layout_width="@dimen/mydialog_button_margin"
             android:layout_height="@dimen/mydialog_button_margin"
             android:layout_marginBottom="@dimen/Margin_S"
-
             android:stateListAnimator="@null"
             android:background="@drawable/next_page_2" />
 

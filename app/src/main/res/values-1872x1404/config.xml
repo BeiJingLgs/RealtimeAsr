@@ -5,4 +5,5 @@
     <integer name="item_num">8</integer>
 
     <integer name="VERSION_TYPE">12</integer>
+    <integer name="PAGE_CATEGORY">10</integer>
 </resources>

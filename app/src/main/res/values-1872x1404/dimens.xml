@@ -5,6 +5,7 @@
     <dimen name="Margin_XXL">32dp</dimen>
     <dimen name="Margin_XSSSSS">10dp</dimen>
     <dimen name="Margin_L">19dp</dimen>
+    <dimen name="Margin_L2">16dp</dimen>
     <dimen name="length_3dp">3dp</dimen>
     <dimen name="dialog_titleH">51dp</dimen>
     <dimen name="dialog_title_marginX">35dp</dimen>
@@ -122,4 +123,21 @@
     <dimen name="register_ed_w">130dp</dimen>
     <dimen name="navigate_menu_width">467dp</dimen>
     <dimen name="Button_H">68dp</dimen>
+
+    <dimen name="image_margin_left">200dp</dimen>
+    <dimen name="image_margin_top">50dp</dimen>
+    <dimen name="image_margin_left2">150dp</dimen>
+
+    <dimen name="textView_w">228.5dp</dimen>
+    <dimen name="pre_button_w">22dp</dimen>
+    <dimen name="pre_button_h">40dp</dimen>
+
+    <dimen name="handwriteTv_h">720dp</dimen>
+    <dimen name="Margin_sp">15dp</dimen>
+    <dimen name="Margin_top">500dp</dimen>
+    <dimen name="Margin_top_left">50dp</dimen>
+    <dimen name="Margin_left">280dp</dimen>
+    <dimen name="Margin_l">0dp</dimen>
+
+    <dimen name="Margin_top2">16.5dp</dimen>
 </resources>

@@ -31,7 +31,9 @@ public class hvLockscreenUtils {
 		if (!bEnable){
 			modifyLockTime(context, DISABLELOCKTIME);
 		}else{
-			modifyLockTime(context, curlocktime);
+			int timeTmp = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, DEFAULTLOCKTIME);
+			if (timeTmp == DISABLELOCKTIME)
+				modifyLockTime(context, curlocktime);
 		}
 	}
 	
@@ -55,8 +57,13 @@ public class hvLockscreenUtils {
 			context = HvApplication.mContext;
 		int timeTmp = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, DEFAULTLOCKTIME);
 		if (time != timeTmp){
+			if (time == DISABLELOCKTIME){
+				curlocktime = timeTmp;
+			}
 			Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, time);
-			curlocktime = time;
+			if (time != DISABLELOCKTIME){
+				curlocktime = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, DEFAULTLOCKTIME);
+			}
 		}
 	}
 	

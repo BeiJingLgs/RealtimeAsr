@@ -79,6 +79,7 @@
     <dimen name="margin_h">10dp</dimen>
     <dimen name="margin_xm">23.3dp</dimen>
     <dimen name="margin_other">10dp</dimen>
+    <dimen name="Margin_L2">40dp</dimen>
 
     <dimen name="textSizeXXL">21.3sp</dimen>
     <dimen name="textSizeXL">18.7sp</dimen>
@@ -110,9 +111,9 @@
     <dimen name="Margin_XS">10dp</dimen>
     <dimen name="margin_M">13.3dp</dimen>
     <dimen name="marginTop">53.3dp</dimen>
-    <dimen name="content_tv_h">655.3dp</dimen>
-    <dimen name="listview_h">666.7dp</dimen>
-    <dimen name="listview_w">660dp</dimen>
+    <dimen name="content_tv_h">595.3dp</dimen>
+    <dimen name="listview_h">650dp</dimen>
+    <dimen name="listview_w">608dp</dimen>
     <dimen name="edit_w">400dp</dimen>
     <dimen name="edit_w2">346.7dp</dimen>
     <dimen name="image_w">50.7dp</dimen>
@@ -120,8 +121,27 @@
     <dimen name="edit_w4">200dp</dimen>
     <dimen name="edit_w5">120dp</dimen>
     <dimen name="register_ed_w">86.7dp</dimen>
-    <dimen name="navigate_menu_width">311.3dp</dimen>
-    <dimen name="Button_H">45dp</dimen>
-
     <dimen name="Meui_Width">45dp</dimen>
+
+    <dimen name="image_margin_left">100dp</dimen>
+    <dimen name="image_margin_top">30dp</dimen>
+    <dimen name="image_width">260dp</dimen>
+
+    <dimen name="Button_H">45dp</dimen>
+    <dimen name="image_margin_left2">80dp</dimen>
+    <dimen name="textView_w">170dp</dimen>
+    <dimen name="pre_button_w">15dp</dimen>
+    <dimen name="pre_button_h">28dp</dimen>
+    <dimen name="Margin_sp">2dp</dimen>
+    <dimen name="Margin_sp2">0dp</dimen>
+
+    <dimen name="handwriteTv_h">470dp</dimen>
+    <dimen name="volbar_width">8dp</dimen>
+    <dimen name="volbar_height">20dp</dimen>
+    <dimen name="volbar_space">3dp</dimen>
+    <dimen name="Margin_top">350dp</dimen>
+    <dimen name="Margin_top_left">35dp</dimen>
+    <dimen name="Margin_left">170dp</dimen>
+    <dimen name="Margin_l">8dp</dimen>
+    <dimen name="Margin_top2">0dp</dimen>
 </resources>
