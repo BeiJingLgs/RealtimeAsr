@@ -265,7 +265,7 @@ public class HandWriteNoteView extends NoteView {
 
         try {
             if( penType == TP_PEN  && downPoint.getToolType() != 1) {
-                LogUtils.printErrorLog(TAG, "canvases: ");
+               // LogUtils.printErrorLog(TAG, "canvases: ");
                 for (Canvas canvas : canvases) {
                     canvas.drawPath(path, paint);
                 }

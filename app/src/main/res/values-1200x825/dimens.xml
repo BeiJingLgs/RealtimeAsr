@@ -144,4 +144,9 @@
     <dimen name="Margin_left">170dp</dimen>
     <dimen name="Margin_l">8dp</dimen>
     <dimen name="Margin_top2">0dp</dimen>
+
+    <dimen name="record_img_w">220dp</dimen>
+    <dimen name="record_img_h">60dp</dimen>
+
+    <dimen name="record_susend">50dp</dimen>
 </resources>

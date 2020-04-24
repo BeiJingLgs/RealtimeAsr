@@ -9,11 +9,15 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.baidu.ai.speech.realtime.R;
+import com.hanvon.speech.realtime.util.LogUtils;
+
 public class HVTextView extends TextView {
     private static final String TAG = "HVTextView";
 
     int pageCount = 0;
     int pageIdx = -1;
+    public static int OFFSET_LINE = 76;//48
 
     public HVTextView(Context context) {
         super(context);
@@ -22,6 +26,7 @@ public class HVTextView extends TextView {
         this.setTextColor(Color.BLACK);
         pageCount = 0;
         pageIdx = -1;
+        LogUtils.printErrorLog(TAG, "OFFSET_LINE: " + OFFSET_LINE);
     }
 
     public HVTextView(Context context, AttributeSet attrs) {
@@ -65,8 +70,7 @@ public class HVTextView extends TextView {
     public boolean pagerPrev() {
         if (isFirstPage())
             return false;
-
-        int offset = -Math.min(this.getHeight(), this.getScrollY());
+        int offset = -Math.min(this.getHeight() - OFFSET_LINE, this.getScrollY());
         this.scrollBy(0, offset);
         return true;
     }
@@ -79,7 +83,8 @@ public class HVTextView extends TextView {
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
 
-        int offset = Math.min(this.getHeight(), rtLine.bottom - this.getScrollY());
+        OFFSET_LINE = getResources().getInteger(R.integer.OFFSET_LINE);
+        int offset = Math.min(this.getHeight() - OFFSET_LINE, rtLine.bottom - this.getScrollY());
         this.scrollBy(0, offset);
         return true;
     }
@@ -93,11 +98,12 @@ public class HVTextView extends TextView {
         int lineCount = this.getLineCount();
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
-        this.scrollBy(0, this.getHeight() * nPage);
+        this.scrollBy(0, this.getHeight() * nPage - OFFSET_LINE);
         return true;
     }
 
     public void gotoLastPage() {
+        LogUtils.printErrorLog(TAG, "gotoLastPage isLastPage: " + isLastPage());
         if (!isLastPage())
             gotoPage(getPageCount() - 1);
     }
@@ -109,7 +115,7 @@ public class HVTextView extends TextView {
                 Rect rtLine = new Rect();
                 getLineBounds(lineCount - 1, rtLine);
                 int viewHeight = this.getHeight();
-                pageCount = (rtLine.bottom + viewHeight - 6) / viewHeight;
+                pageCount = (rtLine.bottom + viewHeight - 6  - OFFSET_LINE - OFFSET_LINE) / (viewHeight - OFFSET_LINE);
             } else {
                 return 0;
             }
@@ -120,7 +126,10 @@ public class HVTextView extends TextView {
 
     public int getPageIdx() {
         if (this.getHeight() != 0) {
-            return this.getScrollY() / this.getHeight();
+          /*  if (this.getScrollY() / this.getHeight() == 1)
+                return this.getScrollY() / this.getHeight();
+            else*/
+                return (this.getScrollY()) / (this.getHeight() - OFFSET_LINE);
         } else {
             return 0;
         }

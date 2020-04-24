@@ -177,4 +177,8 @@
     <dimen name="Margin_l">0dp</dimen>
 
     <dimen name="Margin_top2">6.5dp</dimen>
+    <dimen name="record_img_w">320dp</dimen>
+    <dimen name="record_img_h">90dp</dimen>
+
+    <dimen name="record_susend">70dp</dimen>
 </resources>

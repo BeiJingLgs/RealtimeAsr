@@ -34,7 +34,7 @@
         android:layout_marginBottom="@dimen/Margin_XS"
         android:layout_toRightOf="@+id/btn_Return"
         android:visibility="gone"
-        android:src="@drawable/ic_navigation_add1" />
+        android:background="@drawable/ic_navigation_add1" />
 
 
     <ImageButton
@@ -44,21 +44,19 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
-        android:background="@color/personal_item_default"
         android:visibility="gone"
-        android:src="@drawable/wodedangxuan" />
+        android:background="@drawable/wodedangxuan" />
 
     <ImageButton
         android:id="@+id/btn_option_menus"
-        android:layout_width="@dimen/Button_H"
-        android:layout_height="@dimen/Button_H"
+        android:layout_width="@dimen/Button_H2"
+        android:layout_height="@dimen/Button_H2"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@color/personal_item_default"
         android:layout_marginRight="@dimen/Margin_L"
         android:paddingLeft="@dimen/margin_other"
         android:paddingRight="@dimen/margin_other"
-        android:src="@drawable/youcecaidan" />
+        android:background="@drawable/youcecaidan" />
 
 
 

@@ -14,7 +14,7 @@
         android:id="@+id/record_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/Margin_XS"
+        android:layout_marginTop="@dimen/Margin_S"
         android:layout_marginLeft="@dimen/Margin_XS"
         android:layout_marginRight="@dimen/Margin_XS"
         android:layout_marginBottom="@dimen/Margin_XS"
@@ -23,8 +23,8 @@
 
         <ImageView
             android:id="@+id/suspendImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/record_susend"
+            android:layout_height="@dimen/record_susend"
             android:layout_marginLeft="@dimen/image_margin_left"
             android:layout_marginTop="@dimen/image_margin_top"
             android:layout_marginRight="@dimen/margin_M"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/register_ed_w"
-            android:layout_marginTop="@dimen/Margin_XS"
+            android:layout_marginTop="@dimen/Margin_S"
             android:layout_marginBottom="@dimen/Margin_S"
             android:layout_toRightOf="@+id/suspendImg"
             android:text="@string/recognizing"
@@ -46,8 +46,8 @@
 
         <ImageView
             android:id="@+id/recording_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/record_img_w"
+            android:layout_height="@dimen/record_img_h"
             android:layout_below="@+id/recording"
             android:layout_marginLeft="@dimen/margin_M"
             android:layout_toRightOf="@+id/suspendImg"
