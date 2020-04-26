@@ -31,6 +31,10 @@ public class IatResults {
         return mStringResult.toString();
     }
 
+    public static void setResultsStr(String result) {
+         mStringResult.append(result);
+    }
+
     public static void clearResults() {
         mSentenceResults.clear();
         mStringResult.setLength(0);

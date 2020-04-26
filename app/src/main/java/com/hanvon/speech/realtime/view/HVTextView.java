@@ -63,8 +63,8 @@ public class HVTextView extends TextView {
         int lineCount = this.getLineCount();
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
-
-        return this.getScrollY() >= (rtLine.bottom - viewHeight);
+        return  (getPageIdx() + 1) == getPageCount();
+       // return this.getScrollY() >= (rtLine.bottom - viewHeight);
     }
 
     public boolean pagerPrev() {
@@ -98,7 +98,8 @@ public class HVTextView extends TextView {
         int lineCount = this.getLineCount();
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
-        this.scrollBy(0, this.getHeight() * nPage - OFFSET_LINE);
+        OFFSET_LINE = getResources().getInteger(R.integer.OFFSET_LINE);
+        this.scrollBy(0, (this.getHeight() - OFFSET_LINE) * nPage );
         return true;
     }
 
