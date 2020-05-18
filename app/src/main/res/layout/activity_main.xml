@@ -149,6 +149,49 @@
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeL" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/time_tv"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+
+
+            <CheckBox
+                android:id="@+id/recog_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:button="@drawable/check_box"
+                android:focusableInTouchMode="false"
+                android:layoutDirection="rtl"
+                android:layout_gravity="right"
+                android:layout_marginTop="@dimen/Margin_XS"
+                android:layout_marginRight="@dimen/Margin_XS"
+                android:paddingRight="@dimen/Margin_XS"
+                android:stateListAnimator="@null"
+                android:text="@string/noRecog"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeM"/>
+            <CheckBox
+                android:id="@+id/undisturb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/Margin_XS"
+                android:layout_marginRight="@dimen/Margin_XS"
+                android:button="@drawable/check_box"
+                android:focusableInTouchMode="false"
+                android:layoutDirection="rtl"
+                android:layout_gravity="right"
+                android:paddingRight="@dimen/Margin_XS"
+                android:stateListAnimator="@null"
+                android:text="@string/undisturb"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeM"/>
+        </LinearLayout>
+
+
         <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
@@ -177,8 +220,8 @@
             android:layout_marginTop="@dimen/margin_M"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/Button_H2"
+                android:layout_height="@dimen/Button_H2"
                 android:layout_marginRight="@dimen/Margin_sp"
                 android:background="@drawable/volume_down"
                 android:id="@+id/decre_volume"/>
@@ -191,8 +234,8 @@
                 android:layout_height="@dimen/h_player_vol" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/Button_H2"
+                android:layout_height="@dimen/Button_H2"
                 android:layout_marginRight="@dimen/Margin_XS"
                 android:background="@drawable/volume_up"
                 android:id="@+id/increase_volume"/>

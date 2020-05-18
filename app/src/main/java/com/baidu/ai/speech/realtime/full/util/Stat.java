@@ -112,8 +112,14 @@ public class Stat {
             IatResults.addResult(result);
             Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
             HvApplication.getContext().sendBroadcast(intent);
-        }
-
+        } else {
+            if (TextUtils.isEmpty(result.getResult())) {
+                return;
+            }
+                IatResults.addTempResult(result);
+                Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
+                HvApplication.getContext().sendBroadcast(intent);
+            }
     }
 
     private StringBuilder formatTime(long timeStamp, String message) {

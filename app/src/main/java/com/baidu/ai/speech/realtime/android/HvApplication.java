@@ -13,7 +13,7 @@ public class HvApplication extends Application {
     public static Context mContext;
     public static String TOKEN;
     public static String SESSION;
-    public static final boolean ISDEBUG = false;
+    public static final boolean ISDEBUG = true;
     public static boolean IS_NETDIALOG = true;
     @Override
     public void onCreate() {

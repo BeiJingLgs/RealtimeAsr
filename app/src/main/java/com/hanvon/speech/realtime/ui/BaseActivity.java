@@ -22,12 +22,11 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     protected Button mBackBtn;
     protected ImageButton mMenus, mCreateFile, mMineBtn;
     public String TAG;
-    public static String DEVICEID = "10000000000000011";
+    public static String DEVICEID = "1000000000000008";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
     //返回code
     public static final int OPEN_SET_REQUEST_CODE = 100;
-    public Intent mIntentDrop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +93,6 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
         mMenus.setOnClickListener(this);
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
-        mIntentDrop = new Intent();
     }
 
 

@@ -2,42 +2,32 @@ package com.hanvon.speech.realtime.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import android.view.ViewGroup.LayoutParams;
 
 import androidx.core.app.ActivityCompat;
 
@@ -53,7 +43,6 @@ import com.baidu.ai.speech.realtime.full.download.Result;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hanvon.speech.realtime.adapter.JumpAdapter;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
@@ -92,7 +81,6 @@ import com.hanvon.speech.realtime.view.MyRuber;
 import com.hanvon.speech.realtime.view.UpLoadDialog;
 import com.hanvon.speech.realtime.view.VolumeBar;
 import com.xrz.Pencil;
-import com.xrz.Rubber;
 import com.xrz.SimplePen;
 
 
@@ -141,7 +129,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
     private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
-    public CheckBox mCheckbox;
+    public CheckBox mCheckbox, mNoRecogCheckbox, mUnDisturbCheckox;
     private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
 
     private FileBean mFileBean;
@@ -199,7 +187,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
-        mRecogResultTv.getPaint().setAntiAlias(true);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
@@ -215,6 +202,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         mRecordLayout = view.findViewById(R.id.record_layout);
         mCheckbox = findViewById(R.id.checkbox);
+        mNoRecogCheckbox = findViewById(R.id.recog_checkbox);
+        mUnDisturbCheckox = findViewById(R.id.undisturb);
         mRecordStatusImg = findViewById(R.id.suspendImg);
         mIncreaseVolImg = findViewById(R.id.increase_volume);
         mDecreaseVolImg = findViewById(R.id.decre_volume);
@@ -406,6 +395,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
     }
 
     private void freshRecogContent() {
+        LogUtils.printErrorLog(TAG, IatResults.getResultsStr());
         mRecogResultTv.setText(IatResults.getResultsStr());
         mRecogResultTv.gotoLastPage();
         freshResultPage();
@@ -538,8 +528,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         if (isRecording) {
             mRecognizeStatusTv.setText(R.string.recognizing);
             mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-            uploadUsageTime();
-            close(false);
+
+                uploadUsageTime();
+                close(false);
+
+
             MediaRecorderManager.getInstance().stop();
             mExecutor.execute(new Runnable() {
                 @Override
@@ -592,17 +585,20 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
             isRecording = true;
             mRecognizeStatusTv.setText(getString(R.string.recognizing));
             mStartRecordTime = System.currentTimeMillis();
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        start();
-                        pollCheckStop();
-                    } catch (IOException e) {
-                        ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+            if (!mNoRecogCheckbox.isChecked()) {
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            start();
+                            pollCheckStop();
+                        } catch (IOException e) {
+                            ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                        }
                     }
-                }
-            });
+                });
+            }
+
 
             if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
                 MediaRecorderManager.getInstance().start(mTempPath);
@@ -626,6 +622,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         switch (v.getId()) {
             case R.id.btn_option_menus:
                 Log.e("onClick", "btn_option_menus");
+                enterHandwrite(false);
                 PopupWindow popupWindow = showPopupWindow();
                 Log.i("tag", "onClick: " + popupWindow.isShowing());
                 if (popupWindow != null) {
@@ -826,17 +823,20 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
             createFile(tmpName);
             isRecording = true;
             mStartRecordTime = System.currentTimeMillis();
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        start();
-                        pollCheckStop();
-                    } catch (IOException e) {
-                        ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+            if (!mNoRecogCheckbox.isChecked()) {
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            start();
+                            pollCheckStop();
+                        } catch (IOException e) {
+                            ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                        }
                     }
-                }
-            });
+                });
+            }
+
 
             if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
                 MediaRecorderManager.getInstance().start(mTempPath);
@@ -870,7 +870,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
     }
 
     private void uploadUsageTime() {
-        DialogUtil.getInstance().showWaitingDialog(this);
+
         HashMap<String, String> map2 = new HashMap<>();
         long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
         Log.e("startRecognize", "tempTime(): " + tempTime);
@@ -883,8 +883,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
         DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
 
-        map2.put("duration", String.valueOf(tempTime / 1000));
-        uploadTime(map2, tempTime);
+        if (!mNoRecogCheckbox.isChecked()) {
+            DialogUtil.getInstance().showWaitingDialog(this);
+            map2.put("duration", String.valueOf(tempTime / 1000));
+            uploadTime(map2, tempTime);
+        }
     }
 
     public void exitRecoging() {
@@ -936,11 +939,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                     PackList c = gson2.fromJson(result, PackList.class);
                     Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
-                        mIatLayout.setVisibility(View.GONE);
-                        mRecordLayout.setVisibility(View.VISIBLE);
-                        mRecognizeStatusTv.setText(R.string.recognizing);
-                        mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-                        startRecognize();
+                        startRecord();
                     } else {
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
                     }
@@ -956,6 +955,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
             stopRecognize();
         }
 
+    }
+
+    private void startRecord() {
+        mIatLayout.setVisibility(View.GONE);
+        mRecordLayout.setVisibility(View.VISIBLE);
+        mRecognizeStatusTv.setText(R.string.recognizing);
+        mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+        startRecognize();
     }
 
     private void createFile(String name) {
@@ -1272,6 +1279,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
      */
     private void start() throws IOException {
         logger.info("try to start " + mode);
+        enterHandwrite(true);
         isRunning = true;
         if (mode == Constants.MINI_DEMO_MODE || mode == Runner.MODE_FILE_STREAM
                 || mode == Runner.MODE_SIMULATE_REAL_TIME_STREAM) {
@@ -1319,6 +1327,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
     private void close(boolean isRemoveRunners) {
         CommonUtils.setOnValidate(true, this);
         logger.info("try to close");
+        enterHandwrite(false);
         try {
             is.close();
         } catch (IOException | RuntimeException e) {
@@ -1647,5 +1656,28 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                     ToastUtils.show(getApplicationContext(), getString(R.string.unpermission));
                 }
         }
+    }
+    /**
+     * 进入二值模式
+     *
+     * @param isEnter
+     *            是否进入二值模式，true为进入，false为退出
+     */
+    public void enterHandwrite(boolean isEnter) {
+        Log.e(TAG, "**enterHandwrite, " + isEnter );
+
+        if (isEnter){
+            /*mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);
+                }
+            }, 500);*/
+            mHandler.postDelayed(() -> {getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);}, 500);
+        }
+        else{
+            getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_GU16_MODE); //
+        }
+
     }
 }

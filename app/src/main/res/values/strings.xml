@@ -136,4 +136,8 @@
     <string name="unmailsetting">Mail client is not configured, please configure first</string>
 
     <string name="page_jump_info">第   %d   页</string>
+
+    <string name="noRecog">仅录制</string>
+
+    <string name="undisturb">免打扰模式</string>
 </resources>
