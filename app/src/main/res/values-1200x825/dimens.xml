@@ -37,14 +37,14 @@
 
 
     <dimen name="mydialog_title_font">16sp</dimen>
-    <dimen name="mydialog_message_font">16sp</dimen>
-    <dimen name="mydialog_button_font">16sp</dimen>
+    <dimen name="mydialog_message_font">18sp</dimen>
+    <dimen name="mydialog_button_font">18sp</dimen>
     <dimen name="mydialog_margin_message">20dp</dimen>
     <dimen name="mydialog_margin_stubview">6.7dp</dimen>
     <dimen name="mydialog_margin_small">10.7dp</dimen>
-    <dimen name="mydialog_button_width">93.3dp</dimen>
+    <dimen name="mydialog_button_width">95dp</dimen>
     <dimen name="mydialog_button_margin">28dp</dimen>
-    <dimen name="mydialog_button_height">44dp</dimen>
+    <dimen name="mydialog_button_height">45dp</dimen>
     <dimen name="mydialog_width">545.3dp</dimen>
     <dimen name="mydialog_title_height">28dp</dimen>
 
@@ -86,6 +86,8 @@
     <dimen name="textSizeL">16sp</dimen>
     <dimen name="textSizeM">13.3sp</dimen>
     <dimen name="textSizeS">9.3sp</dimen>
+
+    <dimen name="textSizexL">16sp</dimen>
 
     <dimen name="linePaddingS">0.3dp</dimen>
     <dimen name="linePaddingM">0.5dp</dimen>

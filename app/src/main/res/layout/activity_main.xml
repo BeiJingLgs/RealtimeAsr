@@ -149,49 +149,23 @@
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeL" />
 
-        <LinearLayout
+
+
+        <CheckBox
+            android:id="@+id/recog_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/Margin_XS"
+            android:button="@drawable/check_box"
+            android:focusableInTouchMode="false"
+            android:layoutDirection="rtl"
             android:layout_below="@+id/time_tv"
             android:layout_alignParentRight="true"
-            android:orientation="vertical">
-
-
-            <CheckBox
-                android:id="@+id/recog_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:button="@drawable/check_box"
-                android:focusableInTouchMode="false"
-                android:layoutDirection="rtl"
-                android:layout_gravity="right"
-                android:layout_marginTop="@dimen/Margin_XS"
-                android:layout_marginRight="@dimen/Margin_XS"
-                android:paddingRight="@dimen/Margin_XS"
-                android:stateListAnimator="@null"
-                android:text="@string/noRecog"
-                android:textColor="@color/black"
-                android:textSize="@dimen/textSizeM"/>
-            <CheckBox
-                android:id="@+id/undisturb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/Margin_XS"
-                android:layout_marginRight="@dimen/Margin_XS"
-                android:button="@drawable/check_box"
-                android:focusableInTouchMode="false"
-                android:layoutDirection="rtl"
-                android:layout_gravity="right"
-                android:paddingRight="@dimen/Margin_XS"
-                android:stateListAnimator="@null"
-                android:text="@string/undisturb"
-                android:textColor="@color/black"
-                android:textSize="@dimen/textSizeM"/>
-        </LinearLayout>
-
-
+            android:padding="@dimen/Margin_XS"
+            android:stateListAnimator="@null"
+            android:text="@string/noRecog"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeM"/>
         <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
@@ -271,15 +245,17 @@
             android:layout_width="@dimen/content_tv_h"
             android:layout_height="@dimen/textView_w"
             android:layout_marginLeft="@dimen/margin_s"
-            android:layout_marginTop="@dimen/Margin_top2"
+            android:layout_marginTop="@dimen/Margin_top_bottom"
             android:layout_marginRight="@dimen/margin_s"
-            android:layout_marginBottom="@dimen/Margin_XSSSSS"
+            android:layout_marginBottom="@dimen/Margin_top_bottom"
             android:hint="@string/content"
             android:paddingLeft="@dimen/margin_s"
             android:paddingRight="@dimen/margin_s"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizeL" />
-
+            android:textSize="@dimen/textSizexL" />
+        <!--
+                    android:lineSpacingExtra="5.5dp"
+                    android:letterSpacing="0.06"-->
         <Button
             android:id="@+id/result_ivnext_page"
             android:layout_width="@dimen/pre_button_w"
@@ -291,6 +267,32 @@
             android:focusable="true"
             android:stateListAnimator="@null" />
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/undisturb_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/textView_w"
+        android:layout_marginLeft="@dimen/margin_s"
+        android:layout_marginTop="@dimen/Margin_top_bottom"
+        android:layout_marginRight="@dimen/margin_s"
+        android:layout_marginBottom="@dimen/Margin_top_bottom"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/undisturb_tv"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/content"
+            android:paddingTop="@dimen/margin_m"
+            android:paddingBottom="@dimen/margin_m"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:textColor="@color/black"
+            android:layout_centerInParent="true"
+            android:background="@drawable/button_circle_edge"
+            android:text="@string/undisturbTip"
+            android:textSize="@dimen/textSizeXL" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

@@ -84,6 +84,8 @@
     <dimen name="textSizeXXL">32sp</dimen>
     <dimen name="textSizeXL">28sp</dimen>
     <dimen name="textSizeL">24sp</dimen>
+
+    <dimen name="textSizexL">28sp</dimen>
     <dimen name="textSizeM">20sp</dimen>
     <dimen name="textSizeS">14sp</dimen>
 
@@ -128,11 +130,11 @@
     <dimen name="image_margin_top">50dp</dimen>
     <dimen name="image_margin_left2">150dp</dimen>
 
-    <dimen name="textView_w">228.5dp</dimen>
+    <dimen name="textView_w">226dp</dimen>
     <dimen name="pre_button_w">22dp</dimen>
     <dimen name="pre_button_h">40dp</dimen>
 
-    <dimen name="handwriteTv_h">720dp</dimen>
+    <dimen name="handwriteTv_h">740dp</dimen>
     <dimen name="Margin_sp">15dp</dimen>
     <dimen name="Margin_top">500dp</dimen>
     <dimen name="Margin_top_left">50dp</dimen>
@@ -148,4 +150,6 @@
 
     <dimen name="h_player_vol">50dp</dimen>
     <dimen name="w_player_vol">240dp</dimen>
+
+    <dimen name="Margin_top_bottom">0dp</dimen>
 </resources>

@@ -65,7 +65,11 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
         WindowManager.LayoutParams p =getWindow().getAttributes();
         Point size = new Point();
         d.getSize(size);
-        p.width = (int)(size.x * 0.6);//是dialog的宽度为app界面的80%
+        double width = 0.635;
+        if (getContext().getResources().getInteger(R.integer.device_inch) == 9) {
+            width = 0.75;
+        }
+        p.width = (int)(size.x * width);//是dialog的宽度为app界面的80%
         p.height = (int)(size.y * 0.133);
         getWindow().setAttributes(p);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);

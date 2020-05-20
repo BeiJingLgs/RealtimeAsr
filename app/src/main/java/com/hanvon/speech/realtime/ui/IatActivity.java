@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -105,7 +106,7 @@ import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
-public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
+public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener {
 
     // ============== 以下参数请勿修改 ================
 
@@ -126,15 +127,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
     private SequenceAdapter mSequenceAdapter;
     private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn,
             mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord;
-    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv;
+    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
-    public CheckBox mCheckbox, mNoRecogCheckbox, mUnDisturbCheckox;
+    public CheckBox mCheckbox, mNoRecogCheckbox;
     private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout;
     private boolean isNEW, isTips = false;
 
     private int nPageCount = 0; // 当前分类的页总数
@@ -187,6 +188,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
+        mRecogResultTv.getPaint().setAntiAlias(false);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
@@ -198,17 +200,19 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         mEditListView = (ListView) findViewById(R.id.sentence_list);
         mAudioPlayBtn = (Button) findViewById(R.id.iat_play);
         mResultLayout = findViewById(R.id.result_layout);
+        mUndisturb_layout = findViewById(R.id.undisturb_layout);
         mResultPreBtn = findViewById(R.id.result_ivpre_page);
         mResultNextBtn = findViewById(R.id.result_ivnext_page);
         mRecordLayout = view.findViewById(R.id.record_layout);
         mCheckbox = findViewById(R.id.checkbox);
         mNoRecogCheckbox = findViewById(R.id.recog_checkbox);
-        mUnDisturbCheckox = findViewById(R.id.undisturb);
+       // mUnDisturbCheckox = findViewById(R.id.undisturb);
         mRecordStatusImg = findViewById(R.id.suspendImg);
         mIncreaseVolImg = findViewById(R.id.increase_volume);
         mDecreaseVolImg = findViewById(R.id.decre_volume);
         mCtlVolBar = findViewById(R.id.ctrl_vol);
         mVolumLayout = findViewById(R.id.volum_layout);
+        mExitUndisturbTv = findViewById(R.id.undisturb_tv);
 
         mIncreaseVolImg.setOnClickListener(this);
         mDecreaseVolImg.setOnClickListener(this);
@@ -221,6 +225,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         mResultPreBtn.setOnClickListener(this);
         mResultNextBtn.setOnClickListener(this);
         mSuspendRecord.setOnClickListener(this);
+        mExitUndisturbTv.setOnClickListener(this);
+        //mUnDisturbCheckox.setOnCheckedChangeListener(this);
         mWriteLayout = findViewById(R.id.write_layout);
         mBottomLayout = findViewById(R.id.bottom_layout);
         mNoteView = view.findViewById(R.id.MyNoteView);
@@ -371,6 +377,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         jumpToPage(i);
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+    }
+
     protected class RecordReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -382,7 +393,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                 }
                 stopPlayRecord();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
-                if (mNoteView.canBeFresh()) {
+                if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
+                    //LogUtils.printErrorLog(TAG, "mUnDisturbCheckox.isChecked()");
                     freshRecogContent();
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
@@ -396,6 +408,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
 
     private void freshRecogContent() {
         LogUtils.printErrorLog(TAG, IatResults.getResultsStr());
+
+        if (TextUtils.equals(IatResults.getResultsStr(), mRecogResultTv.getText().toString()))
+            return;
+        LogUtils.printErrorLog(TAG, "freshRecogContent");
         mRecogResultTv.setText(IatResults.getResultsStr());
         mRecogResultTv.gotoLastPage();
         freshResultPage();
@@ -740,9 +756,21 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
                 dialogUtil.regListener(this);
                 dialogUtil.showJumpDialog(this, mNotePageIndex);
                 break;
+            case R.id.undisturb_tv:
+                exitUnDisturp();
+                break;
             default:
                 break;
         }
+    }
+
+    private void exitUnDisturp() {
+        mUndisturb_layout.setVisibility(View.GONE);
+        mResultLayout.setVisibility(View.VISIBLE);
+        if (isRecording())
+            enterHandwrite(true);
+        freshRecogContent();
+
     }
 
     public void adjustVolume(boolean up) {
@@ -1063,6 +1091,26 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
 
             }
         });
+        TextView menuItem7 = view.findViewById(R.id.popup_undisturp);
+        menuItem7.setOnClickListener(view1 -> {
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+                index = 7;
+
+                if (mUndisturb_layout.getVisibility() == View.GONE) {
+                    mUndisturb_layout.setVisibility(View.VISIBLE);
+                    mResultLayout.setVisibility(View.GONE);
+                } else {
+                   exitUnDisturp();
+                }
+            }
+        });
+        if (mUndisturb_layout.getVisibility() == View.GONE) {
+            menuItem7.setText(getString(R.string.undisturb));
+        } else {
+            menuItem7.setText(getString(R.string.exitundisturb));
+        }
+
         if (mNoteView.penType == mNoteView.TP_PEN) {
             menuItem3.setText(getString(R.string.erase));
 
@@ -1271,6 +1319,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         }
         freshResultPage();
     }
+
+
 
     /**
      * 开始识别
@@ -1667,15 +1717,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged{
         Log.e(TAG, "**enterHandwrite, " + isEnter );
 
         if (isEnter){
-            /*mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);
-                }
-            }, 500);*/
+            if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_DU_MODE)
+                return;
             mHandler.postDelayed(() -> {getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);}, 500);
-        }
-        else{
+        } else {
+            if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_GU16_MODE)
+                return;
             getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_GU16_MODE); //
         }
 

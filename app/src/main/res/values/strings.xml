@@ -140,4 +140,7 @@
     <string name="noRecog">仅录制</string>
 
     <string name="undisturb">免打扰模式</string>
+    <string name="exitundisturb">退出免打扰</string>
+
+    <string name="undisturbTip">免打扰模式,点击后退出</string>
 </resources>

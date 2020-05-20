@@ -17,7 +17,7 @@ public class HVTextView extends TextView {
 
     int pageCount = 0;
     int pageIdx = -1;
-    public static int OFFSET_LINE = 76;//48
+    public static int OFFSET_LINE = 0;//48
 
     public HVTextView(Context context) {
         super(context);
@@ -61,8 +61,12 @@ public class HVTextView extends TextView {
     public boolean isLastPage() {
         int viewHeight = this.getHeight();
         int lineCount = this.getLineCount();
+
+        LogUtils.printErrorLog(TAG, "65 this.getHeight(): " + this.getHeight());
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
+
+        LogUtils.printErrorLog(TAG, "69 rtLine.height(): " + rtLine.height());
         if (getPageCount() == 0)
             return true;
         else
@@ -87,6 +91,9 @@ public class HVTextView extends TextView {
         getLineBounds(lineCount - 1, rtLine);
 
         OFFSET_LINE = getResources().getInteger(R.integer.OFFSET_LINE);
+        LogUtils.printErrorLog(TAG, "94 this.getHeight(): " + this.getHeight());
+
+        LogUtils.printErrorLog(TAG, "96 rtLine.getHeight(): " + rtLine.height());
         int offset = Math.min(this.getHeight() - OFFSET_LINE, rtLine.bottom - this.getScrollY());
         this.scrollBy(0, offset);
         return true;
@@ -120,7 +127,7 @@ public class HVTextView extends TextView {
                 Rect rtLine = new Rect();
                 getLineBounds(lineCount - 1, rtLine);
                 int viewHeight = this.getHeight();
-                pageCount = (rtLine.bottom + viewHeight - 6  - OFFSET_LINE - OFFSET_LINE) / (viewHeight - OFFSET_LINE);
+                pageCount = (rtLine.bottom + viewHeight - 10  - OFFSET_LINE - OFFSET_LINE) / (viewHeight - OFFSET_LINE);
             } else {
                 return 0;
             }
