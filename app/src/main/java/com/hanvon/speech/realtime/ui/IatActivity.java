@@ -752,6 +752,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             case R.id.note_pg_info:
                 //pageJump();
                 saveNoteCurTracePage();
+                enterHandwrite(false);
                 DialogUtil dialogUtil = DialogUtil.getInstance();
                 dialogUtil.regListener(this);
                 dialogUtil.showJumpDialog(this, mNotePageIndex);
@@ -1519,13 +1520,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNotePageIndex++;
         // 刷新便笺的页面
         updateNoteCurPage();
-        new Handler().postDelayed(new Runnable() {
 
-            public void run() {
-                mNoteView.setInputEnabled(true);
-            }
-
-        }, 500);
+        mHandler.postDelayed(() -> {mNoteView.setInputEnabled(true);}, 500);
     }
 
     /***
@@ -1540,13 +1536,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNotePageIndex = index;
         // 刷新便笺的页面
         updateNoteCurPage();
-        new Handler().postDelayed(new Runnable() {
+        mHandler.postDelayed(() -> {
+            mNoteView.setInputEnabled(true);
+            if (isRecording)
+                enterHandwrite(true);}, 500);
 
-            public void run() {
-                mNoteView.setInputEnabled(true);
-            }
-
-        }, 500);
     }
 
     /**
@@ -1562,13 +1556,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
         mNotePageIndex--;
         updateNoteCurPage();
-        new Handler().postDelayed(new Runnable() {
 
-            public void run() {
-                mNoteView.setInputEnabled(true);
-            }
-
-        }, 500);
+        mHandler.postDelayed(() -> {mNoteView.setInputEnabled(true);}, 500);
     }
 
 
