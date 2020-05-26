@@ -109,10 +109,12 @@
 
         <Button
             android:id="@+id/text_begin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_w"
+            android:layout_height="@dimen/button_h"
             android:layout_below="@+id/time_tv"
-            android:layout_margin="@dimen/Margin_XS"
+            android:layout_marginLeft="@dimen/Margin_XS"
+            android:layout_marginBottom="@dimen/Margin_XS"
+            android:layout_marginTop="@dimen/Margin_XS"
             android:background="@drawable/button_w_edge"
             android:padding="@dimen/Margin_sp"
             android:stateListAnimator="@null"
@@ -123,10 +125,12 @@
 
         <Button
             android:id="@+id/text_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_w"
+            android:layout_height="@dimen/button_h"
             android:layout_below="@+id/time_tv"
-            android:layout_margin="@dimen/Margin_XS"
+            android:layout_marginLeft="@dimen/Margin_XS"
+            android:layout_marginBottom="@dimen/Margin_XS"
+            android:layout_marginTop="@dimen/Margin_XS"
             android:layout_toRightOf="@+id/text_begin"
             android:background="@drawable/button_w_edge"
             android:padding="@dimen/Margin_sp"
@@ -137,10 +141,12 @@
 
         <Button
             android:id="@+id/iat_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_w"
+            android:layout_height="@dimen/button_h"
             android:layout_below="@+id/time_tv"
-            android:layout_margin="@dimen/Margin_XS"
+            android:layout_marginLeft="@dimen/Margin_XS"
+            android:layout_marginBottom="@dimen/Margin_XS"
+            android:layout_marginTop="@dimen/Margin_XS"
             android:layout_toRightOf="@+id/text_edit"
             android:background="@drawable/button_w_edge"
             android:padding="@dimen/Margin_sp"
@@ -196,21 +202,18 @@
             <ImageView
                 android:layout_width="@dimen/Button_H2"
                 android:layout_height="@dimen/Button_H2"
-                android:layout_marginRight="@dimen/Margin_sp"
                 android:background="@drawable/volume_down"
                 android:id="@+id/decre_volume"/>
 
             <com.hanvon.speech.realtime.view.VolumeBar
                 android:id="@+id/ctrl_vol"
-                android:layout_marginLeft="@dimen/Margin_sp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="0dp"
                 android:layout_width="@dimen/w_player_vol"
                 android:layout_height="@dimen/h_player_vol" />
 
             <ImageView
                 android:layout_width="@dimen/Button_H2"
                 android:layout_height="@dimen/Button_H2"
-                android:layout_marginRight="@dimen/Margin_XS"
                 android:background="@drawable/volume_up"
                 android:id="@+id/increase_volume"/>
         </LinearLayout>
@@ -386,6 +389,19 @@
             android:stateListAnimator="@null"
             android:background="@drawable/next_page_2" />
 
+        <CheckBox
+            android:id="@+id/readcheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_M"
+            android:layout_marginBottom="@dimen/Margin_S"
+            android:button="@drawable/check_box"
+            android:focusableInTouchMode="false"
+            android:padding="@dimen/Margin_XS"
+            android:stateListAnimator="@null"
+            android:text="@string/readcheck"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeM" />
 
     </LinearLayout>
 </LinearLayout>

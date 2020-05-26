@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.btn_Return:
                 MethodUtils.hideSoftInput(LoginActivity.this);
-                new Handler().postDelayed(() -> {finish(); }, 800);
+                new Handler().postDelayed(() -> {finish();}, 800);
                 break;
             case R.id.vc_code_tv:
                 mPassLayout.setVisibility(View.GONE);

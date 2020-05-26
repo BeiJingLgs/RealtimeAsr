@@ -185,4 +185,6 @@
     <dimen name="record_susend">70dp</dimen>
 
     <dimen name="Margin_top_bottom">5dp</dimen>
+    <dimen name="button_h">40dp</dimen>
+    <dimen name="button_w">75dp</dimen>
 </resources>

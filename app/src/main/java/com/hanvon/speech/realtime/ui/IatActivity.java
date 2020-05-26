@@ -451,7 +451,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         }
                     }
                     break;
+                case 2:
+                   // long startTime = (long)message.obj;
+                  //  int index = (int) (startTime * 100 /mFileBean.getTime());
+                   // mSeekBar.setProgress(index);
+                    break;
             }
+
         }
     }
 
@@ -1378,7 +1384,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void close(boolean isRemoveRunners) {
         CommonUtils.setOnValidate(true, this);
         logger.info("try to close");
-        enterHandwrite(false);
+        runOnUiThread(() -> {enterHandwrite(false);});
         try {
             is.close();
         } catch (IOException | RuntimeException e) {
@@ -1495,6 +1501,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         // 笔迹数据
         page.copyTraces(mNoteView.getTraces());
         // 保存以后设置笔迹没有修改
+
         String path = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
         mNoteView.saveCanvasInfo(path);
         mNoteView.setModified(false);

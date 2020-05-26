@@ -154,4 +154,6 @@
 
     <dimen name="h_player_vol">26dp</dimen>
     <dimen name="w_player_vol">180dp</dimen>
+    <dimen name="button_h">40dp</dimen>
+    <dimen name="button_w">75dp</dimen>
 </resources>

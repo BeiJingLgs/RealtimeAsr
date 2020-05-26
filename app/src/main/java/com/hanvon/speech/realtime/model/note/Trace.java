@@ -20,7 +20,7 @@ public class Trace {
 	private int width; // 笔迹的粗细
 	//private int level; // 笔迹的灰度级
 	//private int type; // 笔迹的类型，0表示铅笔，1表示钢笔，2表示毛笔，3表示压感笔
-	public ArrayList<Point> points = null; // 笔迹的点
+    private ArrayList<Point> points = null; // 笔迹的点
 	public boolean bHasRec = false; // 本条笔迹的时候是否有录音
 	public Record RecInfo = null; // 录音信息
 
@@ -67,7 +67,7 @@ public class Trace {
 	public void addPoint(Point pt) {
 		// TODO Auto-generated method stub
 		if (points == null) {
-			points = new ArrayList<Point>();
+			points = new ArrayList<>();
 		}
 		points.add(pt);
 	}
@@ -175,6 +175,7 @@ public class Trace {
 				// 录音结束时间，ms为单位
 				stream.read(info, 0, 4);
 				trace.RecInfo.nTimeEnd = NoteBaseData.byteToInt(info, true);
+
 }
 			info = null;
 
@@ -585,7 +586,7 @@ public class Trace {
 
 		if (newTrace.bHasRec) {
 			newTrace.RecInfo = new Record( this.RecInfo.nTimeBegin,
-					this.RecInfo.nTimeEnd);
+					this.RecInfo.nTimeEnd, this.RecInfo.strName);
 		}
 
 		for (Point pt : points) {
