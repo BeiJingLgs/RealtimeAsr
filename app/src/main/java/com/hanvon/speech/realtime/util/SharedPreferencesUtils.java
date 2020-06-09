@@ -25,6 +25,7 @@ public class SharedPreferencesUtils {
 	public static final String LOGIN = "login";
 
 	public static final String USAGETIME = "usage_time";
+	public static final String PLAYTIME = "play_time";
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
      * @param context

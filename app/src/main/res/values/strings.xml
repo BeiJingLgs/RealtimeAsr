@@ -143,5 +143,5 @@
     <string name="exitundisturb">退出免打扰</string>
 
     <string name="undisturbTip">免打扰模式,点击后退出</string>
-    <string name="readcheck">点击录音过程中的文字，自动播放对应的录音</string>
+    <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
 </resources>

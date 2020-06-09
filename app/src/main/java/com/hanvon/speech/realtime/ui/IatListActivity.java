@@ -1,8 +1,6 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,13 +13,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.android.LoggerUtil;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
@@ -38,15 +34,11 @@ import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
-import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 
 public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -65,7 +57,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HvApplication.IS_NETDIALOG = true;
+        HvApplication.IS_NEEDIALOG = true;
         LogUtils.printErrorLog("onNewIntent", "===onCreate");
         init();
     }
@@ -142,7 +134,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
             }
             if (!TextUtils.isEmpty(HvApplication.TOKEN))
                 return;
-            if (!HvApplication.IS_NETDIALOG)
+            if (!HvApplication.IS_NEEDIALOG)
                 return;
             RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
                 @Override

@@ -64,7 +64,7 @@ public class HandWriteNoteView extends NoteView {
     /**
      * 便笺内容是否被修改过
      */
-    private boolean isModified = false;
+    private boolean isModified = false, isChecked;
     private boolean isMemoEmpty = false;
 
     private boolean m_penErase = false;
@@ -198,6 +198,8 @@ public class HandWriteNoteView extends NoteView {
                         // 判断当前是否正在录音
                         if (((IatActivity) mContext).isRecording()) {
                             long time = ((IatActivity) mContext).getCurrrentRecordTime();
+                            LogUtils.printErrorLog(TAG, "===time: " + time);
+
                             mCurTrace.RecInfo = new Record();
                             mCurTrace.RecInfo.nTimeBegin = time;
                             mCurTrace.RecInfo.nTimeEnd = time;
@@ -212,6 +214,8 @@ public class HandWriteNoteView extends NoteView {
                 case NoteView.ACTION_MOVE:
                     bUp = false;
                     if (!bPenDown) {
+                        if (isChecked)
+                            break;
                         path.moveTo(x, y);
                         lastPoint = p;
                         downPoint = p;
@@ -225,6 +229,8 @@ public class HandWriteNoteView extends NoteView {
                         }
                         bPenDown = true;
                     } else {
+                        if (isChecked)
+                            break;
                         path.lineTo(x, y);
                     }
                     lastPoint = p;
@@ -238,7 +244,8 @@ public class HandWriteNoteView extends NoteView {
                     bUp = true;
 //                    Log.i(TAG, "onDraw UP, "+ "x: "+p.getX() + ", y: "+ p.getY() );
                     if (bPenDown) {
-                        path.lineTo(x, y);
+                        if (!isChecked)
+                            path.lineTo(x, y);
                         bPenDown = false;
                     }
                     lastPoint = p;
@@ -246,7 +253,8 @@ public class HandWriteNoteView extends NoteView {
                         Point pup = new Point(p.getX(), p.getY());
                         mCurTrace.addPoint(pup);
                         mTracePage.add(mCurTrace);
-                        //getRecordTrace();
+                        if (isChecked)
+                            getRecordTrace();
                         mCurTrace = null;
                         setModified(true);
                         isMemoEmpty = false;
@@ -370,6 +378,8 @@ public class HandWriteNoteView extends NoteView {
                     //int idx = mTracePage.get(delIdx).RecInfo.strName;
                     if (delIdx >= 0) {
                         recs.add(mTracePage.get(delIdx).RecInfo);
+                        LogUtils.printErrorLog(TAG, "===mTracePage.size(): " + mTracePage.size());
+
                         LogUtils.printErrorLog(TAG, "===getRecordTrace nTimeBegin delIdx: " + mTracePage.get(delIdx).RecInfo.nTimeBegin);
                     }
                 }
@@ -610,6 +620,9 @@ public class HandWriteNoteView extends NoteView {
         this.isModified = isModified;
     }
 
+    public void setQuickReadChecked(boolean isChecked) {
+        this.isChecked = isChecked;
+    }
 
     /**
      * 清除所有笔迹

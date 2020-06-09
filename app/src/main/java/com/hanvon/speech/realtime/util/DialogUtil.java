@@ -21,14 +21,8 @@ import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.adapter.JumpAdapter;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
-import com.hanvon.speech.realtime.view.CommonDialog;
 import com.hanvon.speech.realtime.view.CustomDialog;
 import com.hanvon.speech.realtime.view.NetWorkDialog;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Response;
 
 public class DialogUtil {
     CustomDialog customDialog;
@@ -93,7 +87,7 @@ public class DialogUtil {
         mNetDialog.setCancel(context.getResources().getString(R.string.cancel), new NetWorkDialog.IOnCancelListener() {
             @Override
             public void onCancel(NetWorkDialog dialog) {
-                HvApplication.IS_NETDIALOG = false;
+                HvApplication.IS_NEEDIALOG = false;
                 disNetWorkDialog();
             }
         });

@@ -2,7 +2,6 @@ package com.hanvon.speech.realtime.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.ai.speech.realtime.Const;
-import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -29,7 +27,6 @@ import com.hanvon.speech.realtime.bean.Result.UsageBeenList;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.CommonUtils;
-import com.hanvon.speech.realtime.util.ShareUtils;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
@@ -93,7 +90,7 @@ public class MeActivity extends BaseActivity {
             }
             id = MethodUtils.getDeviceId();
         }
-        if (!HvApplication.IS_NETDIALOG)
+        if (!HvApplication.IS_NEEDIALOG)
             return;
         RetrofitManager.getInstance(this).getBindUser(id, new RetrofitManager.ICallBack() {
             @Override
@@ -118,12 +115,13 @@ public class MeActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        initStates();
+       // initStates();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        initStates();
     }
 
     @Override

@@ -389,19 +389,35 @@
             android:stateListAnimator="@null"
             android:background="@drawable/next_page_2" />
 
-        <CheckBox
-            android:id="@+id/readcheckbox"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_M"
-            android:layout_marginBottom="@dimen/Margin_S"
-            android:button="@drawable/check_box"
-            android:focusableInTouchMode="false"
-            android:padding="@dimen/Margin_XS"
-            android:stateListAnimator="@null"
-            android:text="@string/readcheck"
-            android:textColor="@color/black"
-            android:textSize="@dimen/textSizeM" />
+            android:orientation="horizontal"
+            android:id="@+id/tip_view">
+            <CheckBox
+                android:id="@+id/readcheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_M"
+                android:layout_marginBottom="@dimen/Margin_S"
+                android:button="@drawable/check_box"
+                android:focusableInTouchMode="false"
+                android:paddingLeft="@dimen/Margin_XS"
+                android:paddingTop="@dimen/Margin_XS"
+                android:paddingBottom="@dimen/Margin_XS"
+                android:stateListAnimator="@null"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeM" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/Margin_S"
+                android:text="@string/readcheck"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeM" />
+        </LinearLayout>
+
 
     </LinearLayout>
 </LinearLayout>

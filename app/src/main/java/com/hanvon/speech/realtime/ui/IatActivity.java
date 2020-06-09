@@ -1,5 +1,6 @@
 package com.hanvon.speech.realtime.ui;
 
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,12 +132,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv;
     private HVTextView mRecogResultTv;
     private SeekBar mSeekBar;
-    public CheckBox mCheckbox, mNoRecogCheckbox;
+    public CheckBox mCheckbox, mNoRecogCheckbox, mReadCheckbox;
     private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout, mViewTips;
     private boolean isNEW, isTips = false;
 
     private int nPageCount = 0; // 当前分类的页总数
@@ -206,13 +208,16 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mRecordLayout = view.findViewById(R.id.record_layout);
         mCheckbox = findViewById(R.id.checkbox);
         mNoRecogCheckbox = findViewById(R.id.recog_checkbox);
-       // mUnDisturbCheckox = findViewById(R.id.undisturb);
+        mReadCheckbox = findViewById(R.id.readcheckbox);
+        mReadCheckbox.setOnCheckedChangeListener(this);
+        // mUnDisturbCheckox = findViewById(R.id.undisturb);
         mRecordStatusImg = findViewById(R.id.suspendImg);
         mIncreaseVolImg = findViewById(R.id.increase_volume);
         mDecreaseVolImg = findViewById(R.id.decre_volume);
         mCtlVolBar = findViewById(R.id.ctrl_vol);
         mVolumLayout = findViewById(R.id.volum_layout);
         mExitUndisturbTv = findViewById(R.id.undisturb_tv);
+        mViewTips = findViewById(R.id.tip_view);
 
         mIncreaseVolImg.setOnClickListener(this);
         mDecreaseVolImg.setOnClickListener(this);
@@ -275,7 +280,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);
         registerReceiver(recordReceiver, mBtFilter);
 
-        forbiddenDropDown(1);
+
     }
     private void init() {
         TAG = getLocalClassName();
@@ -294,6 +299,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mVolumLayout.setVisibility(View.GONE);
             mSeekBar.setVisibility(View.GONE);
             mTimeTv.setVisibility(View.INVISIBLE);
+            mViewTips.setVisibility(View.GONE);
         } else {
             mSeekBar.setMax(mDuration);
         }
@@ -372,6 +378,27 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
     }
 
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        forbiddenDropDown(1);
+        LogUtils.printErrorLog(TAG, "===onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtils.printErrorLog(TAG, "===onPause");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle, PersistableBundle persistableBundle) {
+        super.onSaveInstanceState(bundle, persistableBundle);
+        LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
+    }
+
     @Override
     public void notifyNoteChanged(int i) {
         jumpToPage(i);
@@ -379,7 +406,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+        mNoteView.setQuickReadChecked(b);
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -391,6 +418,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
                     pauseRecognize();
                 }
+                if (MediaPlayerManager.getInstance().isPlaying() || mUsagePlayTime > 0)
+                    SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, mUsagePlayTime);
                 stopPlayRecord();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
@@ -400,8 +429,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
-                LogUtils.printErrorLog(TAG, "HIDE_BACKLOGO");
-                //updateNoteCurPage();
+                LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");
+                mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
+                SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
+                mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
             }
         }
     }
@@ -452,9 +483,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     }
                     break;
                 case 2:
-                   // long startTime = (long)message.obj;
-                  //  int index = (int) (startTime * 100 /mFileBean.getTime());
-                   // mSeekBar.setProgress(index);
+                    if (mTimer != null)
+                        mTimer.cancel();
+                    MediaPlayerManager.getInstance().stop();
+                    mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
+                    long startTime = (long)message.obj;
+                    mUsagePlayTime = startTime;
+                    float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
+                    int du =  (int)(mFileBean.getDuration() * index);
+                    LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
+                    mSeekBar.setProgress(du);
+                    playRecord();
                     break;
             }
 
@@ -815,6 +854,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mDuration = MediaPlayerManager.getInstance().getDuration();//获取音乐总时间
             if (mDuration == 0)
                 return;
+
+            mViewTips.setVisibility(View.VISIBLE);
             if (mAudioOffset == 0) {
                 mStartPlayTime = System.currentTimeMillis();
             } else {
@@ -1712,7 +1753,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     public void enterHandwrite(boolean isEnter) {
         Log.e(TAG, "**enterHandwrite, " + isEnter );
 
-        if (isEnter){
+        /*if (isEnter){
             if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_DU_MODE)
                 return;
             mHandler.postDelayed(() -> {getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);}, 500);
@@ -1720,7 +1761,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_GU16_MODE)
                 return;
             getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_GU16_MODE); //
-        }
+        }*/
 
     }
 }
