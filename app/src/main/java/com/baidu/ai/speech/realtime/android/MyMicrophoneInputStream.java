@@ -7,6 +7,8 @@ import android.util.Log;
 
 import java.io.InputStream;
 
+import static com.baidu.ai.speech.realtime.ConstBroadStr.CHANNEL_CONFIG;
+
 /**
  * 录音流
  * <p>
@@ -44,10 +46,10 @@ public class MyMicrophoneInputStream extends InputStream {
         Log.i(TAG, " MyMicrophoneInputStream start recoding!");
         if (audioRecord == null) {
             int bufferSize = AudioRecord.getMinBufferSize(16000,
-                    AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT) * 16;
+                    CHANNEL_CONFIG, AudioFormat.ENCODING_PCM_16BIT) * 16;
             // 16000 采样率 16bits 单声道
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                    16000, CHANNEL_CONFIG, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
         }
         if (audioRecord == null
                 || audioRecord.getState() != AudioRecord.STATE_INITIALIZED ) {

@@ -64,7 +64,7 @@ public class MediaPlayerManager {
             if (player == null) {
                 player = new MediaPlayer();
                 player.setDataSource(url);
-                player.setVolume(0.9f, 0.9f);
+                player.setVolume(1f, 1f);
                 player.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 player.prepare();
                 player.start();

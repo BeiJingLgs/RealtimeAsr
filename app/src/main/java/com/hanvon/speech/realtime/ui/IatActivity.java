@@ -1349,6 +1349,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void preResultPage() {
+
         logger.info("preResultPage");
         int curPage = mRecogResultTv.getPageIdx();
         logger.info("getPageCount: " + mRecogResultTv.getPageCount());
@@ -1372,7 +1373,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     /**
      * 开始识别
-     *
+
      * @throws IOException Assets 文件异常
      */
     private void start() throws IOException {
