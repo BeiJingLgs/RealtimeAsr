@@ -135,13 +135,18 @@
     <string name="unpermission">No corresponding permission</string>
     <string name="unmailsetting">Mail client is not configured, please configure first</string>
 
-    <string name="page_jump_info">第   %d   页</string>
+    <string name="page_jump_info">The   %d   page</string>
+    <string name="noRecog">Record only</string>
+    <string name="undisturb">No disturb mode</string>
+    <string name="exitundisturb">Exit without interruption</string>
+    <string name="undisturbTip">Do not disturb mode, click to exit</string>
+    <string name="readcheck">Click the text in the recording process to automatically play the corresponding recording (the marking function will not work after checking)</string>
+    <string name="outputing">Building...</string>
+    <string name="save_path">File save path：</string>
+    <string name="select_ocr_type">Select recognition engine：</string>
+    <string name="ocr_type_local">Local engine</string>
+    <string name="ocr_type_online">Online engine (need to be connected)</string>
+    <string name="tips">Tips</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string>
 
-    <string name="noRecog">仅录制</string>
-
-    <string name="undisturb">免打扰模式</string>
-    <string name="exitundisturb">退出免打扰</string>
-
-    <string name="undisturbTip">免打扰模式,点击后退出</string>
-    <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
 </resources>

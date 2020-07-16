@@ -12,6 +12,7 @@ import com.baidu.ai.speech.realtime.Util;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.full.download.Result;
 import com.hanvon.speech.realtime.model.IatResults;
+import com.hanvon.speech.realtime.util.FileBeanUils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
 import java.text.SimpleDateFormat;
@@ -109,6 +110,8 @@ public class Stat {
             if (TextUtils.isEmpty(result.getResult())) {
                 return;
             }
+            //if (FileBeanUils.isRecoding())
+            result.setRecordTime(FileBeanUils.getCurrrentRecordTime());
             IatResults.addResult(result);
             Intent intent = new Intent(ConstBroadStr.UPDATERECOG);
             HvApplication.getContext().sendBroadcast(intent);

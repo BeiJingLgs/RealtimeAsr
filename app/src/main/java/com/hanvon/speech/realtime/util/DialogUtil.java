@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.util;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +28,14 @@ import com.hanvon.speech.realtime.view.CustomDialog;
 import com.hanvon.speech.realtime.view.NetWorkDialog;
 
 public class DialogUtil {
+    private static String TAG = "DialogUtil";
+
     CustomDialog customDialog;
     private static DialogUtil singleton = null;
     NetWorkDialog mNetDialog;
+
     private DialogUtil() {
     }
-
 
 
     public static DialogUtil getInstance() {
@@ -47,11 +52,12 @@ public class DialogUtil {
         customDialog.setCancel(context.getResources().getString(R.string.cancel), new CustomDialog.IOnCancelListener() {
             @Override
             public void onCancel(CustomDialog dialog) {
-                Toast.makeText(context, context.getResources().getString(R.string.success_Cancel),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.success_Cancel), Toast.LENGTH_SHORT).show();
             }
         });
         customDialog.show();
     }
+
     public void disProgressDialog() {
         if (customDialog == null)
             return;
@@ -65,11 +71,12 @@ public class DialogUtil {
         customDialog.setCancel(context.getResources().getString(R.string.cancel), new CustomDialog.IOnCancelListener() {
             @Override
             public void onCancel(CustomDialog dialog) {
-                Toast.makeText(context, context.getResources().getString(R.string.success_Cancel),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.success_Cancel), Toast.LENGTH_SHORT).show();
             }
         });
         customDialog.show();
     }
+
     public void disWaitingDialog() {
         if (customDialog == null)
             return;
@@ -104,6 +111,7 @@ public class DialogUtil {
         });
         mNetDialog.show();
     }
+
     public void disNetWorkDialog() {
         if (mNetDialog == null)
             return;
@@ -168,6 +176,7 @@ public class DialogUtil {
     protected int jumpPageCount = 0;
     public static final int PAGE_JMP_BLOCK_SIZE = 10;
     public NoteChanged noteChanged;
+
     /**
      * 页面跳转
      */
@@ -201,10 +210,8 @@ public class DialogUtil {
     /**
      * 修改btn的状态
      *
-     * @param pageIndex
-     *            第几页
-     * @param count
-     *            总共有多少页
+     * @param pageIndex 第几页
+     * @param count     总共有多少页
      */
     protected void modifyPageJumpBtnState(int pageIndex, int count) {
         btnPrevTen.setClickable(true);
@@ -221,6 +228,7 @@ public class DialogUtil {
         }
         listApapter.updatePage(pageIndex);
     }
+
     public void showJumpDialog(Context context, int mNotePageIndex) {
         LayoutInflater inflater = LayoutInflater.from(context);
         viewPageJump = inflater.inflate(R.layout.popup_page_jump, null);
@@ -271,11 +279,61 @@ public class DialogUtil {
         });
     }
 
+
+    int index = 0;
+
+    public void showOCRSelectDialog(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        viewPageJump = inflater.inflate(R.layout.dialog_ocr_select2, null);
+        int width = HvApplication.mContext.getResources().getDimensionPixelSize(R.dimen.dialog_button_largeX);
+        popPageJump = new PopupWindow(viewPageJump, width, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popPageJump.setBackgroundDrawable(new BitmapDrawable());
+        int gravity = Gravity.CENTER;
+        popPageJump.showAtLocation(viewPageJump, gravity, 0,
+                0);
+
+        RadioGroup rgOcrType = (RadioGroup) viewPageJump.findViewById(R.id.ocrType);
+        rgOcrType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup arg0, int id) {
+                switch (id) {
+                    case R.id.btn_ocr_local:
+                        index = 0;
+                        LogUtils.printErrorLog(TAG, "btn_ocr_local");
+                        break;
+                    case R.id.btn_ocr_online:
+                        index = 1;
+                        LogUtils.printErrorLog(TAG, "btn_ocr_online");
+                        break;
+                }
+            }
+        });
+        Button btnOk = viewPageJump.findViewById(R.id.btnOKImage);
+        Button btnCancel = viewPageJump.findViewById(R.id.btnCancel);
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noteChanged.startOcr(index);
+                popPageJump.dismiss();
+                LogUtils.printErrorLog(TAG, "btnOk.setOnClickListener");
+            }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LogUtils.printErrorLog(TAG, "btnCancel.setOnClickListener");
+                popPageJump.dismiss();
+            }
+        });
+    }
+
     public void regListener(NoteChanged ml) {
         this.noteChanged = ml;
     }
 
     public interface NoteChanged {
         void notifyNoteChanged(int i);
+
+        void startOcr(int i);
     }
 }

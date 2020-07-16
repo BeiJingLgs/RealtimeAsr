@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.baidu.ai.speech.realtime.Const;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
+import com.baidu.ai.speech.realtime.Constants;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
@@ -94,6 +96,10 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         if (mTotalFileList == null) {
             mTotalFileList = new ArrayList<FileBean>();
         }
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Constants.WIDTH = display.getWidth();
+        Constants.HEIGHT = display.getHeight();
         freshPage();
     }
 
@@ -109,6 +115,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 checkApkTask.execute();
             }
         }
+
     }
 
     @Override
@@ -333,7 +340,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         String modify = TimeUtil.getTime(time);
         String content = "";
         intent.putExtra("isNew", true);
-        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0, 0);
+        FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0, 0, HvApplication.Recognition_Engine);
         databaseUtils.insert(fileBean);
         TranslateBean.getInstance().setFileBean(fileBean);
         startActivityForResult(intent, READ_DIALOG_REQUEST);

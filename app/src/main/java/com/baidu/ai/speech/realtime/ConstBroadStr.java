@@ -7,6 +7,7 @@ import android.os.Environment;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 import static com.baidu.ai.speech.realtime.android.HvApplication.getContext;
@@ -39,6 +40,7 @@ public class ConstBroadStr {
      * 返回的音频数据的格式。 ENCODING_PCM_8BIT, ENCODING_PCM_16BIT, and ENCODING_PCM_FLOAT.
      */
     public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    public static String ROOT_OCR_BIN_PATH = File.separator + "device" + File.separator + "hanvon_resources" + File.separator + "ocr" + File.separator + "dict_cn_hw_cluster" ;
 
 
 
@@ -48,6 +50,7 @@ public class ConstBroadStr {
 
     public static final String SHOW_BACKLOGO = "android.intent.action.SHOW_BACKLOGO";
     public static final String UPDATERECOG = "com.hanvon.realtime.UPDATERECOG";
+    public static final String UPDATEALSPEECHRECOG = "com.hanvon.realtime.UPDATEALSPEECHRECOG";
     public static final String ACTION_HOME_PAGE = "intent.hanvon.homepage";
     public static final String HIDE_BACKLOGO = "android.intent.action.HIDE_BACKLOGO";
 }

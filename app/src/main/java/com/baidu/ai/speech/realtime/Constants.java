@@ -27,5 +27,11 @@ public class Constants {
      * Runner.MODE_SIMULATE_REAL_TIME_STREAM 完整版本，输入文件流模拟实时流
      */
     public final static int DEFAULT_MODE = MINI_DEMO_MODE;
+    public static int WIDTH;
+    public static int HEIGHT;
 
+    public static final int MESSAGE_WHAT1 = 1;
+    public static final int MESSAGE_WHAT2 = 2;
+
+    public static final int MESSAGE_WHAT3 = 3;
 }

@@ -243,13 +243,13 @@ public class CommonUtils {
 			return 0;
 		}
 	}
-	public static void saveAsFileWriter(String filePath, String content) {
+	public static void saveAsFileWriter(String filePath, String content, boolean isappend) {
 		FileWriter fwriter = null;
 		StringBuffer buffer = new StringBuffer(TimeUtil.getCurrentTime());
 		buffer.append("\n").append(content).append("\n");
 		try {
 			// true表示不覆盖原来的内容，而是加到文件的后面。若要覆盖原来的内容，直接省略这个参数就好
-			fwriter = new FileWriter(filePath, true);
+			fwriter = new FileWriter(filePath, isappend);
 			fwriter.write(buffer.toString());
 		} catch (IOException ex) {
 			ex.printStackTrace();

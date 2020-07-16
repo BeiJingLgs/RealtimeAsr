@@ -18,6 +18,11 @@ public class Trace {
 	public static int BRUSH_TRACE = 2; // 毛笔
 	public static int PRESSURE_TRACE = 3; // 压感笔*/
 	private int width; // 笔迹的粗细
+
+	public ArrayList<Point> getPoints() {
+		return points;
+	}
+
 	//private int level; // 笔迹的灰度级
 	//private int type; // 笔迹的类型，0表示铅笔，1表示钢笔，2表示毛笔，3表示压感笔
     private ArrayList<Point> points = null; // 笔迹的点

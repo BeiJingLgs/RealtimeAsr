@@ -24,7 +24,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "sdcard text," +
             "createmillis long," +
             "duration int,"  +
-            "time long)";
+            "time long,"  +
+            "sign int)";//标志识别引擎
 
     public static final String USER_TABLE_NAME = "thirdApp";
     /*private static final  String CREATE_TABLE_THIRD = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME +

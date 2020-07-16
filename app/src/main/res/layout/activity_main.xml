@@ -14,7 +14,7 @@
         android:id="@+id/record_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/Margin_S"
+        android:layout_marginTop="@dimen/Margin_SS"
         android:layout_marginLeft="@dimen/Margin_XS"
         android:layout_marginRight="@dimen/Margin_XS"
         android:layout_marginBottom="@dimen/Margin_XS"
@@ -255,7 +255,7 @@
             android:paddingLeft="@dimen/margin_s"
             android:paddingRight="@dimen/margin_s"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizexL" />
+            android:textSize="@dimen/textSizexLSP" />
         <!--
                     android:lineSpacingExtra="5.5dp"
                     android:letterSpacing="0.06"-->
@@ -347,6 +347,7 @@
     <LinearLayout
         android:id="@+id/write_layout"
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="@dimen/handwriteTv_h"
         android:padding="@dimen/Margin_XS">
 

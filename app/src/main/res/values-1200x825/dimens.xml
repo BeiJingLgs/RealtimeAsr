@@ -88,6 +88,7 @@
     <dimen name="textSizeS">9.3sp</dimen>
 
     <dimen name="textSizexL">16sp</dimen>
+    <dimen name="textSizexLSP">20.5sp</dimen>
 
     <dimen name="linePaddingS">0.3dp</dimen>
     <dimen name="linePaddingM">0.5dp</dimen>
@@ -110,6 +111,7 @@
     <dimen name="Text_Font_Size_S">10.7sp</dimen>
     <dimen name="Margin_XXS">5.3dp</dimen>
     <dimen name="Margin_S">8.7dp</dimen>
+    <dimen name="Margin_SS">1.5dp</dimen>
     <dimen name="Margin_XS">10dp</dimen>
     <dimen name="margin_M">13.3dp</dimen>
     <dimen name="marginTop">53.3dp</dimen>
@@ -137,6 +139,7 @@
     <dimen name="Margin_sp">2dp</dimen>
     <dimen name="Margin_sp2">0dp</dimen>
 
+    <dimen name="dialog_button_largeX">500dp</dimen>
     <dimen name="handwriteTv_h">470dp</dimen>
     <dimen name="volbar_width">8dp</dimen>
     <dimen name="volbar_height">20dp</dimen>
@@ -156,4 +159,10 @@
     <dimen name="w_player_vol">180dp</dimen>
     <dimen name="button_h">40dp</dimen>
     <dimen name="button_w">75dp</dimen>
+
+
+    <dimen name="image_h">150dp</dimen>
+    <dimen name="image_w0">150dp</dimen>
+    <dimen name="marginZ2">20dp</dimen>
+    <dimen name="marginZ">10dp</dimen>
 </resources>

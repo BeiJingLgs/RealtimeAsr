@@ -117,6 +117,7 @@
     <string name="recognize_result">识别结果</string>
     <string name="processing">正在识别处理，请稍候……</string>
     <string name="recog_picpath">/我的文档/在线识别/录音记事在线识别/</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string>
     <string name="recog">识&#160;&#160;别</string>
     <string name="saveTo">保存到:</string>
     <string name="save_to_local">保存到本地</string>
@@ -136,4 +137,25 @@
     <string name="unpermission">未拥有相应权限</string>
 
     <string name="unmailsetting">邮件客户端未进行配置，请先进行配置</string>
+
+
+    <string name="outputing">正在生成...</string>
+    <string name="save_path">文件保存路径：</string>
+    <string name="select_ocr_type">选择识别引擎：</string>
+    <string name="ocr_type_local">本地引擎</string>
+    <string name="ocr_type_online">在线引擎（需联网）</string>
+
+    <string name="page_jump_info">第   %d   页</string>
+    <string name="noRecog">仅录制</string>
+    <string name="undisturb">免打扰模式</string>
+    <string name="exitundisturb">退出免打扰</string>
+    <string name="undisturbTip">免打扰模式,点击后退出</string>
+    <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
+    <string name="outputing">正在生成...</string>
+    <string name="save_path">文件保存路径：</string>
+    <string name="select_ocr_type">选择识别引擎：</string>
+    <string name="ocr_type_local">本地引擎</string>
+    <string name="ocr_type_online">在线引擎（需联网）</string>
+    <string name="tips">提示</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string>
 </resources>

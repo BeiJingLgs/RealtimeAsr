@@ -134,4 +134,18 @@
     <string name="unpermission">未擁有相應權限</string>
 
     <string name="unmailsetting">郵件客戶端未進行配置，請先進行配置</string>
+
+    <string name="page_jump_info">第   %d   頁</string>
+    <string name="noRecog">僅錄制</string>
+    <string name="undisturb">免打擾模式</string>
+    <string name="exitundisturb">退出免打擾</string>
+    <string name="undisturbTip">免打擾模式,點擊後退出</string>
+    <string name="readcheck">點擊錄音過程中的文字，自動播放對應的錄音(勾選後劃線功能失效)</string>
+    <string name="outputing">正在生成...</string>
+    <string name="save_path">文件保存路徑：</string>
+    <string name="select_ocr_type">選擇識別引擎：</string>
+    <string name="ocr_type_local">本地引擎</string>
+    <string name="ocr_type_online">在線引擎（需聯網）</string>
+    <string name="tips">提示</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string>
 </resources>

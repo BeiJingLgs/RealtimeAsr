@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mydialog_edge"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mydialog_title_height"
+        android:background="@drawable/mydialog_title"
+        android:gravity="center"
+        android:text="@string/tips"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/mydialog_title_font" />
+     <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/Margin_L"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+
+           <TextView 
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_gravity="center_vertical"
+            	android:text="@string/select_ocr_type"
+            	android:textSize="@dimen/Second_Title_Font_Size" />
+        
+           <RadioGroup
+                android:id="@+id/ocrType"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+            	android:layout_marginLeft="@dimen/Margin_M"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/btn_ocr_local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/Margin_S"
+                    android:button="@drawable/state_checkbtn"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="@string/ocr_type_local"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/Second_Title_Font_Size" >
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/btn_ocr_online"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/Margin_S"
+                    android:button="@drawable/state_checkbtn"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="@string/ocr_type_online"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/Second_Title_Font_Size" >
+                </RadioButton>
+            </RadioGroup>
+        </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/Margin_XSSSSS"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center_vertical"
+        android:text=""
+        android:textSize="@dimen/Second_Title_Font_Size" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/Margin_XXL"
+        android:paddingLeft="@dimen/mydialog_margin_small"
+        android:paddingRight="@dimen/mydialog_margin_small"
+        android:paddingBottom="@dimen/mydialog_margin_small" >
+        <Button
+            android:id="@+id/btnNeutral"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:text="Retry"
+            android:layout_marginLeft="@dimen/Margin_XXL"
+            android:minWidth="@dimen/mydialog_button_width"
+            android:textSize="@dimen/mydialog_button_font"
+            android:background="@drawable/mydialog_basebtn"
+            android:visibility="invisible"
+            android:paddingLeft="@dimen/Margin_S"
+            android:paddingRight="@dimen/Margin_S"/>
+
+        <Button
+            android:id="@+id/btnOKImage"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:text="确定"
+            android:layout_marginLeft="@dimen/Margin_XXL"
+            android:layout_toRightOf="@+id/btnNeutral"
+            android:minWidth="@dimen/mydialog_button_width"
+            android:textSize="@dimen/mydialog_button_font"
+            android:background="@drawable/mydialog_basebtn"
+            android:paddingLeft="@dimen/Margin_S"
+            android:paddingRight="@dimen/Margin_S"/>
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:text="取消"
+            android:layout_marginLeft="@dimen/Margin_XXL"
+            android:layout_toRightOf="@+id/btnOKImage"
+            android:minWidth="@dimen/mydialog_button_width"
+            android:textSize="@dimen/mydialog_button_font"
+            android:background="@drawable/mydialog_basebtn"/>
+    </RelativeLayout>
+</LinearLayout>

@@ -18,6 +18,10 @@ public class ShopType {
 
     private String Describe;
 
+
+
+    private int VoiceEngineTypeID;
+
     public void setID(int ID){
         this.ID = ID;
     }
@@ -53,5 +57,12 @@ public class ShopType {
     }
     public String getDescribe(){
         return this.Describe;
+    }
+    public int getVoiceEngineTypeID() {
+        return VoiceEngineTypeID;
+    }
+
+    public void setVoiceEngineTypeID(int voiceEngineTypeID) {
+        VoiceEngineTypeID = voiceEngineTypeID;
     }
 }

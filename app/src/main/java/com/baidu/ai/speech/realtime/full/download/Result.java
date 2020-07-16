@@ -95,6 +95,11 @@ public class Result implements Serializable {
      */
     private long receiveTime;
 
+
+
+
+    private long recordTime;
+
     public Result(String jsonStr) throws JSONException {
         // 接收时间用于统计
         receiveTime = System.currentTimeMillis();
@@ -187,5 +192,13 @@ public class Result implements Serializable {
 
     public long getReceiveTime() {
         return receiveTime;
+    }
+
+    public long getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(long recordTime) {
+        this.recordTime = recordTime;
     }
 }

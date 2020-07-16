@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -21,7 +22,9 @@ import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -31,9 +34,19 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import com.aispeech.AIError;
+import com.aispeech.AIResult;
+import com.aispeech.DUILiteConfig;
+import com.aispeech.DUILiteSDK;
+import com.aispeech.common.AIConstant;
+import com.aispeech.export.config.AICloudASRConfig;
+import com.aispeech.export.engines2.AICloudLASRRealtimeEngine;
+import com.aispeech.export.intent.AICloudLASRRealtimeIntent;
+import com.aispeech.export.listeners.AILASRRealtimeListener;
 import com.alibaba.fastjson.JSON;
 import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.Constants;
@@ -46,24 +59,29 @@ import com.baidu.ai.speech.realtime.full.download.Result;
 import com.baidu.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hanvon.inputmethod.library.Native;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
+import com.hanvon.speech.realtime.adapter.SpeechSequenceAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.PackList;
 import com.hanvon.speech.realtime.bean.Result.PayResultBean;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
+import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.TraFile;
 import com.hanvon.speech.realtime.model.note.TraPage;
+import com.hanvon.speech.realtime.model.note.Trace;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.CommonUtils;
 import com.hanvon.speech.realtime.util.DialogUtil;
 import com.hanvon.speech.realtime.util.EPDHelper;
 import com.hanvon.speech.realtime.bean.FTBlock;
 import com.hanvon.speech.realtime.bean.FTLine;
+import com.hanvon.speech.realtime.util.FileBeanUils;
 import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MediaPlayerManager;
@@ -73,6 +91,8 @@ import com.hanvon.speech.realtime.model.PictureReco;
 import com.hanvon.speech.realtime.bean.RecoResult;
 import com.hanvon.speech.realtime.util.ShareUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
+import com.hanvon.speech.realtime.util.TextViewUtils;
+import com.hanvon.speech.realtime.util.ThreadPoolUtil;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.ZXingUtils;
@@ -87,12 +107,16 @@ import com.xrz.Pencil;
 import com.xrz.SimplePen;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -104,11 +128,15 @@ import java.util.logging.Logger;
 
 import okhttp3.RequestBody;
 
+import static com.baidu.ai.speech.realtime.ConstBroadStr.ROOT_OCR_BIN_PATH;
+import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT1;
+import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT2;
+import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT3;
 import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
-public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener {
+public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener, View.OnTouchListener {
 
     // ============== 以下参数请勿修改 ================
 
@@ -127,6 +155,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private SequenceAdapter mSequenceAdapter;
+    private SpeechSequenceAdapter mSpeechSequenceAdapter;
     private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn,
             mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord;
     private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv;
@@ -145,6 +174,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     protected static int PAGE_CATEGORY = 10;// 每页显示几个
     private ArrayList<Result> mTotalResultList, mTempResultList;
 
+    private ArrayList<SpeechResult> mTotalSpeechResultList, mTempSpeechResultList;
     private HandWriteNoteView mNoteView;
     // 当前page页的序号，从0开始
     protected int mNotePageIndex;
@@ -153,7 +183,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private Bitmap mBitmap;
     private Timer mTimer;
     private boolean isSeekbarChaning;
-    private boolean isRecording = false;
+    //private boolean isRecording = false;
     private ThreadPoolExecutor mExecutor = new ThreadPoolExecutor(2, 2, 60, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>());
     private String mRecordFilePath, mTempPath, mPath;
@@ -166,6 +196,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private RecordReceiver recordReceiver;
 
     private int index = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +222,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
         mRecogResultTv.getPaint().setAntiAlias(false);
+        mRecogResultTv.setOnTouchListener(this);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
@@ -245,7 +277,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         SimplePen pencil = new SimplePen();
         mNoteView.setPen(pencil);
         mNoteView.setBackground(mBitmap);
+
+
+        // int h = mRecogResultTv.getHeight();
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -271,17 +307,19 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void initData() {
         mUsageRecordTime = SharedPreferencesUtils.getUsageTimeSharedprefer(this, SharedPreferencesUtils.USAGETIME);
         SharedPreferencesUtils.clear(this, SharedPreferencesUtils.USAGETIME);
-        //LogUtils.printErrorLog(TAG, "==mUsagePlayTime: " + mUsageRecordTime);
+        LogUtils.printErrorLog(TAG, "==mUsagePlayTime: " + mUsageRecordTime);
         recordReceiver = new RecordReceiver();
         IntentFilter mBtFilter = new IntentFilter();
         mBtFilter.addAction(ConstBroadStr.SHOW_BACKLOGO);//ConstBroadStr.UPDATERECOG
         mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
         mBtFilter.addAction(ConstBroadStr.ACTION_HOME_PAGE);
+        mBtFilter.addAction(ConstBroadStr.UPDATEALSPEECHRECOG);
         mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);
         registerReceiver(recordReceiver, mBtFilter);
 
 
     }
+
     private void init() {
         TAG = getLocalClassName();
         mAudioManager = (AudioManager) HvApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
@@ -290,9 +328,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteView.setHandler(mHandler);
         mTotalResultList = new ArrayList<>();
         mTempResultList = new ArrayList<>();
+        mTotalSpeechResultList = new ArrayList<>();
+        mTempSpeechResultList = new ArrayList<>();
         mFileBean = TranslateBean.getInstance().getFileBean();
-        if (mFileBean == null)
+        if (mFileBean == null) {
             mFileBean = new FileBean();
+        }
+
+        FileBeanUils.setmFileBean(mFileBean);
         mDuration = mFileBean.getDuration();
         Log.e("startRecognize", "203 mFileBean.getTime()(): " + mFileBean.getTime());
         if (mDuration == 0) {
@@ -316,12 +359,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             String pathName = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/" + tmpName + NoteBaseData.NOTE_SUFFIX;
             NoteBaseData.gTraFile = TraFile.readTraFile(false, pathName, this);
 
-            if(NoteBaseData.gTraFile == null) {
+            if (NoteBaseData.gTraFile == null) {
                 createNewNote();
                 ToastUtils.show(this, getString(R.string.destroy_file));
                 return;
             }
-            if(NoteBaseData.gTraFile.pages == null) {
+            if (NoteBaseData.gTraFile.pages == null) {
                 createNewNote();
                 ToastUtils.show(this, getString(R.string.destroy_file));
                 return;
@@ -345,8 +388,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
-        IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
-        }.getType()));
+        if (mFileBean.getSign() == 0) {
+            IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
+            }.getType()));
+        } else {
+            IatResults.addAllSpeechResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<SpeechResult>>() {
+            }.getType()));
+        }
 
         mRecogResultTv.setText(mFileBean.getContent());
         mRecogResultTv.getPageCount();
@@ -379,7 +427,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -394,19 +441,134 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     @Override
-    public void onSaveInstanceState(Bundle bundle, PersistableBundle persistableBundle) {
-        super.onSaveInstanceState(bundle, persistableBundle);
-        LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
-    }
-
-    @Override
     public void notifyNoteChanged(int i) {
         jumpToPage(i);
     }
 
     @Override
+    public void startOcr(int i) {
+        if (i == 0) {
+            //todo:添加点的坐标
+            ArrayList<Trace> traces = NoteBaseData.gTraFile.getPage(mNotePageIndex).traces;
+            ArrayList<Short> points = new ArrayList<>();
+            if (traces == null)
+                return;
+            DialogUtil.getInstance().showRecogDialog(IatActivity.this);
+            for (Trace trace : traces) {
+                for (Point point : trace.getPoints()) {
+                    LogUtils.printErrorLog("trace.getPoints", "Short s : point.y: " + point.y + "  point.x: " + point.x);
+                    points.add((short)(mNoteView.getHeight() - point.y));
+                    points.add((short) point.x);
+                }
+                points.add((short) -1);
+                points.add((short) 0);
+            }
+            points.add((short) -1);
+            points.add((short) 0);
+            points.add((short) -1);
+            points.add((short) -1);
+            LogUtils.printErrorLog(TAG, "===bafore reco()");
+            LogUtils.printErrorLog(TAG, "===bafore reco()");
+            LogUtils.printErrorLog(TAG, "===bafore reco()");
+            Short []traceBuf = new Short[points.size()];
+            short []traceBuf2 = new short[points.size()];
+            traceBuf = points.toArray(traceBuf);
+
+            for (int k = 0; k < points.size(); k+=2) {
+                LogUtils.printErrorLog(TAG, "===y: " + points.get(k) + "   x: " + points.get(k+1));
+            }
+            for (int j = 0; j < traceBuf.length; j++) {
+                traceBuf2[j] = traceBuf[j].shortValue();
+            }
+
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    reco(traceBuf2);
+                }
+            });
+        } else {
+            RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
+            recognmizeImageAyncTask.execute();
+        }
+    }
+
+
+    void reco(short []traceBuf){
+        try {
+            Native.nativeHwSetDicAndLanguage(ROOT_OCR_BIN_PATH, 1);
+            ArrayList<String> strings = new ArrayList<>();
+            ArrayList<Integer> rects = new ArrayList<>();
+            int cnt = Native.nativeHwRecoDoc(traceBuf, strings, rects);
+            for (String s : strings) {
+                Log.e("nativeHwRecoDoc", "===strings: " + s);
+            }
+            Message message = Message.obtain();
+            message.what = MESSAGE_WHAT3;
+            message.obj = strings;
+            mHandler.sendMessage(message);
+        } catch (Exception e) {
+
+        }
+    }
+    @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         mNoteView.setQuickReadChecked(b);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (mReadCheckbox.getVisibility() != View.GONE) {
+                    String string = TextViewUtils.getTextViewSelectionByTouch(mRecogResultTv, (int) event.getX(), (int) event.getY(), mRecogResultTv.getPageIdx());
+                    LogUtils.printErrorLog("append", "event.getX(): " + event.getX() + " event.getY()" + event.getY());
+                    LogUtils.printErrorLog("append", "string: " + string);
+                    if (TextUtils.isEmpty(string)) {
+                        ToastUtils.showLong(this, "语音跳转失败");
+                        break;
+                    }
+                    if (HvApplication.Recognition_Engine == 0) {
+
+                        List<Result> list = IatResults.getResults();
+                        for (Result result : list) {
+                            if (result.getResult().contains(string)) {
+                                long startTime = result.getRecordTime();
+                                jumpPlayAmrRecord(startTime);
+                                break;
+                            }
+                        }
+                    } else {
+                        List<SpeechResult> list = IatResults.getSpeechResults();
+                        for (SpeechResult result : list) {
+                            if (result.getData().getOnebest().contains(string)) {
+                                long startTime = result.getRecordTime();
+                                jumpPlayAmrRecord(startTime);
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return false;
+    }
+
+    private void jumpPlayAmrRecord(long startTime) {
+        if (mTimer != null)
+            mTimer.cancel();
+        MediaPlayerManager.getInstance().stop();
+        mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
+        mUsagePlayTime = startTime;
+        float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
+        int du = (int) (mFileBean.getDuration() * index);
+        LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
+        mSeekBar.setProgress(du);
+        playRecord();
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -414,7 +576,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
                 LogUtils.printErrorLog(TAG, "===SHOW_BACKLOGO");
-                if (isRecording) {
+                if (FileBeanUils.isRecoding()) {
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
                     pauseRecognize();
                 }
@@ -426,24 +588,36 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     //LogUtils.printErrorLog(TAG, "mUnDisturbCheckox.isChecked()");
                     freshRecogContent();
                 }
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATEALSPEECHRECOG)) {
+                if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
+                    //LogUtils.printErrorLog(TAG, "mUnDisturbCheckox.isChecked()");
+                    freshRecogContent();
+                }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
                 LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");
                 mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
-                mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             }
         }
     }
 
     private void freshRecogContent() {
-        LogUtils.printErrorLog(TAG, IatResults.getResultsStr());
+       // LogUtils.printErrorLog(TAG, IatResults.getResultsStr());
 
-        if (TextUtils.equals(IatResults.getResultsStr(), mRecogResultTv.getText().toString()))
-            return;
-        LogUtils.printErrorLog(TAG, "freshRecogContent");
-        mRecogResultTv.setText(IatResults.getResultsStr());
+        if (HvApplication.Recognition_Engine == 0) {
+            if (TextUtils.equals(IatResults.getResultsStr(), mRecogResultTv.getText().toString()))
+                return;
+            LogUtils.printErrorLog(TAG, "freshRecogContent");
+            mRecogResultTv.setText(IatResults.getResultsStr());
+        } else {
+            if (TextUtils.equals(IatResults.getSpeechResultsStr(), mRecogResultTv.getText().toString()))
+                return;
+            LogUtils.printErrorLog(TAG, "freshRecogContent");
+            mRecogResultTv.setText(IatResults.getSpeechResultsStr());
+        }
         mRecogResultTv.gotoLastPage();
         freshResultPage();
     }
@@ -460,8 +634,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         public void handleMessage(Message message) {
             super.handleMessage(message);
             switch (message.what) {
-                case 1:
-                    if (isRecording) {
+                case MESSAGE_WHAT1:
+                    if (FileBeanUils.isRecoding()) {
                         if (mNoteView.canBeFresh())
                             freshRecogContent();
                     } else {
@@ -474,26 +648,41 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                             if (MediaPlayerManager.getInstance().isPlaying()) {
                                 mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
                                 if (MediaPlayerManager.getInstance().getCurrentPosition() == 0) {
-                                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
                                 } else {
-                                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                    mTimeTv.setText(TimeUtil.calculateTime((int) ((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
                                 }
                             }
                         }
                     }
                     break;
-                case 2:
-                    if (mTimer != null)
+                case MESSAGE_WHAT2:
+                    long startTime = (long) message.obj;
+                    /*if (mTimer != null)
                         mTimer.cancel();
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
-                    long startTime = (long)message.obj;
+
                     mUsagePlayTime = startTime;
                     float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
-                    int du =  (int)(mFileBean.getDuration() * index);
+                    int du = (int) (mFileBean.getDuration() * index);
                     LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
                     mSeekBar.setProgress(du);
-                    playRecord();
+                    playRecord();*/
+                    LogUtils.printErrorLog(TAG, "startTime: " + startTime);
+                    jumpPlayAmrRecord(startTime);
+                    break;
+                case MESSAGE_WHAT3:
+                    DialogUtil.getInstance().disRecogDialog();
+                    StringBuffer stringBuffer = new StringBuffer();
+                    ArrayList<String> list = (ArrayList<String>) message.obj;
+                    for (String s : list)
+                        stringBuffer.append(s);
+                    if (TextUtils.isEmpty(stringBuffer.toString())) {
+                        ToastUtils.showLong(getApplicationContext(),getResources().getString(R.string.noresult));
+                        return;
+                    }
+                    showOcrResultDialog(stringBuffer.toString());
                     break;
             }
 
@@ -508,9 +697,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (mFileBean.getDuration() == 0)
                 return;
             mUsagePlayTime = (mFileBean.getTime() * seekBar.getProgress()) / mFileBean.getDuration();
-            mTimeTv.setText(TimeUtil.calculateTime((int)(mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+            mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
 
-            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch (): " );
+            LogUtils.printErrorLog(TAG, "===onStopTrackingTouch (): ");
             LogUtils.printErrorLog(TAG, "===onStopTrackingTouch mUsagePlayTime(): " + mUsagePlayTime);
             isSeekbarChaning = false;
         }
@@ -530,7 +719,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (mDuration == 0)
                     return;
                 if (seekBar.getProgress() == 0) {
-                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                    mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
                     //LogUtils.printErrorLog(TAG, "seekBar.getProgress(): ");
                     //LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
                 }
@@ -551,6 +740,19 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         IatResults.addAllResult(mTotalResultList);
     }
 
+    private void updateSpeechEditList() {
+        for (int i = 0; i < mTempSpeechResultList.size(); i++)
+            for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++) {
+                if (TextUtils.equals(mTotalSpeechResultList.get(j).getData().getSessionId(), mTempSpeechResultList.get(i).getData().getSessionId())) {
+                    if (TextUtils.isEmpty(mTempSpeechResultList.get(i).getData().getSessionId())) {
+                        mTotalSpeechResultList.remove(j);
+                    }
+                    break;
+                }
+            }
+        IatResults.addAllSpeechResult(mTotalSpeechResultList);
+    }
+
     private void onReturn() {
         if (mEditLayout.getVisibility() == View.VISIBLE) {
             mEditLayout.setVisibility(View.GONE);
@@ -560,8 +762,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mNoteView.setVisibility(View.VISIBLE);
             updateNoteCurPage();
             nPageIsx = 0;
-            updateEditList();
-            mRecogResultTv.setText(IatResults.getResultsStr());
+            if (HvApplication.Recognition_Engine == 0) {
+                updateEditList();
+                mRecogResultTv.setText(IatResults.getResultsStr());
+
+            } else {
+                updateSpeechEditList();
+                mRecogResultTv.setText(IatResults.getSpeechResultsStr());
+            }
             mRecogResultTv.getPageCount();
         } else {
             saveAndExitActivity();
@@ -574,9 +782,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
         if (!TextUtils.equals(con, mFileBean.getContent())) {
             mFileBean.setContent(con);
-            mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
+            if (HvApplication.Recognition_Engine == 0)
+                mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
+            else
+                mFileBean.setJson(JSON.toJSONString(IatResults.getSpeechResults()));
             mFileBean.setModifytime(TimeUtil.getTime(System.currentTimeMillis()));
             mFileBean.setDuration(mDuration);
+            LogUtils.printErrorLog(TAG, mFileBean.getJson());
             databaseUtils.updateByContent(mFileBean);
         }
         // 保存笔迹
@@ -586,12 +798,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void stopRecognize() {
-        if (isRecording) {
+        if (FileBeanUils.isRecoding()) {
             mRecognizeStatusTv.setText(R.string.recognizing);
             mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
 
-                uploadUsageTime();
-                close(false);
+            uploadUsageTime();
+            close(false);
 
 
             MediaRecorderManager.getInstance().stop();
@@ -606,15 +818,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     }
                 }
             });
-            isRecording = false;
+            FileBeanUils.setRecoding(false);
+
         }
     }
 
 
     private void pauseRecognize() {
-        if (isRecording) {
+        if (FileBeanUils.isRecoding()) {
             mUsageRecordTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
             mStartRecordTime = 0;
+            FileBeanUils.setmStartRecordTime(mStartRecordTime);
             close(false);
             mRecognizeStatusTv.setText(getString(R.string.pausing));
             MediaRecorderManager.getInstance().stop();
@@ -629,12 +843,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     }
                 }
             });
-            isRecording = false;
+            FileBeanUils.setRecoding(false);
         }
     }
 
     private void continueRecognize() {
-        if (!isRecording) {
+        if (FileBeanUils.isRecoding()) {
             CommonUtils.setOnValidate(false, this);
             String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
@@ -643,9 +857,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
             }
             createFile(tmpName);
-            isRecording = true;
+            FileBeanUils.setRecoding(true);
             mRecognizeStatusTv.setText(getString(R.string.recognizing));
             mStartRecordTime = System.currentTimeMillis();
+            FileBeanUils.setmStartRecordTime(mStartRecordTime);
             if (!mNoRecogCheckbox.isChecked()) {
                 mExecutor.execute(new Runnable() {
                     @Override
@@ -703,22 +918,22 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
+              //  reco();
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     ToastUtils.show(getApplicationContext(), getResources().getString(R.string.playingAudio));
                     return;
                 }
                 initPermissions();
-
                 break;
             case R.id.text_edit:
-                if (isRecording) {
+                if (FileBeanUils.isRecoding()) {
                     ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips1));
                     return;
                 }
                 freEditSentenceshPage();
                 break;
             case R.id.iat_play:
-                if (isRecording) {
+                if (FileBeanUils.isRecoding()) {
                     ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips2));
                     return;
                 }
@@ -771,7 +986,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 gotoNotePrevPage();
                 break;
             case R.id.suspendImg:
-                if (!isRecording) {
+                if (!FileBeanUils.isRecoding()) {
                     if (!WifiUtils.isWifiOpened()) {
                         DialogUtil.getInstance().showNetWorkDialog(this);
                         return;
@@ -813,7 +1028,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void exitUnDisturp() {
         mUndisturb_layout.setVisibility(View.GONE);
         mResultLayout.setVisibility(View.VISIBLE);
-        if (isRecording())
+        if (FileBeanUils.isRecoding())
             enterHandwrite(true);
         freshRecogContent();
 
@@ -821,18 +1036,19 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     public void adjustVolume(boolean up) {
         if (up) {
-            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
         } else {
-            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
         }
-        mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);;
+        mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);
+        ;
     }
 
     private void stopPlayRecord() {
         if (mTimer != null)
             mTimer.cancel();
         mUsagePlayTime = 0;
-        mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+        mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
         MediaPlayerManager.getInstance().stop();
     }
@@ -874,7 +1090,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                                 @Override
                                 public void run() {
                                     mSeekBar.setProgress(MediaPlayerManager.getInstance().getCurrentPosition());
-                                    mTimeTv.setText(TimeUtil.calculateTime((int)((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
+                                    mTimeTv.setText(TimeUtil.calculateTime((int) ((System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
                                 }
                             });
 
@@ -888,7 +1104,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
 
     private void startRecognize() {
-        if (!isRecording) {
+        if (!FileBeanUils.isRecoding()) {
             CommonUtils.setOnValidate(false, this);
             String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
@@ -897,8 +1113,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
             }
             createFile(tmpName);
-            isRecording = true;
+            FileBeanUils.setRecoding(true);
             mStartRecordTime = System.currentTimeMillis();
+            FileBeanUils.setmStartRecordTime(mStartRecordTime);
             if (!mNoRecogCheckbox.isChecked()) {
                 mExecutor.execute(new Runnable() {
                     @Override
@@ -925,7 +1142,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void freEditSentenceshPage() {
         saveNoteCurTracePage();
-        if (IatResults.getResults().size() == 0) {
+
+        if (IatResults.getResults().size() == 0 && HvApplication.Recognition_Engine == 0) {
+            ToastUtils.show(this, getString(R.string.noEditText));
+            return;
+        } else if (IatResults.getSpeechResults().size() == 0 && HvApplication.Recognition_Engine == 1) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
         }
@@ -934,11 +1155,21 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mWriteLayout.setVisibility(View.GONE);
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
-        mTotalResultList.clear();
-        mTotalResultList.addAll(IatResults.getResults());
-        nPageCount = getTotalqlPageCount(mTotalResultList.size());
-        initPage();
-        freshSentenceList(nPageIsx);
+
+        if (HvApplication.Recognition_Engine == 0) {
+            mTotalResultList.clear();
+            mTotalResultList.addAll(IatResults.getResults());
+            nPageCount = getTotalqlPageCount(mTotalResultList.size());
+            initPage();
+            freshSentenceList(nPageIsx);
+        } else {
+            mTotalSpeechResultList.clear();
+            mTotalSpeechResultList.addAll(IatResults.getSpeechResults());
+            nPageCount = getTotalqlPageCount(mTotalSpeechResultList.size());
+            initPage();
+            freshSpeecnSentenceList(nPageIsx);
+        }
+
     }
 
     public long getCurrrentRecordTime() {
@@ -951,8 +1182,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
         Log.e("startRecognize", "tempTime(): " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
-        mTimeTv.setText(TimeUtil.calculateTime(((int)(mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int)(mFileBean.getTime() / 1000)));
-        if ((int)(mUsagePlayTime) / 1000 > 0) {
+        FileBeanUils.setmFileBean(mFileBean);
+        mTimeTv.setText(TimeUtil.calculateTime(((int) (mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
+        if ((int) (mUsagePlayTime) / 1000 > 0) {
             mSeekBar.setVisibility(View.VISIBLE);
             mTimeTv.setVisibility(View.VISIBLE);
         }
@@ -962,6 +1194,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!mNoRecogCheckbox.isChecked()) {
             DialogUtil.getInstance().showWaitingDialog(this);
             map2.put("duration", String.valueOf(tempTime / 1000));
+            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine  == 0 ? 1 : 2));
             uploadTime(map2, tempTime);
         }
     }
@@ -971,6 +1204,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 getResources().getString(R.string.pausing))) {
             HashMap<String, String> map2 = new HashMap<>();
             map2.put("duration", String.valueOf(mUsageRecordTime / 1000));
+            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine  == 0 ? 1 : 2));
             uploadTime(map2, mUsageRecordTime);
         }
     }
@@ -1002,7 +1236,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void checkUsageTime() {
 
-        if (!isRecording) {
+        if (!FileBeanUils.isRecoding()) {
             if (mEditLayout.getVisibility() == View.VISIBLE) {
                 onReturn();
             }
@@ -1047,7 +1281,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!file.exists()) {
             file.mkdirs();
         }
-        LogUtils.printErrorLog("tag","file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
+        LogUtils.printErrorLog("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
         mRecordFilePath = dirPath + name + Constant.SUFFIX;
         if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
             mTempPath = dirPath + System.currentTimeMillis() + Constant.SUFFIX;
@@ -1078,6 +1312,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 popupWindow.dismiss();
                 saveNoteCurTracePage();
                 saveCurTraNoteFile();
+                String path = saveAsrTxt();
                 ToastUtils.show(this, getString(R.string.saved));
             }
         });
@@ -1124,9 +1359,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 index = 4;
-                RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
-                recognmizeImageAyncTask.execute();
-
+                saveNoteCurTracePage();
+                DialogUtil dialogUtil = DialogUtil.getInstance();
+                dialogUtil.regListener(IatActivity.this);
+                dialogUtil.showOCRSelectDialog(IatActivity.this);
             }
         });
         TextView menuItem6 = view.findViewById(R.id.popup_mail);
@@ -1149,7 +1385,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mUndisturb_layout.setVisibility(View.VISIBLE);
                     mResultLayout.setVisibility(View.GONE);
                 } else {
-                   exitUnDisturp();
+                    exitUnDisturp();
                 }
             }
         });
@@ -1166,14 +1402,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             menuItem3.setText(getString(R.string.pen));
         }
         popupWindow.setContentView(view);
-        popupWindow.setWidth((int)(CommonUtils.getScreenWidth(this) / 5.8));
+        popupWindow.setWidth((int) (CommonUtils.getScreenWidth(this) / 5.8));
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
         popupWindow.setTouchable(true);
         popupWindow.setOutsideTouchable(true);
         return popupWindow;
     }
-
 
 
     private String generateShareHtml(String str, boolean img) {
@@ -1210,7 +1445,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
 
-    private void sendToMail(String url){
+    private void sendToMail(String url) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_SUBJECT, "语音记录邮件分享");
         intent.putExtra(Intent.EXTRA_TEXT, "敬启者,\n下面是语音记录文本内容：\n" + mFileBean.getContent()
@@ -1231,7 +1466,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         upLoadDialog.setCancel(this.getResources().getString(R.string.cancel), new UpLoadDialog.IOnCancelListener() {
             @Override
             public void onCancel(UpLoadDialog dialog) {
-
                 upLoadDialog.dismiss();
             }
         });
@@ -1268,7 +1502,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
                         upLoadDialog.setUpLoadStatus(bitmap);
                     }
-
                 } else {
                     ToastUtils.show(HvApplication.mContext, payResultBean.getMsg());
                     upLoadDialog.dismiss();
@@ -1310,6 +1543,41 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         } else {
             mSequenceAdapter.notifyDataSetChanged();
         }
+        freshEditPageState(currentPage);
+    }
+
+    private void freshSpeecnSentenceList(int currentPage) {
+        if (mTempSpeechResultList == null) {
+            mTempSpeechResultList = new ArrayList<SpeechResult>();
+        } else {
+            mTempSpeechResultList.clear();
+        }
+
+        for (int i = currentPage * PAGE_CATEGORY; i < mTotalResultList.size()
+                && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
+            mTempSpeechResultList.add(mTotalSpeechResultList.get(i));
+        }
+
+        if (mTempSpeechResultList.size() == 0) {
+            if ((currentPage - 1) >= 0) {
+                currentPage--;
+                for (int i = currentPage * PAGE_CATEGORY; i < mTotalResultList.size()
+                        && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
+                    mTempSpeechResultList.add(mTotalSpeechResultList.get(i));
+                }
+            }
+        }
+
+        if (mSpeechSequenceAdapter == null) {
+            mSpeechSequenceAdapter = new SpeechSequenceAdapter(mTempSpeechResultList, this);
+            mEditListView.setAdapter(mSpeechSequenceAdapter);
+        } else {
+            mSequenceAdapter.notifyDataSetChanged();
+        }
+        freshEditPageState(currentPage);
+    }
+
+    private void freshEditPageState(int currentPage) {
         if (currentPage == 0 && nPageCount > 1) {
             mEditPrePageBtn.setBackgroundResource(R.drawable.arrow_left_gray);
             mEditNextPageBtn.setBackgroundResource(R.drawable.arrow_right_black);
@@ -1370,10 +1638,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
 
-
     /**
      * 开始识别
-
+     *
      * @throws IOException Assets 文件异常
      */
     private void start() throws IOException {
@@ -1426,7 +1693,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void close(boolean isRemoveRunners) {
         CommonUtils.setOnValidate(true, this);
         logger.info("try to close");
-        runOnUiThread(() -> {enterHandwrite(false);});
+        runOnUiThread(() -> {
+            enterHandwrite(false);
+        });
         try {
             is.close();
         } catch (IOException | RuntimeException e) {
@@ -1452,9 +1721,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         onReturn();
     }
 
-    public boolean isRecording() {
+    /*public boolean isRecording() {
         return isRecording;
-    }
+    }*/
 
     /**
      * 添加一页新的空白页
@@ -1516,10 +1785,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
-        if (isRecording) {
+        if (FileBeanUils.isRecoding()) {
             long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
             SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
-            LogUtils.printErrorLog(TAG, "===onSaveInstanceState");
+            LogUtils.printErrorLog(TAG, "===onSaveInstanceState  tempTime: " + tempTime);
         }
 
     }
@@ -1570,7 +1839,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         // 刷新便笺的页面
         updateNoteCurPage();
 
-        mHandler.postDelayed(() -> {mNoteView.setInputEnabled(true);}, 500);
+        mHandler.postDelayed(() -> {
+            mNoteView.setInputEnabled(true);
+        }, 500);
     }
 
     /***
@@ -1587,8 +1858,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         updateNoteCurPage();
         mHandler.postDelayed(() -> {
             mNoteView.setInputEnabled(true);
-            if (isRecording)
-                enterHandwrite(true);}, 500);
+            if (FileBeanUils.isRecoding())
+                enterHandwrite(true);
+        }, 500);
 
     }
 
@@ -1606,10 +1878,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNotePageIndex--;
         updateNoteCurPage();
 
-        mHandler.postDelayed(() -> {mNoteView.setInputEnabled(true);}, 500);
+        mHandler.postDelayed(() -> {
+            mNoteView.setInputEnabled(true);
+        }, 500);
     }
-
-
 
 
     private class RecognmizeImageAyncTask extends AsyncTask<Void, Void, String> {
@@ -1662,58 +1934,83 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 return;
             }
             LogUtils.printErrorLog(TAG, "result: " + result);
-            final String content = result;
-            final CommonDialog dialog = new CommonDialog(IatActivity.this, 0);
-            // 设置标题
-            dialog.setTitle(getResources().getString(R.string.recognize_result));
-            dialog.setDialogWidth((int) getResources().getDimension(R.dimen.navigate_menu_width));
-
-            dialog.setInfo(result);
-
-            dialog.setPositiveButton(getString(R.string.share), new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                    String ht = generateShareHtml(result, false);
-                    upLoadFile(ht);
-                    //ToastUtils.show(getApplicationContext(), "分享");
-                }
-            });
-            dialog.setNegativeButton(getString(R.string.cancel), new View.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.setNeutralWidthButton(getString(R.string.save_to_local), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    File file, file1;
-                    String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_picpath);
-                    file = new File(path);
-                    if (!file.exists()) {
-                        file.mkdirs();
-                    }
-                    String srcTmpFilePath = path + getString(R.string.recog_txt);
-
-                    file1 = new File(srcTmpFilePath);
-
-                    if (!file1.exists()) {
-                        try {
-                            file1.createNewFile();
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                    CommonUtils.saveAsFileWriter(srcTmpFilePath, content);
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
+            showOcrResultDialog(result);
         }
+    }
+
+    private String saveAsrTxt() {
+        File file, file1;
+        String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
+        file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String srcTmpFilePath = path + mFileBean.getTitle() + ".txt";
+
+        file1 = new File(srcTmpFilePath);
+        if (!file1.exists()) {
+            try {
+                file1.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        CommonUtils.saveAsFileWriter(srcTmpFilePath, mRecogResultTv.getText().toString(), false);
+        return srcTmpFilePath;
+    }
+
+    private void showOcrResultDialog(String result) {
+        final CommonDialog dialog = new CommonDialog(IatActivity.this, 0);
+        // 设置标题
+        dialog.setTitle(getResources().getString(R.string.recognize_result));
+        dialog.setDialogWidth((int) getResources().getDimension(R.dimen.navigate_menu_width));
+
+        dialog.setInfo(result);
+
+        dialog.setPositiveButton(getString(R.string.share), new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                String ht = generateShareHtml(result, false);
+                upLoadFile(ht);
+                //ToastUtils.show(getApplicationContext(), "分享");
+            }
+        });
+        dialog.setNegativeButton(getString(R.string.cancel), new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setNeutralWidthButton(getString(R.string.save_to_local), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                File file, file1;
+                String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_picpath);
+                file = new File(path);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                String srcTmpFilePath = path + getString(R.string.recog_txt);
+
+                file1 = new File(srcTmpFilePath);
+
+                if (!file1.exists()) {
+                    try {
+                        file1.createNewFile();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                CommonUtils.saveAsFileWriter(srcTmpFilePath, result, true);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -1745,14 +2042,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
         }
     }
+
     /**
      * 进入二值模式
      *
-     * @param isEnter
-     *            是否进入二值模式，true为进入，false为退出
+     * @param isEnter 是否进入二值模式，true为进入，false为退出
      */
     public void enterHandwrite(boolean isEnter) {
-        Log.e(TAG, "**enterHandwrite, " + isEnter );
+        Log.e(TAG, "**enterHandwrite, " + isEnter);
 
         /*if (isEnter){
             if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_DU_MODE)
@@ -1765,4 +2062,28 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }*/
 
     }
+
+    /*void reco(){
+        try {
+            Native.nativeHwSetDicAndLanguage(ROOT_OCR_BIN_PATH, 1);
+            short[] traceBuf = {
+                    28,579,25,583,23,586,21,589,18,592,16,594,15,595,13,596,12,596,12,595,12,594,13,593,14,592,15,592,16,592,17,592,18,594,19,597,20,601,20,604,21,608,21,611,22,613,23,614,25,614,27,610,29,606,31,601,32,595,33,589,34,583,34,577,35,572,35,568,36,564,36,562,36,561,37,561,37,562,37,564,37,566,36,569,35,572,35,575,34,578,34,580,34,581,34,582,35,582,37,582,39,582,41,582,43,581,45,580,46,579,47,578,48,577,48,579,48,581,47,583,47,585,46,587,45,589,43,591,42,592,41,594,40,595,39,596,38,596,37,596,38,596,40,596,43,597,45,598,48,599,51,601,53,603,55,606,56,609,56,611,56,613,56,616,56,618,56,619,55,620,53,620,51,620,49,620,46,619,43,617,40,613,38,609,36,605,36,601,36,597,38,594,42,591,45,587,49,585,52,582,56,580,60,579,64,578,68,578,73,578,78,578,
+                    -1,0,87,566,86,565,85,566,85,567,84,569,83,570,83,571,82,573,82,574,81,575,81,576,81,578,81,579,80,580,80,581,80,582,80,583,80,584,80,585,80,586,80,587,79,587,79,588,78,588,78,589,78,590,77,591,77,592,77,593,77,594,77,595,77,596,77,597,78,598,79,598,80,597,81,596,82,594,83,592,84,591,84,589,85,587,86,586,87,585,88,584,89,584,89,585,89,586,89,587,88,590,87,592,85,595,84,597,83,599,83,601,82,602,82,604,82,605,82,606,83,607,83,608,84,608,85,608,87,607,88,605,89,602,91,598,92,594,93,589,94,585,95,580,96,575,96,571,96,569,96,566,96,565,95,566,95,568,93,570,93,572,92,574,92,576,92,579,92,581,92,582,93,583,94,584,96,584,97,584,99,584,100,583,101,582,102,582,103,581,103,582,102,584,101,586,99,588,98,591,96,593,95,595,93,597,92,598,91,600,91,601,92,601,94,601,96,601,98,601,101,600,103,600,104,600,106,600,107,600,107,601,108,603,108,604,108,606,108,609,108,611,108,612,108,613,108,612,109,609,110,605,111,601,
+                    -1,0,125,575,127,572,128,570,128,569,127,569,126,570,126,571,125,573,125,575,124,577,124,581,124,584,124,586,124,589,126,591,127,592,129,593,132,593,133,594,135,594,136,594,137,594,138,594,138,595,139,595,140,595,141,594,142,593,144,592,146,590,147,587,149,585,150,583,152,581,153,580,154,579,155,579,155,580,155,581,155,582,155,581,156,579,157,577,158,575,158,573,158,571,159,569,159,568,160,566,159,567,158,568,157,570,156,573,155,576,154,579,152,582,151,585,151,587,151,589,151,591,153,591,155,591,157,591,160,591,163,591,165,591,167,590,169,590,171,589,172,589,173,589,173,590,173,591,173,592,172,594,171,596,169,599,168,601,166,604,163,607,160,610,157,612,154,615,151,617,148,618,146,618,144,618,143,617,143,613,143,610,145,605,148,601,151,596,156,592,162,587,169,582,177,577,185,571,193,566,
+                    -1,0,-1,-1,
+            };
+
+            ArrayList<String> strings = new ArrayList<>();
+            ArrayList<Integer> rects = new ArrayList<>();
+            int cnt = Native.nativeHwRecoDoc(traceBuf, strings, rects);
+            Log.e("nativeHwRecoDoc", "===cnt: " + cnt);
+            for (String s : strings) {
+                Log.e("nativeHwRecoDoc", "===strings: " + s);
+            }
+
+        } catch (Exception e) {
+
+        }
+    }*/
+
 }

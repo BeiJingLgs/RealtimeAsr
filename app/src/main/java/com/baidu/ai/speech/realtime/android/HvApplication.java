@@ -13,6 +13,9 @@ public class HvApplication extends Application {
     public static Context mContext;
     public static String TOKEN;
     public static String SESSION;
+
+    public static int Recognition_Engine = 0;//0为百度，1为思必驰
+
     public static final boolean ISDEBUG = true;
     public static boolean IS_NEEDIALOG = true;
     @Override

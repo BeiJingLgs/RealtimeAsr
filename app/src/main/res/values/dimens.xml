@@ -11,6 +11,7 @@
     <dimen name="Margin_XL">26dp</dimen>
     <dimen name="Margin_L">19dp</dimen>
     <dimen name="Margin_S">15dp</dimen>
+    <dimen name="Margin_SS">15dp</dimen>
     <dimen name="Margin_XS">8dp</dimen>
     <dimen name="Margin_L2">16dp</dimen>
     <dimen name="Margin_XSSSSS">10dp</dimen>
@@ -69,6 +70,7 @@
     <dimen name="dialog_button_small">124dp</dimen>
     <dimen name="dialog_button_mid">166dp</dimen>
     <dimen name="dialog_button_large">330dp</dimen>
+    <dimen name="dialog_button_largeX">630dp</dimen>
     <dimen name="dialog_button_H">42dp</dimen>
     <dimen name="margin_small">12dp</dimen>
     <dimen name="margin_middle">30dp</dimen>
@@ -126,6 +128,7 @@
     <dimen name="Text_Font_Size_S">16sp</dimen>
 
     <dimen name="textSizexL">20sp</dimen>
+    <dimen name="textSizexLSP">28sp</dimen>
 
     <dimen name="linePaddingS">0.5dp</dimen>
     <dimen name="linePaddingM">0.7dp</dimen>
@@ -187,4 +190,9 @@
     <dimen name="Margin_top_bottom">5dp</dimen>
     <dimen name="button_h">40dp</dimen>
     <dimen name="button_w">75dp</dimen>
+
+    <dimen name="image_h">250dp</dimen>
+    <dimen name="image_w0">250dp</dimen>
+    <dimen name="marginZ2">40dp</dimen>
+    <dimen name="marginZ">20dp</dimen>
 </resources>

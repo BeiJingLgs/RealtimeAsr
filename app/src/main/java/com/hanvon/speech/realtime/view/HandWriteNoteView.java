@@ -20,6 +20,7 @@ import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.Record;
 import com.hanvon.speech.realtime.model.note.Trace;
 import com.hanvon.speech.realtime.ui.IatActivity;
+import com.hanvon.speech.realtime.util.FileBeanUils;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MediaPlayerManager;
 import com.xrz.FlushInfo;
@@ -39,6 +40,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT1;
+import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 import static com.hanvon.speech.realtime.util.CommonUtils.getScreenWidth;
 
 public class HandWriteNoteView extends NoteView {
@@ -48,7 +51,7 @@ public class HandWriteNoteView extends NoteView {
     private PenPoint lastPoint = new PenPoint();
     private PenPoint prevPoint = new PenPoint(); // 接收到的前一个点。
     private PenPoint downPoint = new PenPoint(); //
-    private Paint paint = new Paint();
+    private Paint paint = new Paint(), mPaint = new Paint();
     private int mStrokeWidth = 5;
     private int penColor = Color.BLACK;
     private boolean bPenDown = false;
@@ -114,6 +117,14 @@ public class HandWriteNoteView extends NoteView {
         paint.setStrokeWidth(mStrokeWidth);
         paint.setAntiAlias(true);
         paint.setDither(true);
+
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setColor(Color.GRAY);
+        mPaint.setStrokeWidth(1);
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
     }
 
     public void setPenType(int type) {
@@ -182,6 +193,7 @@ public class HandWriteNoteView extends NoteView {
                     lastPoint = p;
                     downPoint = p;
                     if (penType == TP_PEN && p.getToolType() == 0) {
+
                         if (mCurTrace != null) {
                             mCurTrace.clear();
                         } else {
@@ -196,7 +208,7 @@ public class HandWriteNoteView extends NoteView {
 
                         //Log.i(TAG, "onDraw down, "+ "x: "+p.getX() + ", y: "+ p.getY() );
                         // 判断当前是否正在录音
-                        if (((IatActivity) mContext).isRecording()) {
+                        if (FileBeanUils.isRecoding()) {
                             long time = ((IatActivity) mContext).getCurrrentRecordTime();
                             LogUtils.printErrorLog(TAG, "===time: " + time);
 
@@ -251,10 +263,27 @@ public class HandWriteNoteView extends NoteView {
                     lastPoint = p;
                     if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pup = new Point(p.getX(), p.getY());
-                        mCurTrace.addPoint(pup);
-                        mTracePage.add(mCurTrace);
-                        if (isChecked)
-                            getRecordTrace();
+                        if (!isChecked) {
+                            mCurTrace.addPoint(pup);
+                            mTracePage.add(mCurTrace);
+                        }
+                        if (isChecked) {
+                            Rect r = getRecordTrace();
+                            LogUtils.printErrorLog(TAG, "getRecordTrace 271");
+                            if (r != null) {
+                                LogUtils.printErrorLog(TAG, "r != null");
+                                for (Canvas canvas : canvases) {
+                                    canvas.drawRect(r, mPaint);
+                                }
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateForeground(getHeight(), getWidth());
+                                    }
+                                }, 1000);
+
+                            }
+                        }
                         mCurTrace = null;
                         setModified(true);
                         isMemoEmpty = false;
@@ -298,7 +327,6 @@ public class HandWriteNoteView extends NoteView {
                             lastPoint.getX(), lastPoint.getY());
 
                     if (rect != null && rect.height() > 0 && rect.width() > 0) {
-
                         canvases[0].drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                         drawPostil(canvases[0]);
 
@@ -310,7 +338,6 @@ public class HandWriteNoteView extends NoteView {
                     } else {
                         dirtyRect = null;
                     }
-
                 } else {
                     dirtyRect = null;
                 }
@@ -323,9 +350,7 @@ public class HandWriteNoteView extends NoteView {
                         LogUtils.printErrorLog(TAG, "updateForeground: ");
                         updateForeground(this.getHeight(), this.getWidth());
                     }
-
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -346,7 +371,7 @@ public class HandWriteNoteView extends NoteView {
                 public void run() {
                     if (!lastPoint.isOutside()) {
                         Message message = new Message();
-                        message.what = 1;
+                        message.what = MESSAGE_WHAT1;
                         handler.sendMessage(message);
                         canBeFresh = true;
                     }
@@ -357,7 +382,7 @@ public class HandWriteNoteView extends NoteView {
         return new FlushInfo(dirtyRect);
     }
 
-    private void getRecordTrace() {
+    private Rect getRecordTrace() {
         // 判断当前的轨迹是否是一点
         ArrayList<Integer> intersect = null;
         if (mCurTrace.isPoint()) {
@@ -371,29 +396,29 @@ public class HandWriteNoteView extends NoteView {
         if (intersect != null && intersect.size() > 0) { // 多条笔迹的话，找到播放哪一条的录音
             // 在相交笔迹中找到播放的录音和时间
             ArrayList<Record> recs = new ArrayList<Record>();
+            ArrayList<Trace> mTrace = new ArrayList<Trace>();
             for (int i = 0; i < intersect.size(); i++) {
                 int delIdx = intersect.get(i);
                 if (delIdx < mTracePage.size()
                         && mTracePage.get(delIdx).bHasRec) {// 有录音
                     //int idx = mTracePage.get(delIdx).RecInfo.strName;
                     if (delIdx >= 0) {
+                        mTrace.add(mTracePage.get(delIdx));
                         recs.add(mTracePage.get(delIdx).RecInfo);
-                        LogUtils.printErrorLog(TAG, "===mTracePage.size(): " + mTracePage.size());
-
-                        LogUtils.printErrorLog(TAG, "===getRecordTrace nTimeBegin delIdx: " + mTracePage.get(delIdx).RecInfo.nTimeBegin);
                     }
                 }
             }
             if (recs.size() > 0) {
                 Message message = Message.obtain();
-                message.what = 2;
+                message.what = MESSAGE_WHAT2;
                 message.obj = recs.get(0).nTimeBegin;
                 handler.sendMessage(message);
+                return mTrace.get(0).getBorderRect();
+            } else {
+                return null;
             }
-
-
-            LogUtils.printErrorLog(TAG, "===getRecordTrace: " + recs.size());
-
+        } else {
+            return null;
         }
     }
 

@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginTop="@dimen/marginZ"
+        android:layout_marginRight="@dimen/marginZ"
         android:background="@drawable/cancel"
         android:visibility="invisible" />
 
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/cancelImg"
         android:layout_centerInParent="true"
-        android:layout_margin="40dp"
+        android:layout_margin="@dimen/marginZ2"
         android:text="正在上传，请稍候..."
         android:textColor="@color/black"
         android:textSize="@dimen/textSizeXL"
@@ -33,8 +33,8 @@
 
     <ImageView
         android:id="@+id/uploadWait"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="@dimen/image_h"
+        android:layout_height="@dimen/image_h"
         android:layout_below="@+id/uploadTxt"
         android:layout_centerInParent="true"
         android:background="@drawable/upload" />
@@ -45,7 +45,7 @@
         android:layout_height="@dimen/mydialog_button_height"
         android:layout_below="@+id/uploadWait"
         android:layout_centerInParent="true"
-        android:layout_margin="40dp"
+        android:layout_margin="@dimen/marginZ2"
         android:background="@drawable/mydialog_basebtn"
         android:text="Cancel"
         android:textSize="@dimen/mydialog_button_font" />

@@ -57,5 +57,4 @@
         android:textSize="@dimen/textSizeL"
         android:text="@string/undisturb" />
 
-
 </LinearLayout>

@@ -37,8 +37,8 @@ public class DatabaseUtils {
     //"title text,content text,createtime text,modifytime text,createmillis long)
     public void insert(FileBean note) {
         logger.info("insert ： " + note.title);
-        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis, duration, time)values(?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis, note.duration, note.time};
+        String sql = "insert into note(title, json, content, createtime, modifytime, createmillis, duration, time, sign)values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Object[] args = {note.title, note.json, note.content, note.createtime, note.modifytime, note.createmillis, note.duration, note.time, note.sign};
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         db.execSQL(sql, args);
@@ -85,6 +85,7 @@ public class DatabaseUtils {
             note.createmillis = cursor.getString(7);
             note.duration = cursor.getInt(8);
             note.time = cursor.getLong(9);
+            note.sign = cursor.getInt(10);
             notes.add(note);
         }
         cursor.close();
