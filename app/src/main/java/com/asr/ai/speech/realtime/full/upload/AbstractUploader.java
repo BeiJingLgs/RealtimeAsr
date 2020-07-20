@@ -1,8 +1,8 @@
-package com.baidu.ai.speech.realtime.full.upload;
+package com.asr.ai.speech.realtime.full.upload;
 
-import com.baidu.ai.speech.realtime.Const;
-import com.baidu.ai.speech.realtime.Util;
-import com.baidu.ai.speech.realtime.full.util.Stat;
+import com.asr.ai.speech.realtime.Const;
+import com.asr.ai.speech.realtime.Util;
+import com.asr.ai.speech.realtime.full.util.Stat;
 
 import okhttp3.WebSocket;
 import okio.ByteString;
@@ -10,7 +10,6 @@ import okio.ByteString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 

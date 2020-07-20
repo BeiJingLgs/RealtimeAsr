@@ -1,25 +1,19 @@
 package com.hanvon.speech.realtime.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.OrderDetail;
-import com.hanvon.speech.realtime.bean.Result.OrderList;
 import com.hanvon.speech.realtime.bean.Result.PayResultBean;
 import com.hanvon.speech.realtime.bean.Result.ShopType;
 import com.hanvon.speech.realtime.model.TranslateBean;

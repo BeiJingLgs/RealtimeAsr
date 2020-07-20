@@ -10,9 +10,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.android.LoggerUtil;
+import com.asr.ai.speech.realtime.R;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.OrderAdapter;
 import com.hanvon.speech.realtime.adapter.PackAdapter;

@@ -1,15 +1,12 @@
 package com.hanvon.speech.realtime.model;
 
-import com.baidu.ai.speech.realtime.full.download.Result;
+import com.asr.ai.speech.realtime.full.download.Result;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
-import com.hanvon.speech.realtime.util.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static android.app.ActivityThread.TAG;
 
 public class IatResults {
 

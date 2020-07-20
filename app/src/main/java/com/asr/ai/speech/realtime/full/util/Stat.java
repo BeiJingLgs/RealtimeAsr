@@ -1,16 +1,13 @@
-package com.baidu.ai.speech.realtime.full.util;
+package com.asr.ai.speech.realtime.full.util;
 
 
 import android.content.Intent;
 import android.text.TextUtils;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.Util;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.full.download.Result;
+import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.Util;
+import com.asr.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.full.download.Result;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.util.FileBeanUils;
 import com.hanvon.speech.realtime.util.ToastUtils;

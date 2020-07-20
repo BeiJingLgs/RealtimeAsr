@@ -1,12 +1,9 @@
-package com.baidu.ai.speech.realtime.android;
+package com.asr.ai.speech.realtime.android;
 
 import android.app.Application;
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.hanvon.speech.realtime.util.CrashHandler;
-import com.hanvon.speech.realtime.util.LogUtils;
-import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 
 public class HvApplication extends Application {
 

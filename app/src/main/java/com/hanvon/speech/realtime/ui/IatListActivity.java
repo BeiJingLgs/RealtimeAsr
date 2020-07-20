@@ -15,12 +15,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.Const;
-import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.Constants;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
+import com.asr.ai.speech.realtime.Const;
+import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.Constants;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;

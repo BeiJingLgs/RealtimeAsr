@@ -1,12 +1,12 @@
-package com.baidu.ai.speech.realtime.full.connection;
+package com.asr.ai.speech.realtime.full.connection;
 
-import com.baidu.ai.speech.realtime.Const;
-import com.baidu.ai.speech.realtime.full.download.SimpleDownloader;
-import com.baidu.ai.speech.realtime.full.upload.AbstractUploader;
-import com.baidu.ai.speech.realtime.full.upload.RealTimeAudioFeeder;
-import com.baidu.ai.speech.realtime.full.upload.RealTimeUploader;
-import com.baidu.ai.speech.realtime.full.upload.SimpleUploader;
-import com.baidu.ai.speech.realtime.full.util.Stat;
+import com.asr.ai.speech.realtime.Const;
+import com.asr.ai.speech.realtime.full.download.SimpleDownloader;
+import com.asr.ai.speech.realtime.full.upload.AbstractUploader;
+import com.asr.ai.speech.realtime.full.upload.RealTimeAudioFeeder;
+import com.asr.ai.speech.realtime.full.upload.RealTimeUploader;
+import com.asr.ai.speech.realtime.full.upload.SimpleUploader;
+import com.asr.ai.speech.realtime.full.util.Stat;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

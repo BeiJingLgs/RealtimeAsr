@@ -1,5 +1,5 @@
 package com.hanvon.speech.realtime.util;
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.android.HvApplication;
 
 import android.content.Context;
 import android.provider.Settings;

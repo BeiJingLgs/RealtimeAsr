@@ -1,7 +1,6 @@
 package com.hanvon.speech.realtime.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -14,11 +13,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 
-import com.baidu.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.ConstBroadStr;
 
 
 /**

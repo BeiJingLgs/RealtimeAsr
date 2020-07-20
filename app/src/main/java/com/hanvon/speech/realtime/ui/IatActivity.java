@@ -1,6 +1,5 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,13 +17,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -34,29 +31,19 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
-import com.aispeech.AIError;
-import com.aispeech.AIResult;
-import com.aispeech.DUILiteConfig;
-import com.aispeech.DUILiteSDK;
-import com.aispeech.common.AIConstant;
-import com.aispeech.export.config.AICloudASRConfig;
-import com.aispeech.export.engines2.AICloudLASRRealtimeEngine;
-import com.aispeech.export.intent.AICloudLASRRealtimeIntent;
-import com.aispeech.export.listeners.AILASRRealtimeListener;
 import com.alibaba.fastjson.JSON;
-import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.Constants;
-import com.baidu.ai.speech.realtime.MiniMain;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.android.MyMicrophoneInputStream;
-import com.baidu.ai.speech.realtime.full.connection.Runner;
-import com.baidu.ai.speech.realtime.full.download.Result;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
+import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.Constants;
+import com.asr.ai.speech.realtime.MiniMain;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.android.MyMicrophoneInputStream;
+import com.asr.ai.speech.realtime.full.connection.Runner;
+import com.asr.ai.speech.realtime.full.download.Result;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanvon.inputmethod.library.Native;
@@ -92,7 +79,6 @@ import com.hanvon.speech.realtime.bean.RecoResult;
 import com.hanvon.speech.realtime.util.ShareUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.TextViewUtils;
-import com.hanvon.speech.realtime.util.ThreadPoolUtil;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.ZXingUtils;
@@ -106,9 +92,6 @@ import com.hanvon.speech.realtime.view.VolumeBar;
 import com.xrz.Pencil;
 import com.xrz.SimplePen;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,11 +111,11 @@ import java.util.logging.Logger;
 
 import okhttp3.RequestBody;
 
-import static com.baidu.ai.speech.realtime.ConstBroadStr.ROOT_OCR_BIN_PATH;
-import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT1;
-import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT2;
-import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT3;
-import static com.baidu.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
+import static com.asr.ai.speech.realtime.ConstBroadStr.ROOT_OCR_BIN_PATH;
+import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT1;
+import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
+import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT3;
+import static com.asr.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 

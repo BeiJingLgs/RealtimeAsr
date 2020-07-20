@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 
 
 /**xufei

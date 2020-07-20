@@ -1,7 +1,7 @@
-package com.baidu.ai.speech.realtime.full.upload;
+package com.asr.ai.speech.realtime.full.upload;
 
-import com.baidu.ai.speech.realtime.Util;
-import com.baidu.ai.speech.realtime.full.util.Stat;
+import com.asr.ai.speech.realtime.Util;
+import com.asr.ai.speech.realtime.full.util.Stat;
 
 import okhttp3.WebSocket;
 

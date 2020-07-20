@@ -1,16 +1,11 @@
 package com.hanvon.speech.realtime.services;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.WebSettings;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.hanvon.speech.realtime.ui.LoginActivity;
-import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
+import com.asr.ai.speech.realtime.android.HvApplication;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;

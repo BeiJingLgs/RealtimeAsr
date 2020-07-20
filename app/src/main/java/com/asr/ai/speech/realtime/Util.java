@@ -1,4 +1,4 @@
-package com.baidu.ai.speech.realtime;
+package com.asr.ai.speech.realtime;
 
 public class Util {
 

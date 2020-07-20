@@ -13,14 +13,12 @@ import com.aispeech.export.config.AICloudASRConfig;
 import com.aispeech.export.engines2.AICloudLASRRealtimeEngine;
 import com.aispeech.export.intent.AICloudLASRRealtimeIntent;
 import com.aispeech.export.listeners.AILASRRealtimeListener;
-import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
 import com.hanvon.speech.realtime.model.IatResults;
-import com.hanvon.speech.realtime.ui.IatActivity;
 import com.hanvon.speech.realtime.util.FileBeanUils;
-import com.hanvon.speech.realtime.util.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

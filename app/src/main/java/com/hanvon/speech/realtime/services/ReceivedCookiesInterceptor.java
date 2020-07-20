@@ -4,8 +4,7 @@ package com.hanvon.speech.realtime.services;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 
 import java.io.IOException;

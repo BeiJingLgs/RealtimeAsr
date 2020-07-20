@@ -13,10 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baidu.ai.speech.realtime.Const;
-import com.baidu.ai.speech.realtime.ConstBroadStr;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.Const;
+import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hanvon.speech.realtime.bean.Result.Constant;

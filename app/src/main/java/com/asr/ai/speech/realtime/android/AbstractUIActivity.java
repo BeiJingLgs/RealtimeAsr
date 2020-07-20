@@ -1,10 +1,9 @@
-package com.baidu.ai.speech.realtime.android;
+package com.asr.ai.speech.realtime.android;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +18,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.connection.Runner;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.connection.Runner;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

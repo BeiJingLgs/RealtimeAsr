@@ -1,20 +1,16 @@
 package com.hanvon.speech.realtime.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
-import com.hanvon.speech.realtime.bean.FileBean;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.Result.Order;
-import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;

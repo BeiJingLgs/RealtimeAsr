@@ -30,7 +30,7 @@ import android.os.PowerManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.bean.FTBlock;
 import com.hanvon.speech.realtime.bean.FTChar;
 import com.hanvon.speech.realtime.bean.FTLine;

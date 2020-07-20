@@ -1,6 +1,6 @@
-package com.baidu.ai.speech.realtime.full.download;
+package com.asr.ai.speech.realtime.full.download;
 
-import com.baidu.ai.speech.realtime.full.util.Stat;
+import com.asr.ai.speech.realtime.full.util.Stat;
 import com.hanvon.speech.realtime.util.LogUtils;
 
 import java.util.logging.Logger;

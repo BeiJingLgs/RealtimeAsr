@@ -5,11 +5,10 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.util.LogUtils;
 
 public class HVTextView extends TextView {

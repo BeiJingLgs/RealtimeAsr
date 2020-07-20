@@ -11,10 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.download.Result;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
-import com.hanvon.speech.realtime.bean.SentenceBean;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.download.Result;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 
 import java.util.List;
 

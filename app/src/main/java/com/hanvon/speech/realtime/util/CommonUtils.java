@@ -1,34 +1,16 @@
 package com.hanvon.speech.realtime.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.text.Collator;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
-import android.os.Environment;
-import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -37,10 +19,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
-import com.hanvon.speech.realtime.ui.IatActivity;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 
 import static android.security.KeyStore.getApplicationContext;
 

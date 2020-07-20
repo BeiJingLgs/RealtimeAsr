@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 
 public class NetWorkDialog extends Dialog implements View.OnClickListener {
     //声明xml文件里的组件

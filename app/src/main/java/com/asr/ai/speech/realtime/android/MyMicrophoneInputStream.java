@@ -1,4 +1,4 @@
-package com.baidu.ai.speech.realtime.android;
+package com.asr.ai.speech.realtime.android;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -7,7 +7,7 @@ import android.util.Log;
 
 import java.io.InputStream;
 
-import static com.baidu.ai.speech.realtime.ConstBroadStr.CHANNEL_CONFIG;
+import static com.asr.ai.speech.realtime.ConstBroadStr.CHANNEL_CONFIG;
 
 /**
  * 录音流

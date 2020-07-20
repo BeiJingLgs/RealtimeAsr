@@ -5,12 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
-import com.hanvon.speech.realtime.ui.IatActivity;
+import com.asr.ai.speech.realtime.R;
 
 public class JumpAdapter extends BaseAdapter {
 	

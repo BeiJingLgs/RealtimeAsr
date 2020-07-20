@@ -1,10 +1,10 @@
-package com.baidu.ai.speech.realtime.android;
+package com.asr.ai.speech.realtime.android;
 
 import android.os.Bundle;
 
-import com.baidu.ai.speech.realtime.MiniMain;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.connection.Runner;
+import com.asr.ai.speech.realtime.MiniMain;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.connection.Runner;
 
 import java.io.IOException;
 import java.io.InputStream;

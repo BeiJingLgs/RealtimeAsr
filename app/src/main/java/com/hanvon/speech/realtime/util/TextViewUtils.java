@@ -3,10 +3,9 @@ package com.hanvon.speech.realtime.util;
 
 import android.graphics.Rect;
 import android.text.Layout;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.Constants;
+import com.asr.ai.speech.realtime.Constants;
 
 public class TextViewUtils {
     /**

@@ -1,6 +1,6 @@
-package com.baidu.ai.speech.realtime.full.upload;
+package com.asr.ai.speech.realtime.full.upload;
 
-import com.baidu.ai.speech.realtime.Util;
+import com.asr.ai.speech.realtime.Util;
 
 import java.io.IOException;
 import java.io.InputStream;

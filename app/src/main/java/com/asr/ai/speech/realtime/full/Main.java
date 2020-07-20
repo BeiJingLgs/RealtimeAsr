@@ -1,7 +1,7 @@
-package com.baidu.ai.speech.realtime.full;
+package com.asr.ai.speech.realtime.full;
 
 
-import com.baidu.ai.speech.realtime.full.connection.Runner;
+import com.asr.ai.speech.realtime.full.connection.Runner;
 
 import java.io.File;
 import java.io.FileInputStream;

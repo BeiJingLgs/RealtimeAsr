@@ -1,6 +1,5 @@
 package com.hanvon.speech.realtime.util;
 
-import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -8,7 +7,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.android.HvApplication;
 
 
 public class MediaPlayerManager {

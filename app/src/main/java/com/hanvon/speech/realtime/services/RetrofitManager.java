@@ -1,38 +1,26 @@
 package com.hanvon.speech.realtime.services;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.WebSettings;
-import android.widget.Toast;
 
-import com.android.internal.telephony.DctConstants;
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
-import com.baidu.ai.speech.realtime.android.LoggerUtil;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
-import com.hanvon.speech.realtime.ui.BaseActivity;
-import com.hanvon.speech.realtime.ui.IatActivity;
 import com.hanvon.speech.realtime.util.BasePath;
 import com.hanvon.speech.realtime.util.DialogUtil;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
-import com.hanvon.speech.realtime.util.WifiOpenHelper;
 import com.hanvon.speech.realtime.util.WifiUtils;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.LogRecord;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -43,10 +31,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.PartMap;
-import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

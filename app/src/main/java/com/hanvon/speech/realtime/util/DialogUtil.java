@@ -1,7 +1,6 @@
 package com.hanvon.speech.realtime.util;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,8 +19,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.android.HvApplication;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.adapter.JumpAdapter;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.view.CustomDialog;

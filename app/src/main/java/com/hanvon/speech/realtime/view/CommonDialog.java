@@ -20,7 +20,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 
 public class CommonDialog {
 	

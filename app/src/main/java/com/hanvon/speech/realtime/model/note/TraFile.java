@@ -12,12 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.util.Log;
-
-import com.baidu.ai.speech.realtime.R;
 
 public class TraFile {
 	private static final String TAG = "TraFile";

@@ -1,4 +1,4 @@
-package com.baidu.ai.speech.realtime;
+package com.asr.ai.speech.realtime;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

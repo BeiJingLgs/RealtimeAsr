@@ -14,11 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,7 +29,7 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.bean.UpdataInfo;
 import com.hanvon.speech.realtime.view.CommonDialog;
 

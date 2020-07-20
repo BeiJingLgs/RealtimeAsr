@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.R;
 
 public class VolumeBar extends View implements Runnable
 {

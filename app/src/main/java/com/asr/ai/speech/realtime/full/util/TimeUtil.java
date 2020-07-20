@@ -1,4 +1,4 @@
-package com.baidu.ai.speech.realtime.full.util;
+package com.asr.ai.speech.realtime.full.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

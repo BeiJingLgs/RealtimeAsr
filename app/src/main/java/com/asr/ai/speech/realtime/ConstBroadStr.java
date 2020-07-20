@@ -1,16 +1,13 @@
-package com.baidu.ai.speech.realtime;
+package com.asr.ai.speech.realtime;
 
 import android.content.Context;
 import android.media.AudioFormat;
 import android.os.Environment;
 
-import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-
-import static com.baidu.ai.speech.realtime.android.HvApplication.getContext;
 
 public class ConstBroadStr {
     // 音频文件路径 /storage/sdcard0/Audio/hello.txt

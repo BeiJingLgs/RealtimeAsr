@@ -2,9 +2,7 @@ package com.hanvon.speech.realtime.util;
 
 import android.util.Log;
 
-import com.baidu.ai.speech.realtime.android.HvApplication;
-
-import static com.baidu.ai.speech.realtime.android.HvApplication.ISDEBUG;
+import static com.asr.ai.speech.realtime.android.HvApplication.ISDEBUG;
 
 /**
  * Created by ebook on 2018/8/16.

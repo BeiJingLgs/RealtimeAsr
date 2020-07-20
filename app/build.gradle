@@ -5,7 +5,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.baidu.ai.speech.realtime"
+        applicationId "com.asr.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
         versionCode 18

@@ -1,4 +1,4 @@
-package com.baidu.ai.speech.realtime.android;
+package com.asr.ai.speech.realtime.android;
 
 import android.os.Message;
 import android.util.Log;

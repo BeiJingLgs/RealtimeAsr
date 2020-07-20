@@ -14,17 +14,14 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.Surface;
 
-import com.baidu.ai.speech.realtime.Constants;
-import com.baidu.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.Constants;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.Record;
 import com.hanvon.speech.realtime.model.note.Trace;
 import com.hanvon.speech.realtime.ui.IatActivity;
 import com.hanvon.speech.realtime.util.FileBeanUils;
 import com.hanvon.speech.realtime.util.LogUtils;
-import com.hanvon.speech.realtime.util.MediaPlayerManager;
 import com.xrz.FlushInfo;
 import com.xrz.NoteView;
 import com.xrz.PenPoint;
@@ -34,17 +31,13 @@ import com.xrz.Rubber;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT1;
-import static com.baidu.ai.speech.realtime.Constants.MESSAGE_WHAT2;
-import static com.hanvon.speech.realtime.util.CommonUtils.getScreenWidth;
+import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT1;
+import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 
 public class HandWriteNoteView extends NoteView {
 
@@ -621,7 +614,7 @@ public class HandWriteNoteView extends NoteView {
         Canvas canvas = new Canvas(bitmap);
         Matrix matrix = new Matrix();
         matrix.setRotate(90);
-        if (getResources().getInteger(com.baidu.ai.speech.realtime.R.integer.device_inch) == 10) {
+        if (getResources().getInteger(com.asr.ai.speech.realtime.R.integer.device_inch) == 10) {
             matrix.postScale((float) Constants.Scale103, (float) Constants.Scale103);
         } else {
             matrix.postScale((float) Constants.Scale97, (float) Constants.Scale97);

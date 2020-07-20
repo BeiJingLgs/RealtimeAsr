@@ -8,9 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.baidu.ai.speech.realtime.R;
-import com.baidu.ai.speech.realtime.full.util.TimeUtil;
-import com.hanvon.speech.realtime.bean.Result.Order;
+import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.Result.UsageBeen;
 
 import java.util.HashMap;
