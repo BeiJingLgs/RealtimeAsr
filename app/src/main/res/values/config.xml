@@ -8,4 +8,5 @@
     <integer name="PAGE_CATEGORY">10</integer>
 
     <integer name="OFFSET_LINE">48</integer>
+
 </resources>

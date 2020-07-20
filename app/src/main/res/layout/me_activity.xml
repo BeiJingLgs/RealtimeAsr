@@ -3,122 +3,186 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <include
         android:id="@+id/activity_header"
         layout="@layout/activity_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/login_or_register"
-        android:layout_marginLeft="@dimen/register_ed_w"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_more_width_port"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/activity_header"
+        android:layout_marginLeft="@dimen/register_ed_w"
         android:drawableLeft="@drawable/wodedangxuan"
-        android:text="@string/loginregister"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/loginregister"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line2"
-        android:layout_below="@+id/login_or_register"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/login_or_register"
+        android:visibility="gone" />
 
 
     <TextView
         android:id="@+id/usage_pack"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line2"
-        android:text="@string/usagePack"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/usagePack"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line3"
-        android:layout_below="@+id/usage_pack"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/usage_pack"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/shop_list"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line3"
-        android:text="@string/purchaserecord"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/purchaserecord"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line4"
-        android:visibility="gone"
-        android:layout_below="@+id/shop_list"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/shop_list"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/bind_deviceList"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line4"
-        android:text="@string/binddevice"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/binddevice"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line5"
-        android:layout_below="@+id/bind_deviceList"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/bind_deviceList"
+        android:visibility="gone" />
 
 
     <TextView
         android:id="@+id/last_time"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line5"
-        android:text="@string/remainTime"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/remainTime"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line8"
-        android:visibility="gone"
-        android:layout_below="@+id/last_time"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/last_time" />
 
     <TextView
         android:id="@+id/usage_record"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="match_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line8"
-        android:text="@string/usageRecord"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/usageRecord"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="@dimen/register_ed_w"
+        android:id="@+id/engine_select"
+        android:layout_below="@+id/login_or_register"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
+        android:gravity="left|center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/engineTip"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/edit_font" />
+
+        <RadioGroup
+            android:id="@+id/ocrType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/Margin_M"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/btn_ocr_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@drawable/state_checkbtn"
+                android:checked="true"
+                android:gravity="center"
+                android:padding="@dimen/Margin_S"
+                android:text="@string/engine1"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/edit_font"></RadioButton>
+
+            <RadioButton
+                android:id="@+id/btn_ocr_online"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@drawable/state_checkbtn"
+                android:checked="false"
+                android:gravity="center"
+                android:padding="@dimen/Margin_S"
+                android:text="@string/engine2"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/edit_font"></RadioButton>
+        </RadioGroup>
+    </LinearLayout>
+
     <View
-        style="@style/view_line2"
         android:id="@+id/view_line6"
-        android:layout_below="@+id/usage_record"/>
+        style="@style/view_line2"
+        android:layout_below="@+id/engine_select" />
+
     <TextView
         android:id="@+id/update_check"
-        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/register_ed_w"
-        android:drawablePadding="@dimen/Margin_XSSSSS"
         android:layout_below="@+id/view_line6"
-        android:text="@string/checkupdate"
+        android:drawablePadding="@dimen/Margin_XSSSSS"
+        android:layout_marginLeft="@dimen/dialog_high_button_height"
         android:gravity="left|center_vertical"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/black"/>
+        android:text="@string/checkupdate"
+        android:textColor="@color/black"
+        android:textSize="@dimen/edit_font" />
 
     <TextView
         android:id="@+id/version_name"
@@ -126,31 +190,31 @@
         android:layout_height="@dimen/register_ed_w"
         android:layout_alignBottom="@+id/update_check"
         android:layout_alignParentRight="true"
-        android:textSize="@dimen/edit_font"
-        android:textColor="@color/dark"
         android:layout_marginRight="@dimen/dialog_high_button_height"
+        android:clickable="true"
         android:gravity="center_vertical"
         android:text="V1.2"
-        android:clickable="true"/>
-
-    <View
-        style="@style/view_line2"
-        android:id="@+id/view_line9"
-        android:layout_below="@+id/update_check"/>
-
-    <View
-        style="@style/view_line2"
-        android:id="@+id/view_line7"
-        android:layout_above="@+id/btn_logout"/>
-    <Button
-        android:text="@string/logout"
-        android:id="@+id/btn_logout"
         android:textColor="@color/dark"
+        android:textSize="@dimen/edit_font" />
+
+    <View
+        android:id="@+id/view_line9"
+        style="@style/view_line2"
+        android:layout_below="@+id/update_check" />
+
+    <View
+        android:id="@+id/view_line7"
+        style="@style/view_line2"
+        android:layout_above="@+id/btn_logout" />
+
+    <Button
+        android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dialog_button_height"
-        android:visibility="gone"
-        android:layout_alignParentBottom ="true"
+        android:layout_alignParentBottom="true"
         android:background="@color/white"
+        android:text="@string/logout"
+        android:textColor="@color/dark"
         android:textSize="@dimen/Second_Title_Font_Size"
-/>
+        android:visibility="gone" />
 </RelativeLayout>

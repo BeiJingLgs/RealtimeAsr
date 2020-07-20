@@ -222,7 +222,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
         mRecogResultTv.getPaint().setAntiAlias(false);
-        mRecogResultTv.setOnTouchListener(this);
+        //mRecogResultTv.setOnTouchListener(this);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
         mEditNextPageBtn = findViewById(R.id.ivnext_page);
@@ -278,8 +278,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteView.setPen(pencil);
         mNoteView.setBackground(mBitmap);
 
-
-        // int h = mRecogResultTv.getHeight();
     }
 
     @Override
@@ -456,7 +454,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             DialogUtil.getInstance().showRecogDialog(IatActivity.this);
             for (Trace trace : traces) {
                 for (Point point : trace.getPoints()) {
-                    LogUtils.printErrorLog("trace.getPoints", "Short s : point.y: " + point.y + "  point.x: " + point.x);
+                    //LogUtils.printErrorLog("trace.getPoints", "Short s : point.y: " + point.y + "  point.x: " + point.x);
+                    if (point.x < 0)
+                       break;
                     points.add((short)(mNoteView.getHeight() - point.y));
                     points.add((short) point.x);
                 }
@@ -467,15 +467,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             points.add((short) 0);
             points.add((short) -1);
             points.add((short) -1);
-            LogUtils.printErrorLog(TAG, "===bafore reco()");
-            LogUtils.printErrorLog(TAG, "===bafore reco()");
-            LogUtils.printErrorLog(TAG, "===bafore reco()");
             Short []traceBuf = new Short[points.size()];
             short []traceBuf2 = new short[points.size()];
             traceBuf = points.toArray(traceBuf);
 
             for (int k = 0; k < points.size(); k+=2) {
-                LogUtils.printErrorLog(TAG, "===y: " + points.get(k) + "   x: " + points.get(k+1));
+              //  LogUtils.printErrorLog(TAG, "===y: " + points.get(k) + "   x: " + points.get(k+1));
             }
             for (int j = 0; j < traceBuf.length; j++) {
                 traceBuf2[j] = traceBuf[j].shortValue();
@@ -1371,6 +1368,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 popupWindow.dismiss();
                 index = 6;
                 String ht = generateShareHtml(mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString(), true);
+
                 upLoadFile(ht);
 
             }
@@ -1488,6 +1486,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         RetrofitManager.getInstance(this).upLoadFile(map, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
+
+                LogUtils.printErrorLog(TAG, "String result: " + result);
                 Gson gson2 = new Gson();
                 PayResultBean payResultBean = gson2.fromJson(result, PayResultBean.class);
                 if (TextUtils.equals(payResultBean.getCode(), Constant.SUCCESSCODE)) {
@@ -1973,6 +1973,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             public void onClick(View view) {
                 dialog.dismiss();
                 String ht = generateShareHtml(result, false);
+                LogUtils.printErrorLog(TAG, "String ht: " + ht);
                 upLoadFile(ht);
                 //ToastUtils.show(getApplicationContext(), "分享");
             }

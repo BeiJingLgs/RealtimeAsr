@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.ai.speech.realtime.Const;
+import com.baidu.ai.speech.realtime.ConstBroadStr;
 import com.baidu.ai.speech.realtime.R;
 import com.baidu.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 public class MeActivity extends BaseActivity {
 
@@ -47,6 +49,7 @@ public class MeActivity extends BaseActivity {
 
     @Override
     void initView(Bundle savedInstanceState, View view) {
+        hvFileCommonUtils.isFileExist(ConstBroadStr.ASR_PATH);
         mMenus.setVisibility(View.GONE);
         login_or_register = findViewById(R.id.login_or_register);
         mLastTimeTv = findViewById(R.id.last_time);
@@ -92,7 +95,7 @@ public class MeActivity extends BaseActivity {
         }
         if (!HvApplication.IS_NEEDIALOG)
             return;
-        RetrofitManager.getInstance(this).getBindUser(id, new RetrofitManager.ICallBack() {
+        /*RetrofitManager.getInstance(this).getBindUser(id, new RetrofitManager.ICallBack() {
             @Override
             public void successData(String result) {
                 JSONObject json = JSONObject.parseObject(result);
@@ -109,7 +112,15 @@ public class MeActivity extends BaseActivity {
             public void failureData(String error) {
 
             }
-        });
+        });*/
+        if (hvFileCommonUtils.isFileExist(ConstBroadStr.ASR_PATH)) {
+            mLogOutBtn.setVisibility(View.GONE);
+            mLastTimeTv.setVisibility(View.GONE);
+            //mUsageRecordTv.setVisibility(View.GONE);
+            mUsagePackTv.setVisibility(View.GONE);
+            mShopListTv.setVisibility(View.GONE);
+            login_or_register.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

@@ -16,6 +16,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.Surface;
 
+import com.baidu.ai.speech.realtime.Constants;
+import com.baidu.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.Record;
 import com.hanvon.speech.realtime.model.note.Trace;
@@ -52,7 +54,7 @@ public class HandWriteNoteView extends NoteView {
     private PenPoint prevPoint = new PenPoint(); // 接收到的前一个点。
     private PenPoint downPoint = new PenPoint(); //
     private Paint paint = new Paint(), mPaint = new Paint();
-    private int mStrokeWidth = 5;
+    private int mStrokeWidth = 3;
     private int penColor = Color.BLACK;
     private boolean bPenDown = false;
 
@@ -158,6 +160,8 @@ public class HandWriteNoteView extends NoteView {
 
             if (p.isOutside()) {
                 canBeFresh = true;
+               // LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN isOutside s : point.y: " + p.getY() + "  point.x: " + p.getX());
+
                 //continue;
             }
 
@@ -203,14 +207,16 @@ public class HandWriteNoteView extends NoteView {
                         mCurTrace.setWidth(mStrokeWidth);
 
                         Point pdown = new Point(p.getX(), p.getY());
-                        mCurTrace.addPoint(pdown);
+                        //LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN Short s : point.y: " + p.getY() + "  point.x: " + p.getX());
+
+                       // if (pdown.x >=0 && pdown.y >=0)
+                            mCurTrace.addPoint(pdown);
 
 
                         //Log.i(TAG, "onDraw down, "+ "x: "+p.getX() + ", y: "+ p.getY() );
                         // 判断当前是否正在录音
                         if (FileBeanUils.isRecoding()) {
                             long time = ((IatActivity) mContext).getCurrrentRecordTime();
-                            LogUtils.printErrorLog(TAG, "===time: " + time);
 
                             mCurTrace.RecInfo = new Record();
                             mCurTrace.RecInfo.nTimeBegin = time;
@@ -249,7 +255,8 @@ public class HandWriteNoteView extends NoteView {
 
                     if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pmove = new Point(p.getX(), p.getY());
-                        mCurTrace.addPoint(pmove);
+                      //  if (pmove.x >=0 && pmove.y >=0)
+                            mCurTrace.addPoint(pmove);
                     }
                     break;
                 case NoteView.ACTION_UP:
@@ -264,7 +271,14 @@ public class HandWriteNoteView extends NoteView {
                     if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pup = new Point(p.getX(), p.getY());
                         if (!isChecked) {
-                            mCurTrace.addPoint(pup);
+                           // if (pup.x >=0 && pup.y >=0)
+                                mCurTrace.addPoint(pup);
+                            if (mCurTrace.getPoints() != null) {
+                                for (Point ps : mCurTrace.getPoints()) {
+                                    LogUtils.printErrorLog(TAG, "p.y: " + ps.y + "  p.x: " + ps.x);
+                                }
+                            }
+
                             mTracePage.add(mCurTrace);
                         }
                         if (isChecked) {
@@ -607,7 +621,11 @@ public class HandWriteNoteView extends NoteView {
         Canvas canvas = new Canvas(bitmap);
         Matrix matrix = new Matrix();
         matrix.setRotate(90);
-        matrix.postScale((float) 0.68, (float) 0.68);
+        if (getResources().getInteger(com.baidu.ai.speech.realtime.R.integer.device_inch) == 10) {
+            matrix.postScale((float) Constants.Scale103, (float) Constants.Scale103);
+        } else {
+            matrix.postScale((float) Constants.Scale97, (float) Constants.Scale97);
+        }
         Bitmap bkBitmap = super.getBackgroundBitmap();
         Bitmap bkBitmap1 = super.getHandwrittenBitmap();
         if (null != bkBitmap) {

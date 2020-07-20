@@ -151,11 +151,5 @@
     <string name="exitundisturb">退出免打扰</string>
     <string name="undisturbTip">免打扰模式,点击后退出</string>
     <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
-    <string name="outputing">正在生成...</string>
-    <string name="save_path">文件保存路径：</string>
-    <string name="select_ocr_type">选择识别引擎：</string>
-    <string name="ocr_type_local">本地引擎</string>
-    <string name="ocr_type_online">在线引擎（需联网）</string>
     <string name="tips">提示</string>
-    <string name="recog_recordtxt">/我的文档/录音记事/</string>
 </resources>

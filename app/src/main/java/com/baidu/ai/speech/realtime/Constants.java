@@ -32,6 +32,10 @@ public class Constants {
 
     public static final int MESSAGE_WHAT1 = 1;
     public static final int MESSAGE_WHAT2 = 2;
-
     public static final int MESSAGE_WHAT3 = 3;
+
+
+
+    public static final double Scale103 = 0.68;
+    public static final double Scale97 = 1.16;
 }

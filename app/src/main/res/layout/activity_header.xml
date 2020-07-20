@@ -48,6 +48,16 @@
         android:background="@drawable/wodedangxuan" />
 
     <ImageButton
+        android:id="@+id/btn_option_update"
+        android:layout_width="@dimen/Button_H"
+        android:layout_height="@dimen/Button_H"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/Margin_L"
+        android:visibility="gone"
+        android:background="@drawable/wodedangxuan" />
+
+    <ImageButton
         android:id="@+id/btn_option_menus"
         android:layout_width="@dimen/Button_H2"
         android:layout_height="@dimen/Button_H2"

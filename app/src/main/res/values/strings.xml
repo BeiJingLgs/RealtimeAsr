@@ -147,6 +147,10 @@
     <string name="ocr_type_local">Local engine</string>
     <string name="ocr_type_online">Online engine (need to be connected)</string>
     <string name="tips">Tips</string>
+
+    <string name="engineTip">引&#160;&#160;擎&#160;&#160;选&#160;&#160;择</string>
+    <string name="engine1">引擎一</string>
+    <string name="engine2">引擎二</string>
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
 
 </resources>

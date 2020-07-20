@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 public abstract class BaseActivity extends Activity  implements View.OnClickListener {
     protected Button mHomeBtn;
     protected Button mBackBtn;
-    protected ImageButton mMenus, mCreateFile, mMineBtn;
+    protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
     public String TAG;
     public static String DEVICEID = "1000000000000007";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -88,11 +88,13 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
         mMenus = findViewById(R.id.btn_option_menus);
         mCreateFile = findViewById(R.id.btn_option_create);
         mMineBtn = findViewById(R.id.btn_option_mine);
+        //mUpdateBtn = findViewById(R.id.btn_option_update);
         mBackBtn.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
         mMenus.setOnClickListener(this);
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
+        //mUpdateBtn.setOnClickListener(this);
     }
 
 

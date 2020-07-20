@@ -18,6 +18,7 @@ public class ConstBroadStr {
 
     public static final String AUDIO_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio/";
 
+    public static final String ASR_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/hwsys/asr.file";
 
     public static String GetAudioRootPath(Context context, boolean isSd) {
         //hvFileCommonUtils.hasSdcard(context) && isSd
