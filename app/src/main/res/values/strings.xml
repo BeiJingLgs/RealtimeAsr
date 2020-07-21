@@ -151,6 +151,8 @@
     <string name="engineTip">引&#160;&#160;擎&#160;&#160;选&#160;&#160;择</string>
     <string name="engine1">引擎一</string>
     <string name="engine2">引擎二</string>
+    <string name="tips6">该引擎下时长不足，请切换引擎进行尝试</string>
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
-
+    <string name="anthfailue">授权失败</string>
+    <string name="tips7">服务器返回错误代码2</string>
 </resources>

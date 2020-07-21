@@ -48,7 +48,7 @@ public class AlSpeechEngine {
 
 
 
-    private void initSpeech() {
+    public void initSpeech() {
         auth();
         AICloudASRConfig config = new AICloudASRConfig();
         config.setLocalVadEnable(false);
@@ -113,13 +113,10 @@ public class AlSpeechEngine {
                         if (TextUtils.isEmpty(result.getData().getOnebest())) {
                             return;
                         }
-                        //if (FileBeanUils.isRecoding())
                         result.setRecordTime(FileBeanUils.getCurrrentRecordTime());
                         IatResults.addSpeechResult(result);
                         Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
                         HvApplication.getContext().sendBroadcast(intent);
-
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -163,11 +160,14 @@ public class AlSpeechEngine {
             @Override
             public void success() {
                 Log.d(TAG, "授权成功! ");
+                HvApplication.HaveAuth = true;
             }
 
             @Override
             public void error(String errorCode, String errorInfo) {
                 Log.d(TAG, "授权失败, errorcode: " + errorCode + ",errorInfo:" + errorInfo);
+                Intent intent = new Intent(ConstBroadStr.SPEENCH_AUTH);
+                HvApplication.getContext().sendBroadcast(intent);
             }
         });
     }

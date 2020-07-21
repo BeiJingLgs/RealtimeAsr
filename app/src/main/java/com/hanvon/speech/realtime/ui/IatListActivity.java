@@ -3,6 +3,7 @@ package com.hanvon.speech.realtime.ui;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -23,6 +24,7 @@ import com.asr.ai.speech.realtime.android.HvApplication;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
+import com.hanvon.speech.realtime.alspeech.AlSpeechEngine;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.LoginResult;
@@ -36,7 +38,9 @@ import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
+import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -100,6 +104,13 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         Display display = getWindowManager().getDefaultDisplay();
         Constants.WIDTH = display.getWidth();
         Constants.HEIGHT = display.getHeight();
+
+        HvApplication.Recognition_Engine = SharedPreferencesUtils.getRecogEngineSharePrefer(this);
+        if (HvApplication.Recognition_Engine == 2) {
+            if (HvApplication.HaveAuth == false) {
+                AlSpeechEngine.getInstance();
+            }
+        }
         freshPage();
     }
 
@@ -174,11 +185,12 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     private void freshPage() {
-        logger.info("DatabaseUtils.getInstance(this).findAll(): " + DatabaseUtils.getInstance(this).findAll().size());
         mTotalFileList.clear();
         mTotalFileList.addAll(DatabaseUtils.getInstance(this).findAll());
         nPageCount = getTotalqlPageCount(mTotalFileList.size());
         initPage();
+       // File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio");
+       // hvFileCommonUtils.notifySystemToScan(this, file);
         freshFileList(nPageIsx);
     }
 
@@ -399,7 +411,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        logger.info("onItemLongClick");
         mFileAdapter.setmShowCheck(true, position);
         mFileAdapter.notifyDataSetChanged();
         mSelectAllBtn.setVisibility(View.VISIBLE);
@@ -409,7 +420,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         if (mFileAdapter.ismShowCheck()) {
             setCheckGone();
         } else {

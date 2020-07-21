@@ -14,6 +14,9 @@ public class PackBean
     private String CreateTime;
 
 
+
+    public int VoiceEngineTypeID;
+
     private String EndTime;
 
     private int Duration;
@@ -64,5 +67,12 @@ public class PackBean
 
     public void setDuration(int duration) {
         Duration = duration;
+    }
+    public int getVoiceEngineTypeID() {
+        return VoiceEngineTypeID;
+    }
+
+    public void setVoiceEngineTypeID(int voiceEngineTypeID) {
+        VoiceEngineTypeID = voiceEngineTypeID;
     }
 }

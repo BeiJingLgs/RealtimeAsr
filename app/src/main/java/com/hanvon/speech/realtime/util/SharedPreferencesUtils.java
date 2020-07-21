@@ -206,9 +206,9 @@ public class SharedPreferencesUtils {
 		return sp.getString(key, "login");
 	}
 
-	public static int getRecogEngineSharePrefer(Context context , String key){
+	public static int getRecogEngineSharePrefer(Context context){
 		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-		return sp.getInt(key, 0);
+		return sp.getInt(ENGINE, 1);
 	}
 	public static void setRecogEngineSharePrefer(Context context, int state){
 		SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);

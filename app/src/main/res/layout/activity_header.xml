@@ -45,7 +45,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
         android:visibility="gone"
-        android:background="@drawable/wodedangxuan" />
+        android:background="@drawable/ic_setting_normal" />
 
     <ImageButton
         android:id="@+id/btn_option_update"
@@ -55,7 +55,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
         android:visibility="gone"
-        android:background="@drawable/wodedangxuan" />
+        android:background="@drawable/ic_setting_normal" />
 
     <ImageButton
         android:id="@+id/btn_option_menus"

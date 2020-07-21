@@ -16,6 +16,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 
 import com.asr.ai.speech.realtime.Constants;
+import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.model.note.NoteBaseData;
 import com.hanvon.speech.realtime.model.note.Record;
 import com.hanvon.speech.realtime.model.note.Trace;
@@ -105,6 +106,10 @@ public class HandWriteNoteView extends NoteView {
     }
 
     private void init() {
+        if (getResources().getInteger(R.integer.device_inch ) == 10)
+            mStrokeWidth = 5;
+        else
+            mStrokeWidth = 3;
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeJoin(Paint.Join.ROUND);
@@ -153,7 +158,7 @@ public class HandWriteNoteView extends NoteView {
 
             if (p.isOutside()) {
                 canBeFresh = true;
-               // LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN isOutside s : point.y: " + p.getY() + "  point.x: " + p.getX());
+                // LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN isOutside s : point.y: " + p.getY() + "  point.x: " + p.getX());
 
                 //continue;
             }
@@ -202,8 +207,8 @@ public class HandWriteNoteView extends NoteView {
                         Point pdown = new Point(p.getX(), p.getY());
                         //LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN Short s : point.y: " + p.getY() + "  point.x: " + p.getX());
 
-                       // if (pdown.x >=0 && pdown.y >=0)
-                            mCurTrace.addPoint(pdown);
+                        // if (pdown.x >=0 && pdown.y >=0)
+                        mCurTrace.addPoint(pdown);
 
 
                         //Log.i(TAG, "onDraw down, "+ "x: "+p.getX() + ", y: "+ p.getY() );
@@ -248,8 +253,8 @@ public class HandWriteNoteView extends NoteView {
 
                     if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pmove = new Point(p.getX(), p.getY());
-                      //  if (pmove.x >=0 && pmove.y >=0)
-                            mCurTrace.addPoint(pmove);
+                        //  if (pmove.x >=0 && pmove.y >=0)
+                        mCurTrace.addPoint(pmove);
                     }
                     break;
                 case NoteView.ACTION_UP:
@@ -264,14 +269,8 @@ public class HandWriteNoteView extends NoteView {
                     if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
                         Point pup = new Point(p.getX(), p.getY());
                         if (!isChecked) {
-                           // if (pup.x >=0 && pup.y >=0)
-                                mCurTrace.addPoint(pup);
-                            if (mCurTrace.getPoints() != null) {
-                                for (Point ps : mCurTrace.getPoints()) {
-                                    LogUtils.printErrorLog(TAG, "p.y: " + ps.y + "  p.x: " + ps.x);
-                                }
-                            }
-
+                            // if (pup.x >=0 && pup.y >=0)
+                            mCurTrace.addPoint(pup);
                             mTracePage.add(mCurTrace);
                         }
                         if (isChecked) {

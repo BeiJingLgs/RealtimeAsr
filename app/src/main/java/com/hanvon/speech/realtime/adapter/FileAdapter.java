@@ -41,7 +41,7 @@ public class FileAdapter extends BaseAdapter {
 
     public void setmShowCheck(boolean mShowCheck, int po) {
         this.mShowCheck = mShowCheck;
-        mSelectStates.put(String.valueOf(cateList.get(po).getCreatemillis()), true);
+        //mSelectStates.put(String.valueOf(cateList.get(po).getCreatemillis()), true);
     }
 
     public void setmCheckGone() {

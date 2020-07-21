@@ -21,6 +21,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/loginregister"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <View
@@ -40,6 +41,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/usagePack"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <View
@@ -58,6 +60,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/purchaserecord"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <View
@@ -76,6 +79,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/binddevice"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <View
@@ -95,6 +99,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/remainTime"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <View
@@ -112,6 +117,7 @@
         android:gravity="left|center_vertical"
         android:text="@string/usageRecord"
         android:textColor="@color/black"
+        android:visibility="gone"
         android:textSize="@dimen/edit_font" />
 
     <LinearLayout
@@ -140,7 +146,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/btn_ocr_local"
+                android:id="@+id/baidu_engine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -153,7 +159,7 @@
                 android:textSize="@dimen/edit_font"></RadioButton>
 
             <RadioButton
-                android:id="@+id/btn_ocr_online"
+                android:id="@+id/speech_engine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -2,13 +2,21 @@ package com.hanvon.speech.realtime.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.android.HvApplication;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
@@ -23,6 +31,8 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     public static String DEVICEID = "1000000000000007";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
+
+    private AuthReceiver mAuthReceiver;
     //返回code
     public static final int OPEN_SET_REQUEST_CODE = 100;
     @Override
@@ -93,6 +103,23 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
         //mUpdateBtn.setOnClickListener(this);
+        init();
+    }
+
+    private void init() {
+        mAuthReceiver = new AuthReceiver();
+        IntentFilter mBtFilter = new IntentFilter();
+        mBtFilter.addAction(ConstBroadStr.SPEENCH_AUTH);
+        registerReceiver(mAuthReceiver, mBtFilter);
+    }
+
+    protected class AuthReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
+                ToastUtils.showLong(HvApplication.mContext, getResources().getString(R.string.anthfailue));
+            }
+        }
     }
 
 

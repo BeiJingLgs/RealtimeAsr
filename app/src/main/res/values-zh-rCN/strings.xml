@@ -66,7 +66,10 @@
     <string name="tips1">正在转写音频，结束后才能编辑</string>
     <string name="tips2">正在录制音频，播放失败</string>
     <string name="tips3">当前文件为空</string>
-    <string name="tips4">剩余时长不足，当前服务不可用，请及时购买服务包</string>
+
+    <string name="tips4">服务器返回错误代码1</string>
+    <string name="tips7">服务器返回错误代码2</string>
+    <string name="tips6">该引擎下时长不足，请切换引擎进行尝试</string>
     <string name="tips5">设备id为空，无法正常使用</string>
     <string name="getVcode">重新获取验证码</string>
     <string name="reSendCode">秒后可重新发送</string>
@@ -152,4 +155,5 @@
     <string name="undisturbTip">免打扰模式,点击后退出</string>
     <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
     <string name="tips">提示</string>
+    <string name="anthfailue">授权失败</string>
 </resources>

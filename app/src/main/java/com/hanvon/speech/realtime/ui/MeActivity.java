@@ -1,4 +1,5 @@
 package com.hanvon.speech.realtime.ui;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,11 +11,14 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.asr.ai.speech.realtime.Const;
 import com.asr.ai.speech.realtime.ConstBroadStr;
+import com.asr.ai.speech.realtime.Constants;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -36,12 +40,14 @@ import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
-public class MeActivity extends BaseActivity {
+public class MeActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
     private TextView login_or_register, mLastTimeTv, mShopListTv, mBindDevicesTv, mUpdateTv,
             mUsageRecordTv, mUsagePackTv, mVersionNameTv;
     private Button mLogOutBtn;
+    private RadioGroup mAsrRadiogroup;
 
+    private RadioButton mRadioBtn1, mRadioBtn2;
     @Override
     int provideContentViewId() {
         return R.layout.me_activity;
@@ -61,6 +67,12 @@ public class MeActivity extends BaseActivity {
         mUsageRecordTv = findViewById(R.id.usage_record);
         mUsagePackTv = findViewById(R.id.usage_pack);
         mVersionNameTv = findViewById(R.id.version_name);
+
+        mAsrRadiogroup = (RadioGroup) findViewById(R.id.ocrType);
+        mRadioBtn1 = findViewById(R.id.baidu_engine);
+        mRadioBtn2 = findViewById(R.id.speech_engine);
+        mAsrRadiogroup.setOnCheckedChangeListener(this);
+
         login_or_register.setOnClickListener(this);
         mLastTimeTv.setOnClickListener(this);
         mShopListTv.setOnClickListener(this);
@@ -111,22 +123,31 @@ public class MeActivity extends BaseActivity {
             @Override
             public void failureData(String error) {
 
-            }
+            }hvFileCommonUtils.isFileExist(ConstBroadStr.ASR_PATH)
         });*/
         if (hvFileCommonUtils.isFileExist(ConstBroadStr.ASR_PATH)) {
-            mLogOutBtn.setVisibility(View.GONE);
-            mLastTimeTv.setVisibility(View.GONE);
-            //mUsageRecordTv.setVisibility(View.GONE);
-            mUsagePackTv.setVisibility(View.GONE);
-            mShopListTv.setVisibility(View.GONE);
-            login_or_register.setVisibility(View.INVISIBLE);
+            findViewById(R.id.view_line2).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line3).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line4).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line5).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line8).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line6).setVisibility(View.VISIBLE);
+            findViewById(R.id.view_line9).setVisibility(View.VISIBLE);
+            findViewById(R.id.update_check).setVisibility(View.GONE);
+            findViewById(R.id.version_name).setVisibility(View.GONE);
+            findViewById(R.id.engine_select).setVisibility(View.GONE);
+            mLogOutBtn.setVisibility(View.VISIBLE);
+            mLastTimeTv.setVisibility(View.VISIBLE);
+            mUsagePackTv.setVisibility(View.VISIBLE);
+            mShopListTv.setVisibility(View.VISIBLE);
+            login_or_register.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-       // initStates();
+        // initStates();
     }
 
     @Override
@@ -137,10 +158,10 @@ public class MeActivity extends BaseActivity {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.login_or_register:
                 if (mLogOutBtn.getVisibility() == View.GONE) {
-                    Intent intent=new Intent(this,LoginActivity.class);
+                    Intent intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);
                 } else {
                     ToastUtils.show(this, getString(R.string.logined));
@@ -154,8 +175,7 @@ public class MeActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.last_time:
-
-                RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+                RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                     @Override
                     public void successData(String result) {
                         Gson gson2 = new Gson();
@@ -189,8 +209,8 @@ public class MeActivity extends BaseActivity {
                     @Override
                     public void successData(String result) {
                         JSONObject json = JSONObject.parseObject(result);
-                        if (!TextUtils.equals((String)json.get("Code"), Constant.SUCCESSCODE)) {
-                            ToastUtils.showLong(MeActivity.this, (String)json.get("Msg"));
+                        if (!TextUtils.equals((String) json.get("Code"), Constant.SUCCESSCODE)) {
+                            ToastUtils.showLong(MeActivity.this, (String) json.get("Msg"));
                             return;
                         }
                         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -240,30 +260,30 @@ public class MeActivity extends BaseActivity {
                     }
                 });
 
-                 break;
-             case R.id.update_check:
-                 if (WifiUtils.isWifiConnected(this) && WifiUtils.isNetWorkConneted(this)) {
-                     LogUtils.printLog("update_check", "UpdateUtil");
-                     UpdateUtil updateUtil = new UpdateUtil(this, true);
-                     UpdateUtil.CheckApkTask checkApkTask = updateUtil.new CheckApkTask();
-                     checkApkTask.execute();
-                 } else {
-                     ToastUtils.showLong(MeActivity.this, getString(R.string.checkNet));
-                 }
+                break;
+            case R.id.update_check:
+                if (WifiUtils.isWifiConnected(this) && WifiUtils.isNetWorkConneted(this)) {
+                    LogUtils.printLog("update_check", "UpdateUtil");
+                    UpdateUtil updateUtil = new UpdateUtil(this, true);
+                    UpdateUtil.CheckApkTask checkApkTask = updateUtil.new CheckApkTask();
+                    checkApkTask.execute();
+                } else {
+                    ToastUtils.showLong(MeActivity.this, getString(R.string.checkNet));
+                }
 
-                 //ToastUtils.showLong(MeActivity.this, getString(R.string.noonLine));
-                 break;
-             case R.id.btn_logout:
-                 RetrofitManager.getInstance(this).logout(new RetrofitManager.ICallBack() {
-                     @Override
-                     public void successData(String result) {
-                         Log.e("AA", "onResponse: " + result + "返回值");
-                         SharedPreferencesUtils.saveLoginStatesSharePrefer(MeActivity.this, "");
-                         SharedPreferencesUtils.clear(MeActivity.this, SharedPreferencesUtils.TOKEN);
-                         login_or_register.setText(getString(R.string.loginregister));
-                         HvApplication.TOKEN = "";
-                         mLogOutBtn.setVisibility(View.GONE);
-                     }
+                //ToastUtils.showLong(MeActivity.this, getString(R.string.noonLine));
+                break;
+            case R.id.btn_logout:
+                RetrofitManager.getInstance(this).logout(new RetrofitManager.ICallBack() {
+                    @Override
+                    public void successData(String result) {
+                        Log.e("AA", "onResponse: " + result + "返回值");
+                        SharedPreferencesUtils.saveLoginStatesSharePrefer(MeActivity.this, "");
+                        SharedPreferencesUtils.clear(MeActivity.this, SharedPreferencesUtils.TOKEN);
+                        login_or_register.setText(getString(R.string.loginregister));
+                        HvApplication.TOKEN = "";
+                        mLogOutBtn.setVisibility(View.GONE);
+                    }
 
                     @Override
                     public void failureData(String error) {
@@ -273,14 +293,14 @@ public class MeActivity extends BaseActivity {
                 });
                 break;
             case R.id.usage_record:
-                RetrofitManager.getInstance(this).getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc",new RetrofitManager.ICallBack() {
+                RetrofitManager.getInstance(this).getUseRecord(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                     @Override
                     public void successData(String result) {
                         Gson gson2 = new Gson();
                         UsageBeenList c = gson2.fromJson(result, UsageBeenList.class);
                         Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getUsageBeen().size());
                         if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                            if(c.getUsageBeen().size() == 0) {
+                            if (c.getUsageBeen().size() == 0) {
                                 ToastUtils.showLong(MeActivity.this, "当前暂时没有使用记录");
                             } else {
                                 if (c.getUsageBeen() == null)
@@ -295,6 +315,7 @@ public class MeActivity extends BaseActivity {
                             ToastUtils.showLong(MeActivity.this, c.getMsg());
                         }
                     }
+
                     @Override
                     public void failureData(String error) {
                         Log.e("AA", "error: " + error + "错");
@@ -336,4 +357,19 @@ public class MeActivity extends BaseActivity {
         ToastUtils.cancelToast();
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int id) {
+        switch (id) {
+            case R.id.baidu_engine:
+                HvApplication.Recognition_Engine = 1;
+                mRadioBtn1.setChecked(true);
+                break;
+            case R.id.speech_engine:
+                HvApplication.Recognition_Engine = 2;
+                mRadioBtn2.setChecked(true);
+                ToastUtils.showLong(getApplicationContext(), "该引擎暂不支持，后续版本会添加");
+                break;
+            }
+        SharedPreferencesUtils.setRecogEngineSharePrefer(getApplicationContext(), HvApplication.Recognition_Engine);
+    }
 }

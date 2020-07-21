@@ -51,4 +51,5 @@ public class ConstBroadStr {
     public static final String UPDATEALSPEECHRECOG = "com.hanvon.realtime.UPDATEALSPEECHRECOG";
     public static final String ACTION_HOME_PAGE = "intent.hanvon.homepage";
     public static final String HIDE_BACKLOGO = "android.intent.action.HIDE_BACKLOGO";
+    public static final String SPEENCH_AUTH = "android.intent.action.Grant_Authorization";
 }

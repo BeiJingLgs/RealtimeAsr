@@ -147,5 +147,5 @@
     <string name="ocr_type_local">本地引擎</string>
     <string name="ocr_type_online">在線引擎（需聯網）</string>
     <string name="tips">提示</string>
-    <string name="recog_recordtxt">/我的文档/录音记事/</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string><string name="tips7">服务器返回错误代码2</string>
 </resources>

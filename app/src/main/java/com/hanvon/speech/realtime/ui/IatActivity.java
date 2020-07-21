@@ -49,8 +49,10 @@ import com.google.gson.reflect.TypeToken;
 import com.hanvon.inputmethod.library.Native;
 import com.hanvon.speech.realtime.adapter.SequenceAdapter;
 import com.hanvon.speech.realtime.adapter.SpeechSequenceAdapter;
+import com.hanvon.speech.realtime.alspeech.AlSpeechEngine;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.PackBean;
 import com.hanvon.speech.realtime.bean.Result.PackList;
 import com.hanvon.speech.realtime.bean.Result.PayResultBean;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
@@ -318,7 +320,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         FileBeanUils.setmFileBean(mFileBean);
         mDuration = mFileBean.getDuration();
-        Log.e("startRecognize", "203 mFileBean.getTime()(): " + mFileBean.getTime());
         if (mDuration == 0) {
             mVolumLayout.setVisibility(View.GONE);
             mSeekBar.setVisibility(View.GONE);
@@ -366,7 +367,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         mRecordFilePath = ConstBroadStr.GetAudioRootPath(this,
                 TextUtils.equals(mFileBean.getmSd(), "sd")) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
-        Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
         if (mFileBean.getSign() == 0) {
@@ -454,9 +454,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             short []traceBuf2 = new short[points.size()];
             traceBuf = points.toArray(traceBuf);
 
-            for (int k = 0; k < points.size(); k+=2) {
-              //  LogUtils.printErrorLog(TAG, "===y: " + points.get(k) + "   x: " + points.get(k+1));
-            }
             for (int j = 0; j < traceBuf.length; j++) {
                 traceBuf2[j] = traceBuf[j].shortValue();
             }
@@ -508,7 +505,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.showLong(this, "语音跳转失败");
                         break;
                     }
-                    if (HvApplication.Recognition_Engine == 0) {
+                    if (HvApplication.Recognition_Engine == 1) {
 
                         List<Result> list = IatResults.getResults();
                         for (Result result : list) {
@@ -555,7 +552,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
-                LogUtils.printErrorLog(TAG, "===SHOW_BACKLOGO");
                 if (FileBeanUils.isRecoding()) {
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
                     pauseRecognize();
@@ -565,12 +561,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 stopPlayRecord();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
-                    //LogUtils.printErrorLog(TAG, "mUnDisturbCheckox.isChecked()");
                     freshRecogContent();
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATEALSPEECHRECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
-                    //LogUtils.printErrorLog(TAG, "mUnDisturbCheckox.isChecked()");
                     freshRecogContent();
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
@@ -585,9 +579,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void freshRecogContent() {
-       // LogUtils.printErrorLog(TAG, IatResults.getResultsStr());
-
-        if (HvApplication.Recognition_Engine == 0) {
+        if (HvApplication.Recognition_Engine == 1) {
             if (TextUtils.equals(IatResults.getResultsStr(), mRecogResultTv.getText().toString()))
                 return;
             LogUtils.printErrorLog(TAG, "freshRecogContent");
@@ -742,7 +734,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mNoteView.setVisibility(View.VISIBLE);
             updateNoteCurPage();
             nPageIsx = 0;
-            if (HvApplication.Recognition_Engine == 0) {
+            if (HvApplication.Recognition_Engine == 1) {
                 updateEditList();
                 mRecogResultTv.setText(IatResults.getResultsStr());
 
@@ -762,7 +754,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
         if (!TextUtils.equals(con, mFileBean.getContent())) {
             mFileBean.setContent(con);
-            if (HvApplication.Recognition_Engine == 0)
+            if (HvApplication.Recognition_Engine == 1)
                 mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
             else
                 mFileBean.setJson(JSON.toJSONString(IatResults.getSpeechResults()));
@@ -877,10 +869,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_option_menus:
-                Log.e("onClick", "btn_option_menus");
                 enterHandwrite(false);
                 PopupWindow popupWindow = showPopupWindow();
-                Log.i("tag", "onClick: " + popupWindow.isShowing());
                 if (popupWindow != null) {
                     popupWindow.setFocusable(true);
                 }
@@ -898,7 +888,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 new MethodUtils(this).getHome();
                 break;
             case R.id.text_begin:
-              //  reco();
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     ToastUtils.show(getApplicationContext(), getResources().getString(R.string.playingAudio));
                     return;
@@ -925,7 +914,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                     mUsagePlayTime = System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime;
                 } else {
-                    Log.e("mRecordFilePath", "mRecordFilePath: " + mRecordFilePath);
                     if (mRecordFilePath == null) {
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
@@ -1039,7 +1027,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mTimeTv.setVisibility(View.VISIBLE);
         if (!MediaPlayerManager.getInstance().isPlaying()) {
             mAudioOffset = mSeekBar.getProgress();
-            Log.e("playRecord", "mAudioOffset: " + mAudioOffset);
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
@@ -1123,10 +1110,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void freEditSentenceshPage() {
         saveNoteCurTracePage();
 
-        if (IatResults.getResults().size() == 0 && HvApplication.Recognition_Engine == 0) {
+        if (IatResults.getResults().size() == 0 && HvApplication.Recognition_Engine == 1) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
-        } else if (IatResults.getSpeechResults().size() == 0 && HvApplication.Recognition_Engine == 1) {
+        } else if (IatResults.getSpeechResults().size() == 0 && HvApplication.Recognition_Engine == 2) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
         }
@@ -1160,7 +1147,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         HashMap<String, String> map2 = new HashMap<>();
         long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
-        Log.e("startRecognize", "tempTime(): " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
         FileBeanUils.setmFileBean(mFileBean);
         mTimeTv.setText(TimeUtil.calculateTime(((int) (mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
@@ -1168,13 +1154,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mSeekBar.setVisibility(View.VISIBLE);
             mTimeTv.setVisibility(View.VISIBLE);
         }
-        Log.e("startRecognize", "getCurrrentRecordTime(): " + getCurrrentRecordTime());
         DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
 
         if (!mNoRecogCheckbox.isChecked()) {
             DialogUtil.getInstance().showWaitingDialog(this);
             map2.put("duration", String.valueOf(tempTime / 1000));
-            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine  == 0 ? 1 : 2));
+            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine));
             uploadTime(map2, tempTime);
         }
     }
@@ -1184,7 +1169,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 getResources().getString(R.string.pausing))) {
             HashMap<String, String> map2 = new HashMap<>();
             map2.put("duration", String.valueOf(mUsageRecordTime / 1000));
-            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine  == 0 ? 1 : 2));
+            map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine));
             uploadTime(map2, mUsageRecordTime);
         }
     }
@@ -1221,7 +1206,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 onReturn();
             }
             DialogUtil.getInstance().showWaitingDialog(this);
-            RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+            RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
                     DialogUtil.getInstance().disWaitingDialog();
@@ -1230,6 +1215,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
                         startRecord();
+                    } else if (TextUtils.equals(c.getCode(), String.valueOf(1))){
+                        ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
+                    } else if (TextUtils.equals(c.getCode(), String.valueOf(2))){//时长用完
+                        ToastUtils.showLong(IatActivity.this, getString(R.string.tips7));
                     } else {
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
                     }
@@ -1252,7 +1241,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mRecordLayout.setVisibility(View.VISIBLE);
         mRecognizeStatusTv.setText(R.string.recognizing);
         mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-        startRecognize();
+        if (HvApplication.Recognition_Engine == 1) {
+            startRecognize();
+        } else {
+            AlSpeechEngine.getInstance().initSpeech();
+        }
     }
 
     private void createFile(String name) {
@@ -2046,28 +2039,5 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }*/
 
     }
-
-    /*void reco(){
-        try {
-            Native.nativeHwSetDicAndLanguage(ROOT_OCR_BIN_PATH, 1);
-            short[] traceBuf = {
-                    28,579,25,583,23,586,21,589,18,592,16,594,15,595,13,596,12,596,12,595,12,594,13,593,14,592,15,592,16,592,17,592,18,594,19,597,20,601,20,604,21,608,21,611,22,613,23,614,25,614,27,610,29,606,31,601,32,595,33,589,34,583,34,577,35,572,35,568,36,564,36,562,36,561,37,561,37,562,37,564,37,566,36,569,35,572,35,575,34,578,34,580,34,581,34,582,35,582,37,582,39,582,41,582,43,581,45,580,46,579,47,578,48,577,48,579,48,581,47,583,47,585,46,587,45,589,43,591,42,592,41,594,40,595,39,596,38,596,37,596,38,596,40,596,43,597,45,598,48,599,51,601,53,603,55,606,56,609,56,611,56,613,56,616,56,618,56,619,55,620,53,620,51,620,49,620,46,619,43,617,40,613,38,609,36,605,36,601,36,597,38,594,42,591,45,587,49,585,52,582,56,580,60,579,64,578,68,578,73,578,78,578,
-                    -1,0,87,566,86,565,85,566,85,567,84,569,83,570,83,571,82,573,82,574,81,575,81,576,81,578,81,579,80,580,80,581,80,582,80,583,80,584,80,585,80,586,80,587,79,587,79,588,78,588,78,589,78,590,77,591,77,592,77,593,77,594,77,595,77,596,77,597,78,598,79,598,80,597,81,596,82,594,83,592,84,591,84,589,85,587,86,586,87,585,88,584,89,584,89,585,89,586,89,587,88,590,87,592,85,595,84,597,83,599,83,601,82,602,82,604,82,605,82,606,83,607,83,608,84,608,85,608,87,607,88,605,89,602,91,598,92,594,93,589,94,585,95,580,96,575,96,571,96,569,96,566,96,565,95,566,95,568,93,570,93,572,92,574,92,576,92,579,92,581,92,582,93,583,94,584,96,584,97,584,99,584,100,583,101,582,102,582,103,581,103,582,102,584,101,586,99,588,98,591,96,593,95,595,93,597,92,598,91,600,91,601,92,601,94,601,96,601,98,601,101,600,103,600,104,600,106,600,107,600,107,601,108,603,108,604,108,606,108,609,108,611,108,612,108,613,108,612,109,609,110,605,111,601,
-                    -1,0,125,575,127,572,128,570,128,569,127,569,126,570,126,571,125,573,125,575,124,577,124,581,124,584,124,586,124,589,126,591,127,592,129,593,132,593,133,594,135,594,136,594,137,594,138,594,138,595,139,595,140,595,141,594,142,593,144,592,146,590,147,587,149,585,150,583,152,581,153,580,154,579,155,579,155,580,155,581,155,582,155,581,156,579,157,577,158,575,158,573,158,571,159,569,159,568,160,566,159,567,158,568,157,570,156,573,155,576,154,579,152,582,151,585,151,587,151,589,151,591,153,591,155,591,157,591,160,591,163,591,165,591,167,590,169,590,171,589,172,589,173,589,173,590,173,591,173,592,172,594,171,596,169,599,168,601,166,604,163,607,160,610,157,612,154,615,151,617,148,618,146,618,144,618,143,617,143,613,143,610,145,605,148,601,151,596,156,592,162,587,169,582,177,577,185,571,193,566,
-                    -1,0,-1,-1,
-            };
-
-            ArrayList<String> strings = new ArrayList<>();
-            ArrayList<Integer> rects = new ArrayList<>();
-            int cnt = Native.nativeHwRecoDoc(traceBuf, strings, rects);
-            Log.e("nativeHwRecoDoc", "===cnt: " + cnt);
-            for (String s : strings) {
-                Log.e("nativeHwRecoDoc", "===strings: " + s);
-            }
-
-        } catch (Exception e) {
-
-        }
-    }*/
 
 }

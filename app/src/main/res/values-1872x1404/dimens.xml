@@ -169,4 +169,5 @@
     <dimen name="image_w0">250dp</dimen>
     <dimen name="marginZ2">40dp</dimen>
     <dimen name="marginZ">20dp</dimen>
+    <dimen name="button_large">350dp</dimen>
 </resources>
