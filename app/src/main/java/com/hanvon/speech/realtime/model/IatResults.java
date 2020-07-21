@@ -60,7 +60,7 @@ public class IatResults {
         clearSpeechResults();
         mSpeechSentenceResults.addAll(results);
         for (SpeechResult result : results)
-            mStringResult.append(result.getData().getOnebest());
+            mStringResult.append(result.getData() == null ? "" : result.getData().getOnebest());
     }
 
 

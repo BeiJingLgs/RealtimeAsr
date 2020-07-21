@@ -155,4 +155,5 @@
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
     <string name="anthfailue">授权失败</string>
     <string name="tips7">服务器返回错误代码2</string>
+    <string name="tips8">本次识别和上次识别引擎不一致，请切换引擎进行识别</string>
 </resources>

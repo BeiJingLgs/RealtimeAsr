@@ -369,7 +369,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 TextUtils.equals(mFileBean.getmSd(), "sd")) + mFileBean.getCreatemillis() + "/" + mFileBean.getCreatemillis() + ".amr";
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
-        if (mFileBean.getSign() == 0) {
+        if (mFileBean.getSign() == 1) {
             IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
             }.getType()));
         } else {
@@ -1204,6 +1204,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!FileBeanUils.isRecoding()) {
             if (mEditLayout.getVisibility() == View.VISIBLE) {
                 onReturn();
+            }
+            if (mFileBean.getSign() != HvApplication.Recognition_Engine) {
+                ToastUtils.showLong(IatActivity.this, getString(R.string.tips7));
+                return;
             }
             DialogUtil.getInstance().showWaitingDialog(this);
             RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {

@@ -90,6 +90,5 @@ public class SequenceAdapter extends BaseAdapter {
     static class ViewHolder {
         public TextView timeTv;
         public EditText sentenceEd;
-
     }
 }

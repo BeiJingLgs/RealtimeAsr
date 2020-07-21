@@ -28,7 +28,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     protected Button mBackBtn;
     protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
     public String TAG;
-    public static String DEVICEID = "1000000000000007";
+    public static String DEVICEID = "1000000000000006";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
 

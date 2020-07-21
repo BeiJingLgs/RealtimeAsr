@@ -92,6 +92,11 @@ public class MeActivity extends BaseActivity implements RadioGroup.OnCheckedChan
         spanStr.setSpan(new RelativeSizeSpan(0.6f), 8, spanStr.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         mUsagePackTv.setText(spanStr);
         mVersionNameTv.setText("V " + CommonUtils.getVersionName(this));
+        if (SharedPreferencesUtils.getRecogEngineSharePrefer(this) == 1) {
+            mRadioBtn1.setChecked(true);
+        } else {
+            mRadioBtn2.setChecked(true);
+        }
     }
 
     private void initStates() {
