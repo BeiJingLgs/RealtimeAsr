@@ -25,7 +25,7 @@ public class HVTextView extends TextView {
         this.setTextColor(Color.BLACK);
         pageCount = 0;
         pageIdx = -1;
-        LogUtils.printErrorLog(TAG, "OFFSET_LINE: " + OFFSET_LINE);
+        //LogUtils.printErrorLog(TAG, "OFFSET_LINE: " + OFFSET_LINE);
     }
 
     public HVTextView(Context context, AttributeSet attrs) {
@@ -61,11 +61,11 @@ public class HVTextView extends TextView {
         int viewHeight = this.getHeight();
         int lineCount = this.getLineCount();
 
-        LogUtils.printErrorLog(TAG, "65 this.getHeight(): " + this.getHeight());
+        //LogUtils.printErrorLog(TAG, "65 this.getHeight(): " + this.getHeight());
         Rect rtLine = new Rect();
         getLineBounds(lineCount - 1, rtLine);
 
-        LogUtils.printErrorLog(TAG, "69 rtLine.height(): " + rtLine.height());
+        //LogUtils.printErrorLog(TAG, "69 rtLine.height(): " + rtLine.height());
         if (getPageCount() == 0)
             return true;
         else
@@ -90,9 +90,9 @@ public class HVTextView extends TextView {
         getLineBounds(lineCount - 1, rtLine);
 
         OFFSET_LINE = getResources().getInteger(R.integer.OFFSET_LINE);
-        LogUtils.printErrorLog(TAG, "94 this.getHeight(): " + this.getHeight());
+        //LogUtils.printErrorLog(TAG, "94 this.getHeight(): " + this.getHeight());
 
-        LogUtils.printErrorLog(TAG, "96 rtLine.getHeight(): " + rtLine.height());
+        //LogUtils.printErrorLog(TAG, "96 rtLine.getHeight(): " + rtLine.height());
         int offset = Math.min(this.getHeight() - OFFSET_LINE, rtLine.bottom - this.getScrollY());
         this.scrollBy(0, offset);
         return true;
@@ -113,8 +113,8 @@ public class HVTextView extends TextView {
     }
 
     public void gotoLastPage() {
-        LogUtils.printErrorLog(TAG, "gotoLastPage isLastPage: " + isLastPage());
-        LogUtils.printErrorLog(TAG, "getPageCount(): " + getPageCount());
+        //LogUtils.printErrorLog(TAG, "gotoLastPage isLastPage: " + isLastPage());
+        //LogUtils.printErrorLog(TAG, "getPageCount(): " + getPageCount());
         if (!isLastPage())
             gotoPage(getPageCount() - 1);
     }
@@ -141,7 +141,7 @@ public class HVTextView extends TextView {
                 return this.getScrollY() / this.getHeight();
             else*/
           OFFSET_LINE = getResources().getInteger(R.integer.OFFSET_LINE);
-          LogUtils.printErrorLog(TAG, "this.getScrollY(): " + this.getScrollY() + "  this.getHeight(): " + this.getHeight());
+          //LogUtils.printErrorLog(TAG, "this.getScrollY(): " + this.getScrollY() + "  this.getHeight(): " + this.getHeight());
           return (this.getScrollY()) / (this.getHeight() - OFFSET_LINE);
         } else {
             return 0;

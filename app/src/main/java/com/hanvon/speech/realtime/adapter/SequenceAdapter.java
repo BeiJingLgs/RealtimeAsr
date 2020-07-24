@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.full.download.Result;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
+import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ import java.util.List;
 
 public class SequenceAdapter extends BaseAdapter {
 
-    List<Result> cateList;
+    List<AsrEditSentence> cateList;
     private Context context;
 
-    public SequenceAdapter(List<Result> litms, Context context) {
+    public SequenceAdapter(List<AsrEditSentence> litms, Context context) {
         super();
         cateList = litms;
         this.context = context;
@@ -61,9 +62,9 @@ public class SequenceAdapter extends BaseAdapter {
             viewHolder = (SequenceAdapter.ViewHolder) convertView.getTag();
         }
 
-        viewHolder.timeTv.setText(TimeUtil.convertMillions2Time(cateList.get(position).getStartTime()) + " - "
-                + TimeUtil.convertMillions2Time(cateList.get(position).getEndTime()));
-        viewHolder.sentenceEd.setText(cateList.get(position).getResult());
+        viewHolder.timeTv.setText(TimeUtil.convertMillions2Time(cateList.get(position).getBg()) + " - "
+                + TimeUtil.convertMillions2Time(cateList.get(position).getEd()));
+        viewHolder.sentenceEd.setText(cateList.get(position).getContent());
         viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -72,7 +73,7 @@ public class SequenceAdapter extends BaseAdapter {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                cateList.get(position).setResult(s.toString());
+                cateList.get(position).setContent(s.toString());
             }
 
             @Override
@@ -83,7 +84,7 @@ public class SequenceAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public List<Result>getCateList() {
+    public List<AsrEditSentence>getCateList() {
         return cateList;
     }
 

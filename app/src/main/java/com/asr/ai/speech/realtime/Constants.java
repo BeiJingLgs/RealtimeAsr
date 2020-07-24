@@ -38,4 +38,8 @@ public class Constants {
 
     public static final double Scale103 = 0.68;
     public static final double Scale97 = 1.16;
+
+
+    public static final int BAIDU_ENGINE = 1;
+    public static final int SPEECH_ENGINE = 2;
 }

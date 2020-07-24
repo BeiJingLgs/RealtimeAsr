@@ -28,7 +28,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     protected Button mBackBtn;
     protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
     public String TAG;
-    public static String DEVICEID = "1000000000000006";
+    public static String DEVICEID = "1000000000000020";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
 
@@ -91,7 +91,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     }
 
     private void initbar() {
-        mHomeBtn=  findViewById(R.id.btn_Home);
+        mHomeBtn = findViewById(R.id.btn_Home);
         mBackBtn = (Button) findViewById(R.id.btn_Return);
         mMenus = findViewById(R.id.btn_option_menus);
         mCreateFile = findViewById(R.id.btn_option_create);
@@ -110,7 +110,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
         mAuthReceiver = new AuthReceiver();
         IntentFilter mBtFilter = new IntentFilter();
         mBtFilter.addAction(ConstBroadStr.SPEENCH_AUTH);
-        registerReceiver(mAuthReceiver, mBtFilter);
+        //registerReceiver(mAuthReceiver, mBtFilter);
     }
 
     protected class AuthReceiver extends BroadcastReceiver {

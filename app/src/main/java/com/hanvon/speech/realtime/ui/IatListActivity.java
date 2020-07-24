@@ -76,7 +76,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     public void initView(Bundle savedInstanceState,View view) {
         mMenus.setVisibility(View.GONE);
         mCreateFile.setVisibility(View.VISIBLE);
-        mMineBtn.setVisibility(View.VISIBLE);
+        mMineBtn.setVisibility(View.GONE);
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -105,12 +105,12 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         Constants.WIDTH = display.getWidth();
         Constants.HEIGHT = display.getHeight();
 
-        HvApplication.Recognition_Engine = SharedPreferencesUtils.getRecogEngineSharePrefer(this);
+        /*HvApplication.Recognition_Engine = SharedPreferencesUtils.getRecogEngineSharePrefer(this);
         if (HvApplication.Recognition_Engine == 2) {
             if (HvApplication.HaveAuth == false) {
                 AlSpeechEngine.getInstance();
             }
-        }
+        }*/
         freshPage();
     }
 

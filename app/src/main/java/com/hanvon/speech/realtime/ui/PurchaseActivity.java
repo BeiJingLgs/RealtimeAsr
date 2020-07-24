@@ -166,7 +166,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         }
                     });
                 } else if (TextUtils.equals(msg, intentPackValue)) {
-                    RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance(this).getAccountPacks( Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();
@@ -262,7 +262,7 @@ public class PurchaseActivity extends BaseActivity implements AdapterView.OnItem
                         ToastUtils.showLong(PurchaseActivity.this, getString(R.string.last_page));
                         return;
                     }
-                    RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+                    RetrofitManager.getInstance(this).getAccountPacks( Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                         @Override
                         public void successData(String result) {
                             Gson gson2 = new Gson();

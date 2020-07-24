@@ -17,8 +17,11 @@ import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
+import com.hanvon.speech.realtime.bean.speechBean.SpeechVarResult;
 import com.hanvon.speech.realtime.model.IatResults;
 import com.hanvon.speech.realtime.util.FileBeanUils;
+import com.hanvon.speech.realtime.util.LogUtils;
+import com.hanvon.speech.realtime.util.ToastUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +46,7 @@ public class AlSpeechEngine {
     }
 
     private AlSpeechEngine() {
-        initSpeech();
+
     }
 
 
@@ -57,7 +60,7 @@ public class AlSpeechEngine {
         mEngine.init(new AlSpeechEngine.AILASRRealtimeListenerImpl());
     }
 
-    private void startSpeechRecog() {
+    public void startSpeechRecog() {
         AICloudLASRRealtimeIntent mAICloudLASRRealtimeIntent = new AICloudLASRRealtimeIntent();
         mAICloudLASRRealtimeIntent.setUseTxtSmooth(false); // 口语顺滑，去掉 嗯、啊 这些词
         mAICloudLASRRealtimeIntent.setUseTProcess(true);    // 逆文本，识别出的数字转成阿拉伯数字
@@ -74,7 +77,7 @@ public class AlSpeechEngine {
         mEngine.start(mAICloudLASRRealtimeIntent);
     }
 
-    private void cancelSpeechRecog() {
+    public void cancelSpeechRecog() {
         mEngine.cancel();
     }
 
@@ -82,7 +85,8 @@ public class AlSpeechEngine {
 
     private class AILASRRealtimeListenerImpl implements AILASRRealtimeListener {
         public void onError(AIError error) {
-
+            ToastUtils.showLong(getApplicationContext(), error.getError());
+            LogUtils.printErrorLog(TAG, "onError: " + error.getError());
         }
 
         /**
@@ -100,13 +104,15 @@ public class AlSpeechEngine {
          * @param results 服务器返回的结果
          */
         public void onResults(AIResult results) {
+            LogUtils.printErrorLog(TAG, "onResults");
             if (results.getResultType() == AIConstant.AIENGINE_MESSAGE_TYPE_JSON) {
                 String resultJson = (String) results.getResultObject();
-                // Log.e(TAG, resultJson);
+                LogUtils.printErrorLog(TAG, resultJson);
                 try {
                     JSONObject jsonObject = new JSONObject(resultJson);
                     int errno = jsonObject.getInt("errno");
                     if (errno != 0 && errno != 7 && errno != 8) {
+                        LogUtils.printErrorLog(TAG, "onResults: " + resultJson);
                         // errno 除了 0，7，8 外，收到其余code后 websocket 会断开，sdk会回调网络错误
                     } else if (errno == 0) {
                         SpeechResult result = gson.fromJson(resultJson, SpeechResult.class);
@@ -117,6 +123,17 @@ public class AlSpeechEngine {
                         IatResults.addSpeechResult(result);
                         Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
                         HvApplication.getContext().sendBroadcast(intent);
+                    } else if (errno == 8) {
+                        SpeechVarResult result = gson.fromJson(resultJson, SpeechVarResult.class);
+                        if (TextUtils.isEmpty(result.getData().getVar())) {
+                            return;
+                        }
+                        IatResults.addSpeechTempResult(result);
+                        Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
+                        HvApplication.getContext().sendBroadcast(intent);
+                    } else {
+
+                       // LogUtils.printErrorLog(TAG, "onResults: " + resultJson);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -126,6 +143,7 @@ public class AlSpeechEngine {
 
         @Override
         public void onInit(int status) {
+            LogUtils.printErrorLog(TAG, "onInit");
             if (status == AIConstant.OPT_SUCCESS) {
 
             } else {
@@ -136,36 +154,42 @@ public class AlSpeechEngine {
         @Override
         public void onReadyForSpeech() {
 
+            LogUtils.printErrorLog(TAG, "onReadyForSpeech");
         }
 
         @Override
         public void onResultDataReceived(byte[] buffer, int size) {
+            LogUtils.printErrorLog(TAG, "onResultDataReceived");
             // 单路音频回调，单麦的话音频直接回调，多麦的话经过 beamforming 之后的单路音频
         }
 
         @Override
         public void onRawDataReceived(byte[] buffer, int size) {
+            LogUtils.printErrorLog(TAG, "onRawDataReceived");
             // 多麦的原始音频
         }
     }
-
-    private void auth() {
+    //d3c265662929841215092b415c257bd6
+    private void auth() {//57ef004d253ca19dae2522c95f17a852
         DUILiteConfig config = new DUILiteConfig(
-                "d3c265662929841215092b415c257bd6",
+                "57ef004d253ca19dae2522c95f17a852",
                 "279594186",
                 "ae625a43ec270c237a799334b9e5f29f",
                 "b6bd6fa75a70105df1919a17ab41d4bd");
         // 初始化数据及授权
+        config.setAudioRecorderType(DUILiteConfig.TYPE_COMMON_MIC);
         DUILiteSDK.init(getApplicationContext(), config, new DUILiteSDK.InitListener() {
             @Override
             public void success() {
-                Log.d(TAG, "授权成功! ");
+                LogUtils.printErrorLog(TAG, "授权成功! ");
                 HvApplication.HaveAuth = true;
+                Intent intent = new Intent(ConstBroadStr.SPEENCH_AUTH);
+                HvApplication.getContext().sendBroadcast(intent);
             }
 
             @Override
             public void error(String errorCode, String errorInfo) {
-                Log.d(TAG, "授权失败, errorcode: " + errorCode + ",errorInfo:" + errorInfo);
+                LogUtils.printErrorLog(TAG, "授权失败, errorcode: " + errorCode + ",errorInfo:" + errorInfo);
                 Intent intent = new Intent(ConstBroadStr.SPEENCH_AUTH);
                 HvApplication.getContext().sendBroadcast(intent);
             }

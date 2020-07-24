@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hwebook.HANVONEBK;
+import android.os.IBinder;
 import android.os.storage.StorageManager;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.io.File;
@@ -93,7 +95,8 @@ public class MethodUtils {
     public static void hideSoftInput(Activity activity){
         InputMethodManager im = (InputMethodManager)activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
         if (im != null){
-            im.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            if (activity.getCurrentFocus() != null)
+                im.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
 

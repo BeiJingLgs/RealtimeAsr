@@ -23,6 +23,7 @@ import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hanvon.speech.realtime.alspeech.AlSpeechEngine;
 import com.hanvon.speech.realtime.bean.Result.Constant;
 import com.hanvon.speech.realtime.bean.Result.DeviceBeanList;
 import com.hanvon.speech.realtime.bean.Result.OrderList;
@@ -180,7 +181,7 @@ public class MeActivity extends BaseActivity implements RadioGroup.OnCheckedChan
                 finish();
                 break;
             case R.id.last_time:
-                RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+                RetrofitManager.getInstance(this).getAccountPacks( Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                     @Override
                     public void successData(String result) {
                         Gson gson2 = new Gson();
@@ -372,7 +373,8 @@ public class MeActivity extends BaseActivity implements RadioGroup.OnCheckedChan
             case R.id.speech_engine:
                 HvApplication.Recognition_Engine = 2;
                 mRadioBtn2.setChecked(true);
-                ToastUtils.showLong(getApplicationContext(), "该引擎暂不支持，后续版本会添加");
+                AlSpeechEngine.getInstance();
+                //ToastUtils.showLong(getApplicationContext(), "该引擎暂不支持，后续版本会添加");
                 break;
             }
         SharedPreferencesUtils.setRecogEngineSharePrefer(getApplicationContext(), HvApplication.Recognition_Engine);

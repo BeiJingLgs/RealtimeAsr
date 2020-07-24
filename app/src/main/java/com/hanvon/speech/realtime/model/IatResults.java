@@ -1,7 +1,10 @@
 package com.hanvon.speech.realtime.model;
 
 import com.asr.ai.speech.realtime.full.download.Result;
+import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
+import com.hanvon.speech.realtime.bean.speechBean.SpeechSentence;
+import com.hanvon.speech.realtime.bean.speechBean.SpeechVarResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,14 +27,16 @@ public class IatResults {
 
 
     public static void addResult(Result result) {
-        mTempResult.setLength(0);
+        /*mTempResult.setLength(0);
         mSentenceResults.add(result);
-        mStringResult.append(result.getResult());
+        mStringResult.append(result.getResult());*/
+        addAsrEditResult(ConvertResult.Result2AsrEditSentence(result));
     }
 
     public static void addTempResult(Result result) {
-        mTempResult.setLength(0);
-        mTempResult.append(result.getResult());
+        //mTempResult.setLength(0);
+        //mTempResult.append(result.getResult());
+        addAsrEditTempResult(ConvertResult.Result2AsrEditSentence(result));
     }
 
 
@@ -65,14 +70,16 @@ public class IatResults {
 
 
     public static void addSpeechResult(SpeechResult result) {
-        mTempResult.setLength(0);
-        mSpeechSentenceResults.add(result);
-        mStringResult.append(result.getData().getOnebest());
+        //mTempResult.setLength(0);
+        //mSpeechSentenceResults.add(result);
+        //mStringResult.append(result.getData().getOnebest());
+        addAsrEditResult(ConvertResult.SpeechSentence2AsrEditSentence(result.getData()));
     }
 
-    public static void addSpeechTempResult(SpeechResult result) {
-        mTempResult.setLength(0);
-        mTempResult.append(result.getData().getOnebest());
+    public static void addSpeechTempResult(SpeechVarResult result) {
+        //mTempResult.setLength(0);
+        //mTempResult.append(result.getData().getOnebest());
+        addAsrEditTempResult(ConvertResult.SpeechSentence2AsrEditSentence2(result.getData()));
     }
 
 
@@ -96,5 +103,48 @@ public class IatResults {
     }
 
 
+
+
+
+
+    private static List<AsrEditSentence> mAsrEditentenceResults = Collections.synchronizedList(new ArrayList<>());
+    public static void addAllAsrEditResult(List<AsrEditSentence> results) {
+        clearAsrEditResults();
+        mAsrEditentenceResults.addAll(results);
+        for (AsrEditSentence result : results)
+            mStringResult.append(result.getContent() == null ? "" : result.getContent());
+    }
+
+
+    public static void addAsrEditResult(AsrEditSentence result) {
+        mTempResult.setLength(0);
+        mAsrEditentenceResults.add(result);
+        mStringResult.append(result.getContent());
+    }
+
+    public static void addAsrEditTempResult(AsrEditSentence result) {
+        mTempResult.setLength(0);
+        mTempResult.append(result.getContent());
+    }
+
+
+
+    public static List<AsrEditSentence> getAsrEditResults() {
+        return mAsrEditentenceResults;
+    }
+
+    public static String getAsrEditResultsStr() {
+        mTotalResult.setLength(0);
+        return mTotalResult.append(mStringResult).append(mTempResult).toString();
+    }
+
+    public static void setAsrEditResultsStr(String result) {
+        mStringResult.append(result);
+    }
+
+    public static void clearAsrEditResults() {
+        mAsrEditentenceResults.clear();
+        mStringResult.setLength(0);
+    }
 
 }

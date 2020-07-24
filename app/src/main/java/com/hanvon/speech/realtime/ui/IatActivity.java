@@ -56,6 +56,7 @@ import com.hanvon.speech.realtime.bean.Result.PackBean;
 import com.hanvon.speech.realtime.bean.Result.PackList;
 import com.hanvon.speech.realtime.bean.Result.PayResultBean;
 import com.hanvon.speech.realtime.bean.Result.VerificationResult;
+import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.IatResults;
@@ -118,6 +119,7 @@ import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT1;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT3;
 import static com.asr.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
+import static com.hanvon.speech.realtime.util.MethodUtils.hideSoftInput;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
@@ -157,7 +159,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private int nPageCount = 0; // 当前分类的页总数
     private int nPageIsx = 0; // 当前显示的页idx
     protected static int PAGE_CATEGORY = 10;// 每页显示几个
-    private ArrayList<Result> mTotalResultList, mTempResultList;
+    private ArrayList<AsrEditSentence> mTotalResultList, mTempResultList;
 
     private ArrayList<SpeechResult> mTotalSpeechResultList, mTempSpeechResultList;
     private HandWriteNoteView mNoteView;
@@ -297,10 +299,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mBtFilter.addAction(ConstBroadStr.UPDATERECOG);
         mBtFilter.addAction(ConstBroadStr.ACTION_HOME_PAGE);
         mBtFilter.addAction(ConstBroadStr.UPDATEALSPEECHRECOG);
-        mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);
+        mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);//ConstBroadStr.SPEENCH_AUTH
+        mBtFilter.addAction(ConstBroadStr.SPEENCH_AUTH);
         registerReceiver(recordReceiver, mBtFilter);
-
-
     }
 
     private void init() {
@@ -370,10 +371,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (TextUtils.isEmpty(mFileBean.getJson()))
             return;
         if (mFileBean.getSign() == 1) {
-            IatResults.addAllResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<Result>>() {
+            IatResults.addAllAsrEditResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<AsrEditSentence>>() {
             }.getType()));
         } else {
-            IatResults.addAllSpeechResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<SpeechResult>>() {
+            IatResults.addAllAsrEditResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<AsrEditSentence>>() {
             }.getType()));
         }
 
@@ -439,8 +440,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 for (Point point : trace.getPoints()) {
                     //LogUtils.printErrorLog("trace.getPoints", "Short s : point.y: " + point.y + "  point.x: " + point.x);
                     if (point.x < 0)
-                       break;
-                    points.add((short)(mNoteView.getHeight() - point.y));
+                        break;
+                    points.add((short) (mNoteView.getHeight() - point.y));
                     points.add((short) point.x);
                 }
                 points.add((short) -1);
@@ -450,8 +451,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             points.add((short) 0);
             points.add((short) -1);
             points.add((short) -1);
-            Short []traceBuf = new Short[points.size()];
-            short []traceBuf2 = new short[points.size()];
+            Short[] traceBuf = new Short[points.size()];
+            short[] traceBuf2 = new short[points.size()];
             traceBuf = points.toArray(traceBuf);
 
             for (int j = 0; j < traceBuf.length; j++) {
@@ -471,7 +472,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
 
-    void reco(short []traceBuf){
+    void reco(short[] traceBuf) {
         try {
             Native.nativeHwSetDicAndLanguage(ROOT_OCR_BIN_PATH, 1);
             ArrayList<String> strings = new ArrayList<>();
@@ -488,6 +489,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         }
     }
+
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         mNoteView.setQuickReadChecked(b);
@@ -505,21 +507,20 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.showLong(this, "语音跳转失败");
                         break;
                     }
-                    if (HvApplication.Recognition_Engine == 1) {
-
-                        List<Result> list = IatResults.getResults();
-                        for (Result result : list) {
-                            if (result.getResult().contains(string)) {
-                                long startTime = result.getRecordTime();
+                    if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+                        List<AsrEditSentence> list = IatResults.getAsrEditResults();
+                        for (AsrEditSentence result : list) {
+                            if (result.getContent().contains(string)) {
+                                long startTime = result.getRecordtime();
                                 jumpPlayAmrRecord(startTime);
                                 break;
                             }
                         }
                     } else {
-                        List<SpeechResult> list = IatResults.getSpeechResults();
-                        for (SpeechResult result : list) {
-                            if (result.getData().getOnebest().contains(string)) {
-                                long startTime = result.getRecordTime();
+                        List<AsrEditSentence> list = IatResults.getAsrEditResults();
+                        for (AsrEditSentence result : list) {
+                            if (result.getContent().contains(string)) {
+                                long startTime = result.getRecordtime();
                                 jumpPlayAmrRecord(startTime);
                                 break;
                             }
@@ -570,25 +571,32 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
-                LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");
+                LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
                 mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
+                if (HvApplication.HaveAuth) {
+                    AlSpeechEngine.getInstance().startSpeechRecog();
+                    LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
+                } else {
+                    ToastUtils.showLong(getApplicationContext(), "授权失败");
+                }
             }
         }
     }
 
     private void freshRecogContent() {
-        if (HvApplication.Recognition_Engine == 1) {
-            if (TextUtils.equals(IatResults.getResultsStr(), mRecogResultTv.getText().toString()))
+        if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+            if (TextUtils.equals(IatResults.getAsrEditResultsStr(), mRecogResultTv.getText().toString()))
                 return;
             LogUtils.printErrorLog(TAG, "freshRecogContent");
-            mRecogResultTv.setText(IatResults.getResultsStr());
+            mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
         } else {
             if (TextUtils.equals(IatResults.getSpeechResultsStr(), mRecogResultTv.getText().toString()))
                 return;
             LogUtils.printErrorLog(TAG, "freshRecogContent");
-            mRecogResultTv.setText(IatResults.getSpeechResultsStr());
+            mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
         }
         mRecogResultTv.gotoLastPage();
         freshResultPage();
@@ -651,7 +659,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     for (String s : list)
                         stringBuffer.append(s);
                     if (TextUtils.isEmpty(stringBuffer.toString())) {
-                        ToastUtils.showLong(getApplicationContext(),getResources().getString(R.string.noresult));
+                        ToastUtils.showLong(getApplicationContext(), getResources().getString(R.string.noresult));
                         return;
                     }
                     showOcrResultDialog(stringBuffer.toString());
@@ -700,16 +708,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     };
 
     private void updateEditList() {
-        for (int i = 0; i < mTempResultList.size(); i++)
-            for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++) {
-                if (TextUtils.equals(mTotalResultList.get(j).getSn(), mTempResultList.get(i).getSn())) {
-                    if (TextUtils.isEmpty(mTempResultList.get(i).getResult())) {
-                        mTotalResultList.remove(j);
-                    }
-                    break;
-                }
-            }
-        IatResults.addAllResult(mTotalResultList);
+        for (int i = 0; i < mTotalResultList.size(); i++) {
+            if (TextUtils.isEmpty(mTotalResultList.get(i).getContent()))
+                mTotalResultList.remove(i);
+        }
+        IatResults.addAllAsrEditResult(mTotalResultList);
     }
 
     private void updateSpeechEditList() {
@@ -727,6 +730,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void onReturn() {
         if (mEditLayout.getVisibility() == View.VISIBLE) {
+            hideSoftInput(this);
             mEditLayout.setVisibility(View.GONE);
             mResultLayout.setVisibility(View.VISIBLE);
             mWriteLayout.setVisibility(View.VISIBLE);
@@ -734,16 +738,22 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mNoteView.setVisibility(View.VISIBLE);
             updateNoteCurPage();
             nPageIsx = 0;
-            if (HvApplication.Recognition_Engine == 1) {
+            if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
                 updateEditList();
-                mRecogResultTv.setText(IatResults.getResultsStr());
-
+                mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
             } else {
-                updateSpeechEditList();
-                mRecogResultTv.setText(IatResults.getSpeechResultsStr());
+                updateEditList();
+                mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
             }
             mRecogResultTv.getPageCount();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    freshResultPage();
+                }
+            }, 200);
         } else {
+            //hideSoftInput(this);
             saveAndExitActivity();
             finish();
         }
@@ -754,10 +764,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
         if (!TextUtils.equals(con, mFileBean.getContent())) {
             mFileBean.setContent(con);
-            if (HvApplication.Recognition_Engine == 1)
-                mFileBean.setJson(JSON.toJSONString(IatResults.getResults()));
+            if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE)
+                mFileBean.setJson(JSON.toJSONString(IatResults.getAsrEditResults()));
             else
-                mFileBean.setJson(JSON.toJSONString(IatResults.getSpeechResults()));
+                mFileBean.setJson(JSON.toJSONString(IatResults.getAsrEditResults()));
             mFileBean.setModifytime(TimeUtil.getTime(System.currentTimeMillis()));
             mFileBean.setDuration(mDuration);
             LogUtils.printErrorLog(TAG, mFileBean.getJson());
@@ -775,8 +785,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
 
             uploadUsageTime();
-            close(false);
-
+            if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE)
+                close(false);
+            else
+                AlSpeechEngine.getInstance().cancelSpeechRecog();
 
             MediaRecorderManager.getInstance().stop();
             mExecutor.execute(new Runnable() {
@@ -801,7 +813,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mUsageRecordTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
             mStartRecordTime = 0;
             FileBeanUils.setmStartRecordTime(mStartRecordTime);
-            close(false);
+
+            if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE)
+                close(false);
+            else
+                AlSpeechEngine.getInstance().cancelSpeechRecog();
             mRecognizeStatusTv.setText(getString(R.string.pausing));
             MediaRecorderManager.getInstance().stop();
             mExecutor.execute(new Runnable() {
@@ -861,7 +877,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         exitRecoging();
         stopRecognize();
         stopPlayRecord();
-        IatResults.clearResults();
+        IatResults.clearAsrEditResults();
         unregisterReceiver(recordReceiver);
     }
 
@@ -1084,17 +1100,25 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mStartRecordTime = System.currentTimeMillis();
             FileBeanUils.setmStartRecordTime(mStartRecordTime);
             if (!mNoRecogCheckbox.isChecked()) {
-                mExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            start();
-                            pollCheckStop();
-                        } catch (IOException e) {
-                            ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                start();
+                                pollCheckStop();
+                            } catch (IOException e) {
+                                ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    /*LogUtils.printErrorLog(TAG, "startSpeechRecog");
+                    if (HvApplication.HaveAuth)
+                        AlSpeechEngine.getInstance().startSpeechRecog();
+                    else*/
+                        AlSpeechEngine.getInstance().initSpeech();
+                }
             }
 
 
@@ -1109,11 +1133,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void freEditSentenceshPage() {
         saveNoteCurTracePage();
-
-        if (IatResults.getResults().size() == 0 && HvApplication.Recognition_Engine == 1) {
+        if (IatResults.getAsrEditResults().size() == 0 && HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
-        } else if (IatResults.getSpeechResults().size() == 0 && HvApplication.Recognition_Engine == 2) {
+        } else if (IatResults.getAsrEditResults().size() == 0 && HvApplication.Recognition_Engine == 2) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
         }
@@ -1123,18 +1146,19 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
 
-        if (HvApplication.Recognition_Engine == 0) {
+        if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             mTotalResultList.clear();
-            mTotalResultList.addAll(IatResults.getResults());
+            mTotalResultList.addAll(IatResults.getAsrEditResults());
             nPageCount = getTotalqlPageCount(mTotalResultList.size());
             initPage();
             freshSentenceList(nPageIsx);
         } else {
-            mTotalSpeechResultList.clear();
-            mTotalSpeechResultList.addAll(IatResults.getSpeechResults());
-            nPageCount = getTotalqlPageCount(mTotalSpeechResultList.size());
+            mTotalResultList.clear();
+            mTotalResultList.addAll(IatResults.getAsrEditResults());
+            nPageCount = getTotalqlPageCount(mTotalResultList.size());
             initPage();
-            freshSpeecnSentenceList(nPageIsx);
+            freshSentenceList(nPageIsx);
+            //freshSpeecnSentenceList(nPageIsx);
         }
 
     }
@@ -1205,23 +1229,27 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (mEditLayout.getVisibility() == View.VISIBLE) {
                 onReturn();
             }
-            if (mFileBean.getSign() != HvApplication.Recognition_Engine) {
-                ToastUtils.showLong(IatActivity.this, getString(R.string.tips7));
-                return;
-            }
+
             DialogUtil.getInstance().showWaitingDialog(this);
-            RetrofitManager.getInstance(this).getAccountPacks(String.valueOf(HvApplication.Recognition_Engine), Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
+            RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
                     DialogUtil.getInstance().disWaitingDialog();
                     Gson gson2 = new Gson();
                     PackList c = gson2.fromJson(result, PackList.class);
+                    //Log.e("A", "onResponse: " + "result: " + result);
                     Log.e("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
-                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) && (c.getPackBean().size() > 0)) {
-                        startRecord();
-                    } else if (TextUtils.equals(c.getCode(), String.valueOf(1))){
+                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                        if (c.getPackBean() != null) {
+                            PackBean packBean = c.getPackBean().get(0);
+                            HvApplication.Recognition_Engine = packBean.VoiceEngineTypeID;
+                            startRecord();
+                        } else {
+                            ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
+                        }
+                    } else if (TextUtils.equals(c.getCode(), String.valueOf(1))) {
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
-                    } else if (TextUtils.equals(c.getCode(), String.valueOf(2))){//时长用完
+                    } else if (TextUtils.equals(c.getCode(), String.valueOf(2))) {//时长用完
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips7));
                     } else {
                         ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
@@ -1245,11 +1273,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mRecordLayout.setVisibility(View.VISIBLE);
         mRecognizeStatusTv.setText(R.string.recognizing);
         mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-        if (HvApplication.Recognition_Engine == 1) {
-            startRecognize();
-        } else {
-            AlSpeechEngine.getInstance().initSpeech();
-        }
+
+        startRecognize();
+
     }
 
     private void createFile(String name) {
@@ -1497,7 +1523,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void freshSentenceList(int currentPage) {
         if (mTempResultList == null) {
-            mTempResultList = new ArrayList<Result>();
+            mTempResultList = new ArrayList<AsrEditSentence>();
         } else {
             mTempResultList.clear();
         }
