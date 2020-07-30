@@ -132,13 +132,13 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        LogUtils.printErrorLog("onNewIntent", "===onNewIntent");
+        LogUtils.printErrorLog("onNewIntent", "===onNewIntent: " + HvApplication.TOKEN);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+        /*if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
 
             String id = "";
             if (HvApplication.ISDEBUG) {
@@ -154,6 +154,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 return;
             if (!HvApplication.IS_NEEDIALOG)
                 return;
+            LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
             RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
                 @Override
                 public void successData(String result) {
@@ -174,7 +175,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 }
             });
             LogUtils.printErrorLog("onNewIntent", "===onResume");
-        }
+        }*/
     }
 
     @Override

@@ -9,32 +9,41 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.asr.ai.speech.realtime.Const;
 import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
+import com.google.gson.Gson;
+import com.hanvon.speech.realtime.bean.Result.Constant;
+import com.hanvon.speech.realtime.bean.Result.LoginResult;
+import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.LogUtils;
+import com.hanvon.speech.realtime.util.MethodUtils;
+import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public abstract class BaseActivity extends Activity  implements View.OnClickListener {
+public abstract class BaseActivity extends Activity implements View.OnClickListener {
     protected Button mHomeBtn;
     protected Button mBackBtn;
     protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
     public String TAG;
-    public static String DEVICEID = "1000000000000020";
+    public static String DEVICEID = "1000000000000022";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
 
     private AuthReceiver mAuthReceiver;
     //返回code
     public static final int OPEN_SET_REQUEST_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +71,7 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     public boolean lacksPermission() {
         for (String permission : permissions) {
             //判断是否缺少权限，true=缺少权限
-            if(ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {
                 return true;
             }
         }
@@ -123,10 +132,48 @@ public abstract class BaseActivity extends Activity  implements View.OnClickList
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
+        if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+
+            String id = "";
+            if (HvApplication.ISDEBUG) {
+                id = DEVICEID;
+            } else {
+                if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
+                    ToastUtils.show(this, getString(R.string.tips5));
+                    return;
+                }
+                id = MethodUtils.getDeviceId();
+            }
+            if (!TextUtils.isEmpty(HvApplication.TOKEN))
+                return;
+            //if (!HvApplication.IS_NEEDIALOG)
+             //   return;
+            LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
+            RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
+                @Override
+                public void successData(String result) {
+                    Gson gson2 = new Gson();
+                    LoginResult c = gson2.fromJson(result, LoginResult.class);
+
+                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                        Log.e("A", "onResponse: " + result + "返回值");
+                        HvApplication.TOKEN = c.getToken();
+                        SharedPreferencesUtils.saveLoginStatesSharePrefer(BaseActivity.this, SharedPreferencesUtils.LOGIN);
+                    } else {
+                        ToastUtils.showLong(BaseActivity.this, c.getMsg());
+                    }
+                }
+                @Override
+                public void failureData(String error) {
+                    Log.e("AA", "error: " + error + "错");
+                }
+            });
+            LogUtils.printErrorLog("onNewIntent", "===onResume");
+        }
     }
 
     @Override

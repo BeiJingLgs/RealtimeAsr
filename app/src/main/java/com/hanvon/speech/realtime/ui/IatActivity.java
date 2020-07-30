@@ -115,6 +115,7 @@ import java.util.logging.Logger;
 import okhttp3.RequestBody;
 
 import static com.asr.ai.speech.realtime.ConstBroadStr.ROOT_OCR_BIN_PATH;
+import static com.asr.ai.speech.realtime.Constants.BAIDU_ENGINE;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT1;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT3;
@@ -286,7 +287,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        LogUtils.printErrorLog(TAG, "==onNewIntent");
+        LogUtils.printErrorLog(TAG, "==onNewIntent: " + HvApplication.TOKEN);
     }
 
     private void initData() {
@@ -301,6 +302,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mBtFilter.addAction(ConstBroadStr.UPDATEALSPEECHRECOG);
         mBtFilter.addAction(ConstBroadStr.HIDE_BACKLOGO);//ConstBroadStr.SPEENCH_AUTH
         mBtFilter.addAction(ConstBroadStr.SPEENCH_AUTH);
+        mBtFilter.addAction(ConstBroadStr.SPEENCH_CLOSE);
         registerReceiver(recordReceiver, mBtFilter);
     }
 
@@ -409,11 +411,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
 
+
     @Override
     protected void onResume() {
         super.onResume();
         forbiddenDropDown(1);
-        LogUtils.printErrorLog(TAG, "===onResume");
+        LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
     }
 
     @Override
@@ -577,11 +580,27 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
                 if (HvApplication.HaveAuth) {
+                    LogUtils.printErrorLog(TAG, "===Constants.SPEENCH_AUTH");
+                    mIatLayout.setVisibility(View.GONE);
+                    mRecordLayout.setVisibility(View.VISIBLE);
+                    mRecognizeStatusTv.setText(R.string.recognizing);
+                    mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+
+                    mViewTips.setVisibility(View.GONE);
                     AlSpeechEngine.getInstance().startSpeechRecog();
                     LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
                 } else {
+                    if (mDuration != 0) {
+                        mViewTips.setVisibility(View.VISIBLE);
+                    }
                     ToastUtils.showLong(getApplicationContext(), "授权失败");
                 }
+                mTextBegin.setEnabled(true);
+            } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_CLOSE)) {
+                mIatLayout.setVisibility(View.VISIBLE);
+                mRecordLayout.setVisibility(View.GONE);
+                LogUtils.printErrorLog(TAG, "网络错误，请检查重试");
+                ToastUtils.showLong(getApplicationContext(), "网络错误，请检查重试");
             }
         }
     }
@@ -789,7 +808,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 close(false);
             else
                 AlSpeechEngine.getInstance().cancelSpeechRecog();
-
+            if (mDuration != 0) {
+                mViewTips.setVisibility(View.VISIBLE);
+            }
             MediaRecorderManager.getInstance().stop();
             mExecutor.execute(new Runnable() {
                 @Override
@@ -818,6 +839,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 close(false);
             else
                 AlSpeechEngine.getInstance().cancelSpeechRecog();
+
+            if (mDuration != 0) {
+                mViewTips.setVisibility(View.VISIBLE);
+            }
             mRecognizeStatusTv.setText(getString(R.string.pausing));
             MediaRecorderManager.getInstance().stop();
             mExecutor.execute(new Runnable() {
@@ -836,7 +861,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void continueRecognize() {
-        if (FileBeanUils.isRecoding()) {
+        if (!FileBeanUils.isRecoding()) {
             CommonUtils.setOnValidate(false, this);
             String tmpName = mFileBean.getCreatemillis();
             if (isNEW) {
@@ -846,21 +871,29 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }
             createFile(tmpName);
             FileBeanUils.setRecoding(true);
-            mRecognizeStatusTv.setText(getString(R.string.recognizing));
             mStartRecordTime = System.currentTimeMillis();
             FileBeanUils.setmStartRecordTime(mStartRecordTime);
             if (!mNoRecogCheckbox.isChecked()) {
-                mExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            start();
-                            pollCheckStop();
-                        } catch (IOException e) {
-                            ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                if (HvApplication.Recognition_Engine == BAIDU_ENGINE) {
+                    mRecognizeStatusTv.setText(getString(R.string.recognizing));
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                start();
+                                pollCheckStop();
+                            } catch (IOException e) {
+                                ToastUtils.show(getApplicationContext(), getString(R.string.tryagain));
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    AlSpeechEngine.getInstance().initSpeech();
+                   /* if (HvApplication.HaveAuth) {
+                        AlSpeechEngine.getInstance().startSpeechRecog();
+                    }*/
+                }
+
             }
 
 
@@ -1117,7 +1150,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     if (HvApplication.HaveAuth)
                         AlSpeechEngine.getInstance().startSpeechRecog();
                     else*/
-                        AlSpeechEngine.getInstance().initSpeech();
+                    mTextBegin.setEnabled(false);
+                    AlSpeechEngine.getInstance().initSpeech();
                 }
             }
 
@@ -1269,11 +1303,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void startRecord() {
-        mIatLayout.setVisibility(View.GONE);
-        mRecordLayout.setVisibility(View.VISIBLE);
-        mRecognizeStatusTv.setText(R.string.recognizing);
-        mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-
+        if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+            LogUtils.printErrorLog(TAG, "===Constants.BAIDU_ENGINE");
+            mIatLayout.setVisibility(View.GONE);
+            mRecordLayout.setVisibility(View.VISIBLE);
+            mRecognizeStatusTv.setText(R.string.recognizing);
+            mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+        }
         startRecognize();
 
     }
@@ -1508,6 +1544,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         Bitmap bitmap = ZXingUtils.createQRImage(payResultBean.getUrlBean().getUrl(), 500, 500);
                         upLoadDialog.setUpLoadStatus(bitmap);
                     }
+                    String path = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
+                    hvFileCommonUtils.recursiveDeleteExcludeRoot(HvApplication.mContext, path);
                 } else {
                     ToastUtils.show(HvApplication.mContext, payResultBean.getMsg());
                     upLoadDialog.dismiss();

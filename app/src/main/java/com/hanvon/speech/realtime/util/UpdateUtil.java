@@ -37,7 +37,7 @@ public class UpdateUtil {
     Context context;
     private boolean isChecking;
     private static final String UPDATEURL = "http://edu.hwebook.cn/xys/mobile.mvc?api=getapps&type=12";
-    private static final String TAG = "UpdateUtul";
+    private static final String TAG = "UpdateUtil";
     private static String APPNAME60 = "hvRecord.apk";
     private static String APPNAME960 = "hvRecord.apk";
     private boolean isShowToast;

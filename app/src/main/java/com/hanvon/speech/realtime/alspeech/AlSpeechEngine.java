@@ -85,7 +85,9 @@ public class AlSpeechEngine {
 
     private class AILASRRealtimeListenerImpl implements AILASRRealtimeListener {
         public void onError(AIError error) {
-            ToastUtils.showLong(getApplicationContext(), error.getError());
+            //ToastUtils.showLong(getApplicationContext(), error.getError());
+            Intent intent = new Intent(ConstBroadStr.SPEENCH_CLOSE);
+            HvApplication.getContext().sendBroadcast(intent);
             LogUtils.printErrorLog(TAG, "onError: " + error.getError());
         }
 
@@ -113,6 +115,8 @@ public class AlSpeechEngine {
                     int errno = jsonObject.getInt("errno");
                     if (errno != 0 && errno != 7 && errno != 8) {
                         LogUtils.printErrorLog(TAG, "onResults: " + resultJson);
+                        Intent intent = new Intent(ConstBroadStr.SPEENCH_CLOSE);
+                        HvApplication.getContext().sendBroadcast(intent);
                         // errno 除了 0，7，8 外，收到其余code后 websocket 会断开，sdk会回调网络错误
                     } else if (errno == 0) {
                         SpeechResult result = gson.fromJson(resultJson, SpeechResult.class);
@@ -145,9 +149,9 @@ public class AlSpeechEngine {
         public void onInit(int status) {
             LogUtils.printErrorLog(TAG, "onInit");
             if (status == AIConstant.OPT_SUCCESS) {
-
+                LogUtils.printErrorLog(TAG, "onInit   AIConstant.OPT_SUCCESS");
             } else {
-
+                LogUtils.printErrorLog(TAG, "onInit   ！AIConstant.OPT_SUCCESS");
             }
         }
 

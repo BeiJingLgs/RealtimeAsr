@@ -65,8 +65,16 @@ public class NetWorkDialog extends Dialog implements View.OnClickListener {
         WindowManager.LayoutParams p =getWindow().getAttributes();
         Point size = new Point();
         d.getSize(size);
-        p.width = (int)(size.x * 0.7);//是dialog的宽度为app界面的80%
-        p.height = (int)(size.y * 0.16);
+
+        double width = 0.7;
+        double height =  0.16;
+        if (getContext().getResources().getInteger(R.integer.device_inch) == 9) {
+            width = 0.7;
+            height = 0.22;
+        }
+        p.width = (int)(size.x * width);//是dialog的宽度为app界面的80%
+        p.height = (int)(size.y * height);
+
         getWindow().setAttributes(p);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         //找到组件

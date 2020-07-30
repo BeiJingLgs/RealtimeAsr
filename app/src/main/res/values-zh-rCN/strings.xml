@@ -55,7 +55,7 @@
     <string name="checkNeterror">网络连接出现问题，请检查网络连接</string>
     <string name="checkNet">请检查网络连接</string>
     <string name="playingAudio">正在播放音频，录制失败</string>
-    <string name="startrecording">在开始录制</string>
+    <string name="startrecording">开始录制</string>
     <string name="hasend">已结束</string>
     <string name="loading">正在加载，请稍候。。</string>
     <string name="hasLogined">已经登录</string>
@@ -99,7 +99,7 @@
     <string name="dialog_hint">版本更新</string>
     <string name="dialog_positive_button">确认</string>
     <string name="dialog_negative_button">取消</string>
-    <string name="loginByPass">请使用账号密码登录</string>
+    <string name="loginByPass">获取服务器信息失败，请退出重试</string>
     <string name="logined">您已登录</string>
     <string name="validTime">有效期：&#160;&#160;</string>
     <string name="share">分&#160;&#160;享</string>

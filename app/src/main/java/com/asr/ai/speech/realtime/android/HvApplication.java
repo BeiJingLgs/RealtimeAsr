@@ -11,7 +11,7 @@ public class HvApplication extends Application {
     public static String TOKEN;
     public static String SESSION;
 
-    public static int Recognition_Engine = 1;//0为百度，1为思必驰
+    public static int Recognition_Engine = 1;//1为百度，2为思必驰
 
     public static boolean HaveAuth = false;
     public static final boolean ISDEBUG = true;
