@@ -36,7 +36,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     protected Button mBackBtn;
     protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
     public String TAG;
-    public static String DEVICEID = "1000000000000022";
+    public static String DEVICEID = "1000000000000021";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
 
@@ -136,7 +136,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
-        if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+        //if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
 
             String id = "";
             if (HvApplication.ISDEBUG) {
@@ -160,7 +160,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
                     LoginResult c = gson2.fromJson(result, LoginResult.class);
 
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                        Log.e("A", "onResponse: " + result + "返回值");
+                        LogUtils.printErrorLog("A", "onResponse: " + result + "返回值");
                         HvApplication.TOKEN = c.getToken();
                         SharedPreferencesUtils.saveLoginStatesSharePrefer(BaseActivity.this, SharedPreferencesUtils.LOGIN);
                     } else {
@@ -169,11 +169,11 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
                 }
                 @Override
                 public void failureData(String error) {
-                    Log.e("AA", "error: " + error + "错");
+                    LogUtils.printErrorLog("AA", "error: " + error + "错");
                 }
             });
             LogUtils.printErrorLog("onNewIntent", "===onResume");
-        }
+        //}
     }
 
     @Override
