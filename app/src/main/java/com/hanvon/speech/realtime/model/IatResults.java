@@ -5,6 +5,7 @@ import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechSentence;
 import com.hanvon.speech.realtime.bean.speechBean.SpeechVarResult;
+import com.hanvon.speech.realtime.util.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,8 @@ public class IatResults {
     private static StringBuffer mStringResult = new StringBuffer();
     private static StringBuffer mTempResult = new StringBuffer();
     private static StringBuffer mTotalResult = new StringBuffer();
+
+    private static AsrEditSentence mTempEditSentence;
     private static Logger logger = Logger.getLogger("IatResults");
     public static void addAllResult(List<Result> results) {
         clearResults();
@@ -118,15 +121,29 @@ public class IatResults {
 
     public static void addAsrEditResult(AsrEditSentence result) {
         mTempResult.setLength(0);
+        mTempEditSentence = null;
         mAsrEditentenceResults.add(result);
         mStringResult.append(result.getContent());
     }
 
     public static void addAsrEditTempResult(AsrEditSentence result) {
         mTempResult.setLength(0);
+        mTempEditSentence = result;
         mTempResult.append(result.getContent());
     }
 
+
+    public static String getAsrEndEditResult() {
+        if (mTempEditSentence != null) {
+            mAsrEditentenceResults.add(mTempEditSentence);
+            mStringResult.append(mTempEditSentence.getContent());
+            mTempEditSentence.setEd(mTempEditSentence.getBg() + 1000);
+            mTempResult.setLength(0);
+            LogUtils.printErrorLog("getAsrEndEditResult", "mTempEditSentence.getContent(): " + mTempEditSentence.getContent());
+            mTempEditSentence = null;
+        }
+        return mStringResult.toString();
+    }
 
 
     public static List<AsrEditSentence> getAsrEditResults() {
@@ -136,6 +153,10 @@ public class IatResults {
     public static String getAsrEditResultsStr() {
         mTotalResult.setLength(0);
         return mTotalResult.append(mStringResult).append(mTempResult).toString();
+    }
+
+    public static String getAsrEditResultsStrUnTemp() {
+        return mStringResult.toString();
     }
 
     public static void setAsrEditResultsStr(String result) {

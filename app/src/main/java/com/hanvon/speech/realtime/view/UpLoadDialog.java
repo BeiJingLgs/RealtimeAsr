@@ -46,7 +46,7 @@ public class UpLoadDialog extends Dialog implements View.OnClickListener {
         findViewById(R.id.qr_des).setVisibility(View.VISIBLE);
         ViewGroup.LayoutParams para1;
         para1 = mUpLoadImg.getLayoutParams();
-        para1.height = (int)(para1.height * 1.7);
+        para1.height = (int)(para1.height * 1.5);
         para1.width = para1.height;
         mUpLoadImg.setLayoutParams(para1);
         mUpLoadImg.setImageBitmap(bitmap);

@@ -18,6 +18,7 @@ import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.WifiUtils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -397,7 +398,7 @@ public class RetrofitManager {
                 //任何一个事件报错后执行
                 if (callBack != null) {
                     callBack.failureData(e.getMessage());
-                    Log.e("AAA", e.getMessage());
+                    Log.e("AAA", e.getMessage()  + "  e.getClass(): " + e.getClass());
                     if (e instanceof NullPointerException) {
                         String id = "";
                         if (HvApplication.ISDEBUG) {
@@ -424,6 +425,8 @@ public class RetrofitManager {
                         ToastUtils.showLong(HvApplication.getContext(), HvApplication.getContext().getString(R.string.loginByPass));
                     } else if(e instanceof UnknownHostException) {
                         //ToastUtils.showLong(HvApplication.getContext(), "服务器开小差了，请稍候再试");
+                    } else if (e instanceof SocketTimeoutException) {
+                        ToastUtils.showLong(HvApplication.getContext(), HvApplication.getContext().getString(R.string.timeOut));
                     }
                 }
             }

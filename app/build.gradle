@@ -8,8 +8,8 @@ android {
         applicationId "com.asr.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 20
-        versionName "1.20"
+        versionCode 23
+        versionName "1.23"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -55,6 +55,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'com.squareup.okio:okio:1.13.0'
     implementation files('libs/HANVONEBK.jar')
+    implementation files('libs/DUI-lite-SDK-for-Android-2.5.1.jar')
 }
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {

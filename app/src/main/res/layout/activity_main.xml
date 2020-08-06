@@ -101,6 +101,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_M"
             android:layout_toRightOf="@+id/time_tv"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:maxHeight="10dp"
             android:progressDrawable="@drawable/shape_bg"
             android:thumb="@drawable/thumb" />

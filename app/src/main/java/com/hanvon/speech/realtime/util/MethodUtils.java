@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hwebook.HANVONEBK;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.storage.StorageManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.asr.ai.speech.realtime.android.HvApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -138,5 +141,15 @@ public class MethodUtils {
         if ((t - r) > t)
             return  100;
         return ((t - r) * 100) / t;
+    }
+
+    public static void closeRecord() {
+        Intent intent2bc = new Intent("hanvon.aebr.hvaudio.musicop");
+        if (intent2bc != null) {
+            Bundle bundle2bc = new Bundle();
+            bundle2bc.putInt("opstate", 2);
+            intent2bc.putExtras(bundle2bc);
+            HvApplication.mContext.sendBroadcast(intent2bc);
+        }
     }
 }

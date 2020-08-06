@@ -33,6 +33,8 @@ import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.bean.UpdataInfo;
 import com.hanvon.speech.realtime.view.CommonDialog;
 
+import static android.webkit.WebViewZygote.getPackageName;
+
 public class UpdateUtil {
     Context context;
     private boolean isChecking;
@@ -248,7 +250,7 @@ public class UpdateUtil {
             super.onPreExecute();
             apkPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator+ APPNAME960;
             LogUtils.printErrorLog(TAG, " apkPath =" + apkPath);
-            uri = FileProvider.getUriForFile(context, "com.baidu.ai.speech.realtime.fileprovider", new File(apkPath));
+            uri = FileProvider.getUriForFile(context, "com.asr.ai.speech.realtime.fileprovider", new File(apkPath));
             progressDialog = new CommonDialog(context, R.layout.dialog_down_apk_progress, true);
             progressDialog.setTitle(R.string.downing_apk);
             View rootView = progressDialog.getView();
@@ -381,14 +383,16 @@ public class UpdateUtil {
     private void installApk(Uri fileSavePath, String apkPath) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri data;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//判断版本大于等于7.0
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//判断版本大于等于7.0
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);// 给目标应用一个临时授权
             intent.setDataAndType(fileSavePath, "application/vnd.android.package-archive");
-        } else {
+            LogUtils.printErrorLog(TAG, "==Build.VERSION.SDK_INT >= Build.VERSION_CODES.N");
+        } else {*/
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             data = Uri.fromFile(new File(apkPath));
             intent.setDataAndType(data, "application/vnd.android.package-archive");
-        }
+            LogUtils.printErrorLog(TAG, "==Build.VERSION.SDK_INT < Build.VERSION_CODES.N");
+        //}
         context.startActivity(intent);
         android.os.Process.killProcess(android.os.Process.myPid());
     }

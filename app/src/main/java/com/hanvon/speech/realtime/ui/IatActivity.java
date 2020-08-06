@@ -42,7 +42,6 @@ import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.asr.ai.speech.realtime.android.MyMicrophoneInputStream;
 import com.asr.ai.speech.realtime.full.connection.Runner;
-import com.asr.ai.speech.realtime.full.download.Result;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -119,6 +118,7 @@ import static com.asr.ai.speech.realtime.Constants.BAIDU_ENGINE;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT1;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT3;
+import static com.asr.ai.speech.realtime.Constants.SPEECH_ENGINE;
 import static com.asr.ai.speech.realtime.full.connection.Runner.MODE_REAL_TIME_STREAM;
 import static com.hanvon.speech.realtime.util.MethodUtils.hideSoftInput;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
@@ -177,7 +177,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private String mRecordFilePath, mTempPath, mPath;
     private int mAudioOffset;
     private AudioHandler mHandler;
-    private long mStartRecordTime, mUsageRecordTime, mStartPlayTime, mUsagePlayTime;
+    private long mStartAsrTime, mUsageRecordTime, mStartPlayTime, mUsagePlayTime;
     private int mDuration;
     private VolumeBar mCtlVolBar;
     private AudioManager mAudioManager;
@@ -307,6 +307,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void init() {
+       // saveLog();
         TAG = getLocalClassName();
         mAudioManager = (AudioManager) HvApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
         mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);
@@ -409,7 +410,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             checkUsageTime();
         }
     }
-
 
 
     @Override
@@ -547,7 +547,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mUsagePlayTime = startTime;
         float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
         int du = (int) (mFileBean.getDuration() * index);
-        LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
+        //LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
         mSeekBar.setProgress(du);
         playRecord();
     }
@@ -556,6 +556,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConstBroadStr.SHOW_BACKLOGO)) {
+                LogUtils.printErrorLog(TAG, "ConstBroadStr.SHOW_BACKLOGO");
                 if (FileBeanUils.isRecoding()) {
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
                     pauseRecognize();
@@ -574,33 +575,38 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
-                LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
+               // LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
                 mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
                 if (HvApplication.HaveAuth) {
-                    LogUtils.printErrorLog(TAG, "===Constants.SPEENCH_AUTH");
+                    startRecord();
+                    MethodUtils.closeRecord();
+                  //  LogUtils.printErrorLog(TAG, "===Constants.SPEENCH_AUTH");
                     mIatLayout.setVisibility(View.GONE);
                     mRecordLayout.setVisibility(View.VISIBLE);
                     mRecognizeStatusTv.setText(R.string.recognizing);
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
-
                     mViewTips.setVisibility(View.GONE);
+                    mReadCheckbox.setChecked(false);
                     AlSpeechEngine.getInstance().startSpeechRecog();
                     LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
                 } else {
                     if (mDuration != 0) {
                         mViewTips.setVisibility(View.VISIBLE);
                     }
+                    stopRecognizeIfFailue();
                     ToastUtils.showLong(getApplicationContext(), "授权失败");
                 }
                 mTextBegin.setEnabled(true);
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_CLOSE)) {
                 mIatLayout.setVisibility(View.VISIBLE);
                 mRecordLayout.setVisibility(View.GONE);
-                LogUtils.printErrorLog(TAG, "网络错误，请检查重试");
-                ToastUtils.showLong(getApplicationContext(), "网络错误，请检查重试");
+                //stopRecognizeIfFailue();
+                //LogUtils.printErrorLog(TAG, "网络错误，请检查重试");
+
+                //ToastUtils.showLong(getApplicationContext(), "网络错误，请检查重试");
             }
         }
     }
@@ -762,7 +768,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
             } else {
                 updateEditList();
-                mRecogResultTv.setText(IatResults.getAsrEditResultsStr());
+                mRecogResultTv.setText(IatResults.getAsrEndEditResult());
             }
             mRecogResultTv.getPageCount();
             mHandler.postDelayed(new Runnable() {
@@ -817,23 +823,77 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 public void run() {
                     if (TextUtils.isEmpty(mTempPath))
                         return;
-                    Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                   // Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
                     if (hvFileCommonUtils.isFileExist(mTempPath)) {
                         FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
                     }
                 }
             });
             FileBeanUils.setRecoding(false);
+            if (HvApplication.Recognition_Engine == SPEECH_ENGINE) {
+                LogUtils.printErrorLog(TAG, "getAsrEndEditResult:  " + IatResults.getAsrEndEditResult());
+                LogUtils.printErrorLog(TAG, "getAsrEditResultsStr:  " + IatResults.getAsrEditResultsStr());
+                mHandler.postDelayed(() -> {
+                    mRecogResultTv.setText(IatResults.getAsrEndEditResult());
+                    mRecogResultTv.gotoLastPage();
+                }, 400);
 
+            }
+        } else {
+            LogUtils.printErrorLog(TAG, "842 mFileBean.getTime(): " + mFileBean.getTime() + "   mUsageRecordTime: " + mUsageRecordTime);
+
+            mFileBean.setTime(mFileBean.getTime() + mUsageRecordTime);
+            FileBeanUils.setmFileBean(mFileBean);
+            mUsageRecordTime = 0;
+            mTimeTv.setText(TimeUtil.calculateTime(((int) (mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
+            if ((int) (mUsagePlayTime) / 1000 > 0) {
+                mSeekBar.setVisibility(View.VISIBLE);
+                mTimeTv.setVisibility(View.VISIBLE);
+            }
+            DatabaseUtils.getInstance(HvApplication.getContext()).updateTime(mFileBean);
+        }
+    }
+
+    private void stopRecognizeIfFailue() {
+
+
+
+        if (FileBeanUils.isRecoding()) {
+
+            long tempTime = System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
+
+            mFileBean.setTime(mFileBean.getTime() + 0);
+            mStartAsrTime = 0;
+            FileBeanUils.setmStartRecordTime(mStartAsrTime);
+            //AlSpeechEngine.getInstance().cancelSpeechRecog();
+            if (mDuration != 0) {
+                mViewTips.setVisibility(View.VISIBLE);
+            }
+            mRecognizeStatusTv.setText(getString(R.string.pausing));
+            MediaRecorderManager.getInstance().stop();
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (TextUtils.isEmpty(mTempPath))
+                        return;
+                    //Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                    if (hvFileCommonUtils.isFileExist(mTempPath)) {
+                        FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
+                    }
+                }
+            });
+            FileBeanUils.setRecoding(false);
         }
     }
 
 
     private void pauseRecognize() {
         if (FileBeanUils.isRecoding()) {
-            mUsageRecordTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
-            mStartRecordTime = 0;
-            FileBeanUils.setmStartRecordTime(mStartRecordTime);
+            mUsageRecordTime = System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
+            mStartAsrTime = 0;
+            //mFileBean.setTime(mFileBean.getTime() + mUsageRecordTime);
+            FileBeanUils.setmStartRecordTime(mStartAsrTime);
+            LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()：" + mFileBean.getTime() + "   mUsageRecordTime:  " + mUsageRecordTime);
 
             if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE)
                 close(false);
@@ -850,7 +910,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 public void run() {
                     if (TextUtils.isEmpty(mTempPath))
                         return;
-                    Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
+                    LogUtils.printErrorLog("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
                     if (hvFileCommonUtils.isFileExist(mTempPath)) {
                         FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
                     }
@@ -862,19 +922,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private void continueRecognize() {
         if (!FileBeanUils.isRecoding()) {
-            CommonUtils.setOnValidate(false, this);
-            String tmpName = mFileBean.getCreatemillis();
-            if (isNEW) {
-                if (mCheckbox.isChecked()) {
-                    mFileBean.mSd = "sd";
-                }
-            }
-            createFile(tmpName);
-            FileBeanUils.setRecoding(true);
-            mStartRecordTime = System.currentTimeMillis();
-            FileBeanUils.setmStartRecordTime(mStartRecordTime);
+            if (HvApplication.Recognition_Engine == BAIDU_ENGINE) {
             if (!mNoRecogCheckbox.isChecked()) {
-                if (HvApplication.Recognition_Engine == BAIDU_ENGINE) {
                     mRecognizeStatusTv.setText(getString(R.string.recognizing));
                     mExecutor.execute(new Runnable() {
                         @Override
@@ -887,22 +936,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                             }
                         }
                     });
-                } else {
-                    AlSpeechEngine.getInstance().initSpeech();
-                   /* if (HvApplication.HaveAuth) {
-                        AlSpeechEngine.getInstance().startSpeechRecog();
-                    }*/
                 }
-
-            }
-
-
-            if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
-                MediaRecorderManager.getInstance().start(mTempPath);
+                ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
             } else {
-                MediaRecorderManager.getInstance().start(mRecordFilePath);
+                AlSpeechEngine.getInstance().initSpeech();
             }
-            ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
         }
     }
 
@@ -1071,6 +1109,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void playRecord() {
+        MethodUtils.closeRecord();
         mVolumLayout.setVisibility(View.VISIBLE);
         mSeekBar.setVisibility(View.VISIBLE);
         mTimeTv.setVisibility(View.VISIBLE);
@@ -1079,6 +1118,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    //mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
                     stopPlayRecord();
                     mSeekBar.setProgress(0);
                 }
@@ -1118,22 +1158,31 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
     }
 
+    private void startRecord() {
+        CommonUtils.setOnValidate(false, this);
+        String tmpName = mFileBean.getCreatemillis();
+        if (isNEW) {
+            if (mCheckbox.isChecked()) {
+                mFileBean.mSd = "sd";
+            }
+        }
+        createFile(tmpName);
+        FileBeanUils.setRecoding(true);
+        mStartAsrTime = System.currentTimeMillis();
+        FileBeanUils.setmStartRecordTime(mStartAsrTime);
+        if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
+            MediaRecorderManager.getInstance().start(mTempPath);
+        } else {
+            MediaRecorderManager.getInstance().start(mRecordFilePath);
+        }
+    }
 
     private void startRecognize() {
         if (!FileBeanUils.isRecoding()) {
-            CommonUtils.setOnValidate(false, this);
-            String tmpName = mFileBean.getCreatemillis();
-            if (isNEW) {
-                if (mCheckbox.isChecked()) {
-                    mFileBean.mSd = "sd";
-                }
-            }
-            createFile(tmpName);
-            FileBeanUils.setRecoding(true);
-            mStartRecordTime = System.currentTimeMillis();
-            FileBeanUils.setmStartRecordTime(mStartRecordTime);
-            if (!mNoRecogCheckbox.isChecked()) {
-                if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+
+            if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
+                startRecord();
+                if (!mNoRecogCheckbox.isChecked()) {
                     mExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -1145,23 +1194,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                             }
                         }
                     });
-                } else {
-                    /*LogUtils.printErrorLog(TAG, "startSpeechRecog");
-                    if (HvApplication.HaveAuth)
-                        AlSpeechEngine.getInstance().startSpeechRecog();
-                    else*/
-                    mTextBegin.setEnabled(false);
-                    AlSpeechEngine.getInstance().initSpeech();
                 }
-            }
-
-
-            if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
-                MediaRecorderManager.getInstance().start(mTempPath);
+                ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
             } else {
-                MediaRecorderManager.getInstance().start(mRecordFilePath);
+                FileBeanUils.setRecoding(true);
+                mTextBegin.setEnabled(false);
+                AlSpeechEngine.getInstance().initSpeech();
             }
-            ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
         }
     }
 
@@ -1198,14 +1237,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     public long getCurrrentRecordTime() {
-        return mFileBean.getTime() + System.currentTimeMillis() - mStartRecordTime;
+        LogUtils.printErrorLog(TAG, "getCurrrentRecordTime  mUsageRecordTime:  " + mUsageRecordTime);
+        return mFileBean.getTime() + System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
     }
 
     private void uploadUsageTime() {
-
         HashMap<String, String> map2 = new HashMap<>();
-        long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
+        LogUtils.printErrorLog(TAG, "uploadUsageTime  mUsageRecordTime:  " + mUsageRecordTime);
+        long tempTime = System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
+        LogUtils.printErrorLog(TAG, "uploadUsageTime mStartAsrTime: " + mStartAsrTime + "  tempTime:  " + tempTime);
         mFileBean.setTime(mFileBean.getTime() + tempTime);
+        mUsageRecordTime = 0;
         FileBeanUils.setmFileBean(mFileBean);
         mTimeTv.setText(TimeUtil.calculateTime(((int) (mUsagePlayTime) / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
         if ((int) (mUsagePlayTime) / 1000 > 0) {
@@ -1226,6 +1268,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (mRecognizeStatusTv.getVisibility() == View.VISIBLE && TextUtils.equals(mRecognizeStatusTv.getText(),
                 getResources().getString(R.string.pausing))) {
             HashMap<String, String> map2 = new HashMap<>();
+            if (mUsageRecordTime == 0)
+                return;
             map2.put("duration", String.valueOf(mUsageRecordTime / 1000));
             map2.put("voiceEngineTypeID", String.valueOf(HvApplication.Recognition_Engine));
             uploadTime(map2, mUsageRecordTime);
@@ -1277,7 +1321,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         if (c.getPackBean() != null) {
                             PackBean packBean = c.getPackBean().get(0);
                             HvApplication.Recognition_Engine = packBean.VoiceEngineTypeID;
-                            startRecord();
+                            startASR();
                         } else {
                             ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
                         }
@@ -1302,7 +1346,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     }
 
-    private void startRecord() {
+    private void startASR() {
         if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             LogUtils.printErrorLog(TAG, "===Constants.BAIDU_ENGINE");
             mIatLayout.setVisibility(View.GONE);
@@ -1320,7 +1364,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!file.exists()) {
             file.mkdirs();
         }
-        LogUtils.printErrorLog("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
+        //LogUtils.printErrorLog("tag", "file.exists(): " + hvFileCommonUtils.isFileExist(dirPath));
         mRecordFilePath = dirPath + name + Constant.SUFFIX;
         if (hvFileCommonUtils.isFileExist(mRecordFilePath)) {
             mTempPath = dirPath + System.currentTimeMillis() + Constant.SUFFIX;
@@ -1830,7 +1874,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         if (FileBeanUils.isRecoding()) {
-            long tempTime = System.currentTimeMillis() - mStartRecordTime + mUsageRecordTime;
+            long tempTime = System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
             SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
             LogUtils.printErrorLog(TAG, "===onSaveInstanceState  tempTime: " + tempTime);
         }
@@ -2107,5 +2151,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }*/
 
     }
+
+
 
 }

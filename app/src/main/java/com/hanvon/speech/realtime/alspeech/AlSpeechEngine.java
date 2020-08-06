@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.alspeech;
 
 import android.content.Intent;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -56,17 +57,17 @@ public class AlSpeechEngine {
         AICloudASRConfig config = new AICloudASRConfig();
         config.setLocalVadEnable(false);
         gson = new Gson();
-        mEngine = AICloudLASRRealtimeEngine.createInstance();
-        mEngine.init(new AlSpeechEngine.AILASRRealtimeListenerImpl());
+        //mEngine = AICloudLASRRealtimeEngine.createInstance();
+        //mEngine.init(new AlSpeechEngine.AILASRRealtimeListenerImpl());
     }
 
     public void startSpeechRecog() {
         AICloudLASRRealtimeIntent mAICloudLASRRealtimeIntent = new AICloudLASRRealtimeIntent();
         mAICloudLASRRealtimeIntent.setUseTxtSmooth(false); // 口语顺滑，去掉 嗯、啊 这些词
         mAICloudLASRRealtimeIntent.setUseTProcess(true);    // 逆文本，识别出的数字转成阿拉伯数字
-        mAICloudLASRRealtimeIntent.setUseAlignment(false); // 是否输出词级别时间对齐信息
+        //mAICloudLASRRealtimeIntent.setUseAlignment(false); // 是否输出词级别时间对齐信息
         mAICloudLASRRealtimeIntent.setUseSensitiveWdsNorm(false); // 是否使用内置敏感词
-        mAICloudLASRRealtimeIntent.setUseStreamPunc(false); // 是否启用流式标点
+        //mAICloudLASRRealtimeIntent.setUseStreamPunc(false); // 是否启用流式标点
 
         mAICloudLASRRealtimeIntent.setRes(null); // res=lasr-cn-en使用中英文混合，不设置res字段使用中文在线
         mAICloudLASRRealtimeIntent.setForwardAddresses(null); // 当参数不为空时，启动转发模式。 当有转写结果时，会往注册的WebSocket地址实时推送转写结果。
@@ -78,7 +79,7 @@ public class AlSpeechEngine {
     }
 
     public void cancelSpeechRecog() {
-        mEngine.cancel();
+        mEngine.stop();
     }
 
 
@@ -86,9 +87,9 @@ public class AlSpeechEngine {
     private class AILASRRealtimeListenerImpl implements AILASRRealtimeListener {
         public void onError(AIError error) {
             //ToastUtils.showLong(getApplicationContext(), error.getError());
+            LogUtils.printErrorLog(TAG, "onError: " + error.getError());
             Intent intent = new Intent(ConstBroadStr.SPEENCH_CLOSE);
             HvApplication.getContext().sendBroadcast(intent);
-            LogUtils.printErrorLog(TAG, "onError: " + error.getError());
         }
 
         /**
@@ -106,19 +107,19 @@ public class AlSpeechEngine {
          * @param results 服务器返回的结果
          */
         public void onResults(AIResult results) {
-            LogUtils.printErrorLog(TAG, "onResults");
+            LogUtils.printErrorLog(TAG, "onResults： ");
             if (results.getResultType() == AIConstant.AIENGINE_MESSAGE_TYPE_JSON) {
                 String resultJson = (String) results.getResultObject();
                 LogUtils.printErrorLog(TAG, resultJson);
                 try {
                     JSONObject jsonObject = new JSONObject(resultJson);
                     int errno = jsonObject.getInt("errno");
-                    if (errno != 0 && errno != 7 && errno != 8) {
+                    if (errno != 0 && errno != 7 && errno != 8 && errno != 9) {
                         LogUtils.printErrorLog(TAG, "onResults: " + resultJson);
                         Intent intent = new Intent(ConstBroadStr.SPEENCH_CLOSE);
                         HvApplication.getContext().sendBroadcast(intent);
                         // errno 除了 0，7，8 外，收到其余code后 websocket 会断开，sdk会回调网络错误
-                    } else if (errno == 0) {
+                    } else if (errno == 0 || errno == 9) {
                         SpeechResult result = gson.fromJson(resultJson, SpeechResult.class);
                         if (TextUtils.isEmpty(result.getData().getOnebest())) {
                             return;
@@ -149,6 +150,7 @@ public class AlSpeechEngine {
         public void onInit(int status) {
             LogUtils.printErrorLog(TAG, "onInit");
             if (status == AIConstant.OPT_SUCCESS) {
+
                 LogUtils.printErrorLog(TAG, "onInit   AIConstant.OPT_SUCCESS");
             } else {
                 LogUtils.printErrorLog(TAG, "onInit   ！AIConstant.OPT_SUCCESS");
@@ -181,11 +183,27 @@ public class AlSpeechEngine {
                 "ae625a43ec270c237a799334b9e5f29f",
                 "b6bd6fa75a70105df1919a17ab41d4bd");
         // 初始化数据及授权
+        config.setAuthTimeout(5000);
         config.setAudioRecorderType(DUILiteConfig.TYPE_COMMON_MIC);
+
+        config.openLog();//仅输出SDK logcat日志，须在init之前调用.
+        config.openLog(Environment.getExternalStorageDirectory() + "/DUILite_SDK.log");//输出SDK logcat日志，同时保存日志文件在/sdcard/duilite/DUILite_SDK.log，须在init之前调用.
+
+
+        String core_version = DUILiteSDK.getCoreVersion();//获取内核版本号
+        //LogUtils.printErrorLog(TAG, "core version is: " + core_version);
+
+        boolean isAuthorized = DUILiteSDK.isAuthorized(getApplicationContext());//查询授权状态，DUILiteSDK.init之后随时可以调
+        //LogUtils.printErrorLog(TAG, "DUILite SDK is isAuthorized ？ " + isAuthorized);
+
         DUILiteSDK.init(getApplicationContext(), config, new DUILiteSDK.InitListener() {
             @Override
             public void success() {
-                LogUtils.printErrorLog(TAG, "授权成功! ");
+
+                mEngine = AICloudLASRRealtimeEngine.createInstance();
+                mEngine.init(new AlSpeechEngine.AILASRRealtimeListenerImpl());
+
+                LogUtils.printErrorLog(TAG, "success 授权成功! ");
                 HvApplication.HaveAuth = true;
                 Intent intent = new Intent(ConstBroadStr.SPEENCH_AUTH);
                 HvApplication.getContext().sendBroadcast(intent);

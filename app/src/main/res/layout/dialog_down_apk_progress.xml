@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mydialog_title_height"
         android:background="@drawable/mydialog_title"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="TextView"
         android:textColor="@android:color/white"
         android:textSize="@dimen/mydialog_title_font" />

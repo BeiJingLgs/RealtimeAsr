@@ -156,4 +156,6 @@
     <string name="anthfailue">授权失败</string>
     <string name="tips7">服务器返回错误代码2</string>
     <string name="tips8">本次识别和上次识别引擎不一致，请切换引擎进行识别</string>
+
+    <string name="timeOut">网络异常，请检查后重试</string>
 </resources>
