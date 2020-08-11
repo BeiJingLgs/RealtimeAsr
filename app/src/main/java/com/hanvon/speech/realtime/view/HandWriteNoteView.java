@@ -160,7 +160,7 @@ public class HandWriteNoteView extends NoteView {
                 canBeFresh = true;
                 // LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN isOutside s : point.y: " + p.getY() + "  point.x: " + p.getX());
 
-                //continue;
+                continue;
             }
 
 //            if (p.getToolType() == 1 && penType == TP_PEN) {

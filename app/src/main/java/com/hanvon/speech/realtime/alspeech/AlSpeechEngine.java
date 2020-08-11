@@ -89,6 +89,7 @@ public class AlSpeechEngine {
             //ToastUtils.showLong(getApplicationContext(), error.getError());
             LogUtils.printErrorLog(TAG, "onError: " + error.getError());
             Intent intent = new Intent(ConstBroadStr.SPEENCH_CLOSE);
+            intent.putExtra(ConstBroadStr.SPEENCH_ERROR, error.getError());
             HvApplication.getContext().sendBroadcast(intent);
         }
 
@@ -129,13 +130,15 @@ public class AlSpeechEngine {
                         Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
                         HvApplication.getContext().sendBroadcast(intent);
                     } else if (errno == 8) {
-                        SpeechVarResult result = gson.fromJson(resultJson, SpeechVarResult.class);
-                        if (TextUtils.isEmpty(result.getData().getVar())) {
-                            return;
+                        if (HvApplication.REFRESH) {
+                            SpeechVarResult result = gson.fromJson(resultJson, SpeechVarResult.class);
+                            if (TextUtils.isEmpty(result.getData().getVar())) {
+                                return;
+                            }
+                            IatResults.addSpeechTempResult(result);
+                            Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
+                            HvApplication.getContext().sendBroadcast(intent);
                         }
-                        IatResults.addSpeechTempResult(result);
-                        Intent intent = new Intent(ConstBroadStr.UPDATEALSPEECHRECOG);
-                        HvApplication.getContext().sendBroadcast(intent);
                     } else {
 
                        // LogUtils.printErrorLog(TAG, "onResults: " + resultJson);
@@ -175,10 +178,14 @@ public class AlSpeechEngine {
             // 多麦的原始音频
         }
     }
-    //d3c265662929841215092b415c257bd6
-    private void auth() {//57ef004d253ca19dae2522c95f17a852
+    /*
+                "e341a0dbbca18e81be4e44aa5f2d229b",
+                        "279596358",
+                        "1d21d043ffb787fae93ec490a34a0dfd",
+                        "6e60862844d44355acc7447491b76909" */
+    private void auth() {//
         DUILiteConfig config = new DUILiteConfig(
-                "57ef004d253ca19dae2522c95f17a852",
+        "57ef004d253ca19dae2522c95f17a852",
                 "279594186",
                 "ae625a43ec270c237a799334b9e5f29f",
                 "b6bd6fa75a70105df1919a17ab41d4bd");
@@ -187,7 +194,7 @@ public class AlSpeechEngine {
         config.setAudioRecorderType(DUILiteConfig.TYPE_COMMON_MIC);
 
         config.openLog();//仅输出SDK logcat日志，须在init之前调用.
-        config.openLog(Environment.getExternalStorageDirectory() + "/DUILite_SDK.log");//输出SDK logcat日志，同时保存日志文件在/sdcard/duilite/DUILite_SDK.log，须在init之前调用.
+        //config.openLog(Environment.getExternalStorageDirectory() + "/DUILite_SDK.log");//输出SDK logcat日志，同时保存日志文件在/sdcard/duilite/DUILite_SDK.log，须在init之前调用.
 
 
         String core_version = DUILiteSDK.getCoreVersion();//获取内核版本号

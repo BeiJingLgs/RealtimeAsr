@@ -132,7 +132,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/engineTip"
             android:textColor="@android:color/black"
             android:textSize="@dimen/edit_font" />
 
@@ -154,7 +153,6 @@
                 android:checked="true"
                 android:gravity="center"
                 android:padding="@dimen/Margin_S"
-                android:text="@string/engine1"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/edit_font"></RadioButton>
 
@@ -167,7 +165,6 @@
                 android:checked="false"
                 android:gravity="center"
                 android:padding="@dimen/Margin_S"
-                android:text="@string/engine2"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/edit_font"></RadioButton>
         </RadioGroup>

@@ -35,6 +35,7 @@ import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
 
 import com.alibaba.fastjson.JSON;
+import com.asr.ai.speech.realtime.Const;
 import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.Constants;
 import com.asr.ai.speech.realtime.MiniMain;
@@ -405,14 +406,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
     }
 
-    private void initPermissions() {
-        if (lacksPermission()) {//判断是否拥有权限
-            ActivityCompat.requestPermissions(this, permissions, OPEN_SET_REQUEST_CODE);
-        } else {
-            checkUsageTime();
-        }
-    }
-
 
     @Override
     protected void onResume() {
@@ -549,7 +542,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mUsagePlayTime = startTime;
         float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
         int du = (int) (mFileBean.getDuration() * index);
-        //LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
         mSeekBar.setProgress(du);
         playRecord();
     }
@@ -563,9 +555,16 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
                     pauseRecognize();
                 }
-                if (MediaPlayerManager.getInstance().isPlaying() || mUsagePlayTime > 0)
-                    SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, mUsagePlayTime);
+                mFileBean.setTime(mFileBean.getTime() + mUsageRecordTime);
+                mUsageRecordTime = 0;
+                LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()：" + mFileBean.getTime() + "   mUsageRecordTime:  " + mUsageRecordTime);
+                if (MediaPlayerManager.getInstance().isPlaying() || mUsagePlayTime > 0) {
+                    SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, (System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime));
+                    LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + "System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime: " + (System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) );
+                    LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + mUsagePlayTime +  " + mUsagePlayTime");
+                }
                 stopPlayRecord();
+                CommonUtils.setOnValidate(false, getApplicationContext());
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
                     freshRecogContent();
@@ -577,16 +576,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
-               // LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
+                LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
                 mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
+                LogUtils.printErrorLog(TAG, "mUsagePlayTime: " + mUsagePlayTime);
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
                 if (HvApplication.HaveAuth) {
-                    startRecord();
-                    MethodUtils.closeRecord();
-                  //  LogUtils.printErrorLog(TAG, "===Constants.SPEENCH_AUTH");
                     setRecordStatus();
+                    startRecord();
                     mViewTips.setVisibility(View.GONE);
                     mReadCheckbox.setChecked(false);
                     AlSpeechEngine.getInstance().startSpeechRecog();
@@ -602,10 +600,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_CLOSE)) {
                 mIatLayout.setVisibility(View.VISIBLE);
                 mRecordLayout.setVisibility(View.GONE);
-                //stopRecognizeIfFailue();
-                //LogUtils.printErrorLog(TAG, "网络错误，请检查重试");
-
-                //ToastUtils.showLong(getApplicationContext(), "网络错误，请检查重试");
+                stopRecognizeIfFailue();
+                ToastUtils.showLong(getApplicationContext(), intent.getStringExtra(ConstBroadStr.SPEENCH_ERROR));
             }
         }
     }
@@ -662,17 +658,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     break;
                 case MESSAGE_WHAT2:
                     long startTime = (long) message.obj;
-                    /*if (mTimer != null)
-                        mTimer.cancel();
-                    MediaPlayerManager.getInstance().stop();
-                    mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
-
-                    mUsagePlayTime = startTime;
-                    float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
-                    int du = (int) (mFileBean.getDuration() * index);
-                    LogUtils.printErrorLog(TAG, "startTime: " + startTime + "  mFileBean.getTime(): " + mFileBean.getTime() + "  du: " + du);
-                    mSeekBar.setProgress(du);
-                    playRecord();*/
                     LogUtils.printErrorLog(TAG, "startTime: " + startTime);
                     jumpPlayAmrRecord(startTime);
                     break;
@@ -724,8 +709,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     return;
                 if (seekBar.getProgress() == 0) {
                     mTimeTv.setText(TimeUtil.calculateTime(0) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
-                    //LogUtils.printErrorLog(TAG, "seekBar.getProgress(): ");
-                    //LogUtils.printErrorLog(TAG, "mNoteView.getCurrentPosition(): ");
                 }
             }
         }
@@ -739,18 +722,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         IatResults.addAllAsrEditResult(mTotalResultList);
     }
 
-    private void updateSpeechEditList() {
-        for (int i = 0; i < mTempSpeechResultList.size(); i++)
-            for (int j = nPageIsx * PAGE_CATEGORY; j < ((nPageIsx + 1) * PAGE_CATEGORY); j++) {
-                if (TextUtils.equals(mTotalSpeechResultList.get(j).getData().getSessionId(), mTempSpeechResultList.get(i).getData().getSessionId())) {
-                    if (TextUtils.isEmpty(mTempSpeechResultList.get(i).getData().getSessionId())) {
-                        mTotalSpeechResultList.remove(j);
-                    }
-                    break;
-                }
-            }
-        IatResults.addAllSpeechResult(mTotalSpeechResultList);
-    }
+
 
     private void onReturn() {
         if (mEditLayout.getVisibility() == View.VISIBLE) {
@@ -777,7 +749,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
             }, 200);
         } else {
-            //hideSoftInput(this);
             saveAndExitActivity();
             finish();
         }
@@ -832,7 +803,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 public void run() {
                     if (TextUtils.isEmpty(mTempPath))
                         return;
-                   // Log.e("startRecognize", "file.exists(): " + hvFileCommonUtils.isFileExist(mTempPath));
                     if (hvFileCommonUtils.isFileExist(mTempPath)) {
                         FileUtils.copyRecordFile(mRecordFilePath, mTempPath);
                     }
@@ -864,16 +834,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void stopRecognizeIfFailue() {
-
-
-
         if (FileBeanUils.isRecoding()) {
-
             long tempTime = System.currentTimeMillis() - mStartAsrTime + mUsageRecordTime;
-
-            mFileBean.setTime(mFileBean.getTime() + 0);
+            LogUtils.printErrorLog(TAG, "stopRecognizeIfFailue  mFileBean.getTime(): " + mFileBean.getTime() + "  tempTime: " + tempTime);
+            mFileBean.setTime(mFileBean.getTime() + tempTime);
             mStartAsrTime = 0;
             FileBeanUils.setmStartRecordTime(mStartAsrTime);
+
+            FileBeanUils.setRecoding(false);
             //AlSpeechEngine.getInstance().cancelSpeechRecog();
             if (mDuration != 0) {
                 mViewTips.setVisibility(View.VISIBLE);
@@ -891,7 +859,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     }
                 }
             });
-            FileBeanUils.setRecoding(false);
         }
     }
 
@@ -994,7 +961,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     ToastUtils.show(getApplicationContext(), getResources().getString(R.string.playingAudio));
                     return;
                 }
-                initPermissions();
+                checkUsageTime();
                 break;
             case R.id.text_edit:
                 if (FileBeanUils.isRecoding()) {
@@ -1327,9 +1294,28 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         });
     }
 
+    private boolean checkUserStatus() {
+        String id = "";
+        if (HvApplication.ISDEBUG) {
+            id = DEVICEID;
+        } else {
+            if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId()))) {
+                ToastUtils.show(this, getString(R.string.tips5));
+                return false;
+            }
+            id = MethodUtils.getDeviceId();
+        }
+        if (TextUtils.isEmpty(HvApplication.TOKEN)) {
+            ToastUtils.show(this, getString(R.string.tips6));
+            return false;
+        }
+        return true;
+    }
+
 
     private void checkUsageTime() {
         if (!FileBeanUils.isRecoding()) {
+            MethodUtils.closeRecord();
             if (mEditLayout.getVisibility() == View.VISIBLE) {
                 onReturn();
             }
@@ -1341,6 +1327,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 return;
             }
 
+            if (!checkUserStatus())
+                return;
+
             DialogUtil.getInstance().showWaitingDialog(this);
             RetrofitManager.getInstance(this).getAccountPacks(Constant.PAGE_INDEX + "", Constant.PAGE_SIZE + "", "desc", new RetrofitManager.ICallBack() {
                 @Override
@@ -1348,7 +1337,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     DialogUtil.getInstance().disWaitingDialog();
                     Gson gson2 = new Gson();
                     PackList c = gson2.fromJson(result, PackList.class);
-                    //Log.e("A", "onResponse: " + "result: " + result);
                     LogUtils.printErrorLog("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                         if (c.getPackBean() != null) {
@@ -1441,8 +1429,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 mNoteView.clearAllMemo();
-                //LogUtils.printErrorLog("setOnClickListener", "已经删除");
-                //ToastUtils.show(this, "已经删除");
             }
         });
         TextView menuItem3 = view.findViewById(R.id.popup_rubber);
@@ -1985,7 +1971,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mNoteView.setInputEnabled(true);
             if (FileBeanUils.isRecoding())
                 enterHandwrite(true);
-        }, 500);
+        }, 800);
 
     }
 
@@ -2005,7 +1991,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         mHandler.postDelayed(() -> {
             mNoteView.setInputEnabled(true);
-        }, 500);
+        }, 800);
     }
 
 

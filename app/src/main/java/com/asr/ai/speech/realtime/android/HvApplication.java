@@ -16,6 +16,7 @@ public class HvApplication extends Application {
     public static boolean HaveAuth = false;
     public static final boolean ISDEBUG = true;
     public static boolean IS_NEEDIALOG = true;
+    public static boolean REFRESH = true;
     @Override
     public void onCreate() {
         super.onCreate();
