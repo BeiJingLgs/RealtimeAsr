@@ -69,7 +69,7 @@
 
     <string name="tips4">服务器返回错误代码1</string>
     <string name="tips7">服务器返回错误代码2</string>
-    <string name="tips6">该引擎下时长不足，请切换引擎进行尝试</string>
+    <string name="tips6">网络连接出错，请检查网络连接后退出重新进入</string>
     <string name="tips5">设备id为空，无法正常使用</string>
     <string name="getVcode">重新获取验证码</string>
     <string name="reSendCode">秒后可重新发送</string>

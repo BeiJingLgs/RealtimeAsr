@@ -138,44 +138,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
-
-            String id = "";
-            if (HvApplication.ISDEBUG) {
-                id = DEVICEID;
-            } else {
-                if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId())) && !Const.IS_DEBUG) {
-                    ToastUtils.show(this, getString(R.string.tips5));
-                    return;
-                }
-                id = MethodUtils.getDeviceId();
-            }
-            if (!TextUtils.isEmpty(HvApplication.TOKEN))
-                return;
-            if (!HvApplication.IS_NEEDIALOG)
-                return;
-            LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
-            RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
-                @Override
-                public void successData(String result) {
-                    Gson gson2 = new Gson();
-                    LoginResult c = gson2.fromJson(result, LoginResult.class);
-
-                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                        Log.e("A", "onResponse: " + result + "返回值");
-                        HvApplication.TOKEN = c.getToken();
-                        SharedPreferencesUtils.saveLoginStatesSharePrefer(IatListActivity.this, SharedPreferencesUtils.LOGIN);
-                    } else {
-                        ToastUtils.showLong(IatListActivity.this, c.getMsg());
-                    }
-                }
-                @Override
-                public void failureData(String error) {
-                    Log.e("AA", "error: " + error + "错");
-                }
-            });
-            LogUtils.printErrorLog("onNewIntent", "===onResume");
-        }*/
     }
 
     @Override

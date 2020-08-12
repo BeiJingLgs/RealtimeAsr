@@ -240,7 +240,7 @@ public class CommonUtils {
 				fwriter.close();
                 filePath = filePath.substring(20, filePath.length());
 				String path = getApplicationContext().getString(R.string.saveTo) + filePath;
-				ToastUtils.show( getApplicationContext(), path);
+				ToastUtils.show(getApplicationContext(), path);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

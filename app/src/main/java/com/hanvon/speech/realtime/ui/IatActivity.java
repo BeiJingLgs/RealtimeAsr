@@ -5,7 +5,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -17,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -564,7 +567,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + mUsagePlayTime +  " + mUsagePlayTime");
                 }
                 stopPlayRecord();
-                CommonUtils.setOnValidate(false, getApplicationContext());
+                //CommonUtils.setOnValidate(true, getApplicationContext());
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
                     freshRecogContent();
@@ -582,6 +585,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
+                //mRecordStatusImg.setEnabled(true);
                 if (HvApplication.HaveAuth) {
                     setRecordStatus();
                     startRecord();
@@ -601,6 +605,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mIatLayout.setVisibility(View.VISIBLE);
                 mRecordLayout.setVisibility(View.GONE);
                 stopRecognizeIfFailue();
+                AlSpeechEngine.getInstance().cancelSpeechRecog();
                 ToastUtils.showLong(getApplicationContext(), intent.getStringExtra(ConstBroadStr.SPEENCH_ERROR));
             }
         }
@@ -916,8 +921,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         }
                     });
                 }
+                startRecord();
+                FileBeanUils.setRecoding(true);
                 ToastUtils.show(getApplicationContext(), getResources().getString(R.string.startrecording));
             } else {
+                //mRecordStatusImg.setEnabled(false);
                 AlSpeechEngine.getInstance().initSpeech();
             }
         }
@@ -987,6 +995,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
+                    //AlSpeechEngine.getInstance().cancelSpeechRecog();
                     CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
@@ -1023,6 +1032,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 gotoNotePrevPage();
                 break;
             case R.id.suspendImg:
+                mRecordStatusImg.setEnabled(false);
+                mHandler.postDelayed(() ->{mRecordStatusImg.setEnabled(true);}, 3000);
                 if (!FileBeanUils.isRecoding()) {
                     if (!WifiUtils.isWifiOpened()) {
                         DialogUtil.getInstance().showNetWorkDialog(this);
@@ -1043,7 +1054,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                 } else {
                     mRecordStatusImg.setBackgroundResource(R.drawable.ps_play);
-
                     pauseRecognize();
                 }
                 break;
@@ -1054,7 +1064,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 adjustVolume(false);
                 break;
             case R.id.note_pg_info:
-                //pageJump();
                 saveNoteCurTracePage();
                 enterHandwrite(false);
                 DialogUtil dialogUtil = DialogUtil.getInstance();
@@ -1295,16 +1304,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private boolean checkUserStatus() {
-        String id = "";
-        if (HvApplication.ISDEBUG) {
-            id = DEVICEID;
-        } else {
-            if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId()))) {
-                ToastUtils.show(this, getString(R.string.tips5));
-                return false;
-            }
-            id = MethodUtils.getDeviceId();
-        }
+
         if (TextUtils.isEmpty(HvApplication.TOKEN)) {
             ToastUtils.show(this, getString(R.string.tips6));
             return false;
@@ -1337,6 +1337,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     DialogUtil.getInstance().disWaitingDialog();
                     Gson gson2 = new Gson();
                     PackList c = gson2.fromJson(result, PackList.class);
+                    LogUtils.printErrorLog("A", "onResponse: " + "TextUtils.equals(c.getCode(), Constant.SUCCESSCODE): " + TextUtils.equals(c.getCode(), Constant.SUCCESSCODE));
+
                     LogUtils.printErrorLog("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                         if (c.getPackBean() != null) {
@@ -1358,6 +1360,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 @Override
                 public void failureData(String error) {
                     DialogUtil.getInstance().disWaitingDialog();
+                    if (error.contains("null object reference")) {
+                        ToastUtils.showLong(IatActivity.this, getString(R.string.tips4));
+                    }
                     LogUtils.printErrorLog("AA", "error: " + error);
                 }
             });
@@ -1551,17 +1556,56 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         return mBase64Img;
     }
 
-
-    private void sendToMail(String url) {
+    private void sendToMail(String url){
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "语音记录邮件分享");
-        intent.putExtra(Intent.EXTRA_TEXT, "敬启者,\n下面是语音记录文本内容：\n" + mFileBean.getContent()
-                + " \n\n请打开下面链接查看附件内容：\n" + url);
         intent.setType("application/octet-stream");
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            ToastUtils.show(this, getString(R.string.unmailsetting));
+
+        List<ResolveInfo> resInfo = getPackageManager().queryIntentActivities(intent, 0);
+        List<Intent> targetedShareIntents = new ArrayList<Intent>();
+        boolean bHasK9 = false;
+        if (!resInfo.isEmpty()) {
+            for (ResolveInfo info : resInfo) {
+                Intent targeted = new Intent(Intent.ACTION_SEND);
+                targeted.setType("application/octet-stream");
+
+                ActivityInfo activityInfo = info.activityInfo;
+                targeted.setPackage(activityInfo.packageName);
+                targeted.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
+                targeted.putExtra(Intent.EXTRA_SUBJECT, "语音记录邮件分享");
+                targeted.putExtra(Intent.EXTRA_TEXT, "敬启者：\n下面是语音记录文本内容：\n" + mFileBean.getContent()
+                        + " \n\n请打开下面链接查看附件内容：\n" + url);
+
+                if (activityInfo.name.contains("k9")){
+                    targetedShareIntents.add(targeted);
+                    bHasK9 = true;
+                }
+                else if(activityInfo.name.contains("gm") || activityInfo.name.contains("mail")) {
+                    if(activityInfo.name.contains("qqmail") && activityInfo.name.contains("Upload")){
+                        continue;
+                    }else {
+                        targetedShareIntents.add(targeted);
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        if(targetedShareIntents.size() == 0){
+            ToastUtils.showLong(this,  getString( R.string.unmailsetting));
+            return;
+        }else if(!bHasK9){
+            ToastUtils.showLong(this,  "系统邮件客户端未进行配置，将用第三方邮件类应用发送");
+        }
+        Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "请选择邮件类应用");
+        if (chooserIntent == null) {
+            return;
+        }
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[] {}));
+        try {
+            startActivity(chooserIntent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            ToastUtils.showLong(this,  getString( R.string.unmailsetting));
         }
     }
 

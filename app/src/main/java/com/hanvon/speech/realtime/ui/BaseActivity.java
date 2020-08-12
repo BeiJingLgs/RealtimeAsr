@@ -40,7 +40,6 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO};
 
-    private AuthReceiver mAuthReceiver;
     //返回code
     public static final int OPEN_SET_REQUEST_CODE = 100;
 
@@ -116,20 +115,10 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     }
 
     private void init() {
-        mAuthReceiver = new AuthReceiver();
-        IntentFilter mBtFilter = new IntentFilter();
-        mBtFilter.addAction(ConstBroadStr.SPEENCH_AUTH);
-        //registerReceiver(mAuthReceiver, mBtFilter);
+
     }
 
-    protected class AuthReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
-                ToastUtils.showLong(HvApplication.mContext, getResources().getString(R.string.anthfailue));
-            }
-        }
-    }
+
 
 
     @Override
@@ -150,8 +139,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
             }
             if (!TextUtils.isEmpty(HvApplication.TOKEN))
                 return;
-            //if (!HvApplication.IS_NEEDIALOG)
-             //   return;
+
             LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
             RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
                 @Override
@@ -162,7 +150,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                         LogUtils.printErrorLog("A", "onResponse: " + result + "返回值");
                         HvApplication.TOKEN = c.getToken();
-                        SharedPreferencesUtils.saveLoginStatesSharePrefer(BaseActivity.this, SharedPreferencesUtils.LOGIN);
+                        //SharedPreferencesUtils.saveLoginStatesSharePrefer(BaseActivity.this, SharedPreferencesUtils.LOGIN);
                     } else {
                         ToastUtils.showLong(BaseActivity.this, c.getMsg());
                     }
