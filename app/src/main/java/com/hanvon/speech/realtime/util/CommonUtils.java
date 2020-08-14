@@ -224,7 +224,7 @@ public class CommonUtils {
 			return 0;
 		}
 	}
-	public static void saveAsFileWriter(String filePath, String content, boolean isappend) {
+	public static void saveAsFileWriter(String filePath, String content, boolean isappend, boolean isToast) {
 		FileWriter fwriter = null;
 		StringBuffer buffer = new StringBuffer(TimeUtil.getCurrentTime());
 		buffer.append("\n").append(content).append("\n");
@@ -240,7 +240,8 @@ public class CommonUtils {
 				fwriter.close();
                 filePath = filePath.substring(20, filePath.length());
 				String path = getApplicationContext().getString(R.string.saveTo) + filePath;
-				ToastUtils.show(getApplicationContext(), path);
+				if (isToast)
+					ToastUtils.show(getApplicationContext(), path);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

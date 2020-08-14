@@ -561,20 +561,26 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mFileBean.setTime(mFileBean.getTime() + mUsageRecordTime);
                 mUsageRecordTime = 0;
                 LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()：" + mFileBean.getTime() + "   mUsageRecordTime:  " + mUsageRecordTime);
-                if (MediaPlayerManager.getInstance().isPlaying() || mUsagePlayTime > 0) {
+                if (MediaPlayerManager.getInstance().isPlaying()) {
                     SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, (System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime));
                     LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + "System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime: " + (System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) );
                     LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + mUsagePlayTime +  " + mUsagePlayTime");
+                } else if (mUsagePlayTime > 0) {
+                    SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, mUsagePlayTime);
                 }
                 stopPlayRecord();
-                //CommonUtils.setOnValidate(true, getApplicationContext());
+                CommonUtils.setOnValidate(true, getApplicationContext());
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATERECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
+                    mNoteView.setInputEnabled(false);
                     freshRecogContent();
+                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 500);
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATEALSPEECHRECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
+                    mNoteView.setInputEnabled(false);
                     freshRecogContent();
+                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 500);
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
@@ -585,7 +591,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
-                //mRecordStatusImg.setEnabled(true);
+
                 if (HvApplication.HaveAuth) {
                     setRecordStatus();
                     startRecord();
@@ -602,11 +608,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
                 mTextBegin.setEnabled(true);
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_CLOSE)) {
-                mIatLayout.setVisibility(View.VISIBLE);
-                mRecordLayout.setVisibility(View.GONE);
-                stopRecognizeIfFailue();
-                AlSpeechEngine.getInstance().cancelSpeechRecog();
-                ToastUtils.showLong(getApplicationContext(), intent.getStringExtra(ConstBroadStr.SPEENCH_ERROR));
+                if (FileBeanUils.isRecoding()) {
+                    mIatLayout.setVisibility(View.VISIBLE);
+                    mRecordLayout.setVisibility(View.GONE);
+                    stopRecognizeIfFailue();
+                    AlSpeechEngine.getInstance().cancelSpeechRecog();
+                    ToastUtils.showLong(getApplicationContext(), intent.getStringExtra(ConstBroadStr.SPEENCH_ERROR));
+                }
             }
         }
     }
@@ -776,6 +784,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         // 保存笔迹
         saveNoteCurTracePage();
         saveCurTraNoteFile();
+        saveAsrTxt();
         exitActivity();
     }
 
@@ -844,6 +853,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             LogUtils.printErrorLog(TAG, "stopRecognizeIfFailue  mFileBean.getTime(): " + mFileBean.getTime() + "  tempTime: " + tempTime);
             mFileBean.setTime(mFileBean.getTime() + tempTime);
             mStartAsrTime = 0;
+
             FileBeanUils.setmStartRecordTime(mStartAsrTime);
 
             FileBeanUils.setRecoding(false);
@@ -1035,14 +1045,16 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mRecordStatusImg.setEnabled(false);
                 mHandler.postDelayed(() ->{mRecordStatusImg.setEnabled(true);}, 3000);
                 if (!FileBeanUils.isRecoding()) {
-                    if (!WifiUtils.isWifiOpened()) {
-                        DialogUtil.getInstance().showNetWorkDialog(this);
-                        return;
-                    }
-                    if (WifiUtils.getWifiConnectState(HvApplication.getContext()) == NetworkInfo.State.DISCONNECTED) {
-                        ToastUtils.show(this, getString(R.string.checkNeterror));
-                        LogUtils.printErrorLog(TAG, "getWifiConnectState: 网络未连接");
-                        return;
+                    if (!mNoRecogCheckbox.isChecked()) {
+                        if (!WifiUtils.isWifiOpened()) {
+                            DialogUtil.getInstance().showNetWorkDialog(this);
+                            return;
+                        }
+                        if (WifiUtils.getWifiConnectState(HvApplication.getContext()) == NetworkInfo.State.DISCONNECTED) {
+                            ToastUtils.show(this, getString(R.string.checkNeterror));
+                            LogUtils.printErrorLog(TAG, "getWifiConnectState: 网络未连接");
+                            return;
+                        }
                     }
                     if (mNoRecogCheckbox.isChecked()) {
                         FileBeanUils.setRecoding(true);
@@ -1094,7 +1106,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
         }
         mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);
-        ;
     }
 
     private void stopPlayRecord() {
@@ -1116,7 +1127,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    //mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
+                    mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
                     stopPlayRecord();
                     mSeekBar.setProgress(0);
                 }
@@ -1425,8 +1436,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 popupWindow.dismiss();
                 saveNoteCurTracePage();
                 saveCurTraNoteFile();
-                String path = saveAsrTxt();
+                saveAsrTxt();
                 ToastUtils.show(this, getString(R.string.saved));
+                //mHandler.postDelayed(()->{ToastUtils.show(this, getString(R.string.saved));}, 500);
             }
         });
         TextView menuItem2 = view.findViewById(R.id.popup_delete);
@@ -2111,7 +2123,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 e.printStackTrace();
             }
         }
-        CommonUtils.saveAsFileWriter(srcTmpFilePath, mRecogResultTv.getText().toString(), false);
+        CommonUtils.saveAsFileWriter(srcTmpFilePath, mRecogResultTv.getText().toString(), false, false);
         return srcTmpFilePath;
     }
 
@@ -2162,7 +2174,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         e.printStackTrace();
                     }
                 }
-                CommonUtils.saveAsFileWriter(srcTmpFilePath, result, true);
+                CommonUtils.saveAsFileWriter(srcTmpFilePath, result, true, true);
                 dialog.dismiss();
             }
         });

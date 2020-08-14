@@ -71,6 +71,7 @@ public class HandWriteNoteView extends NoteView {
 
     Timer timer = null;
     TimerTask timerTask = null;
+    Handler mHandler;
 
     public HandWriteNoteView(Context context) {
         this(context, null);
@@ -93,6 +94,7 @@ public class HandWriteNoteView extends NoteView {
     public void onCreated() {
         init();
         updateForeground(getHeight(), getWidth());
+        mHandler = new Handler();
         super.onCreated();
     }
 
@@ -160,6 +162,23 @@ public class HandWriteNoteView extends NoteView {
                 canBeFresh = true;
                 // LogUtils.printErrorLog("trace.getPoints", "ACTION_DOWN isOutside s : point.y: " + p.getY() + "  point.x: " + p.getX());
 
+                if (bPenDown) {
+                    if (!isChecked)
+                        path.lineTo(p.getX(), p.getY());
+                    bPenDown = false;
+
+                    if (mCurTrace != null && penType == TP_PEN && p.getToolType() == 0) {
+                        Point pup = new Point(p.getX(), p.getY());
+                        if (!isChecked) {
+                            mCurTrace.addPoint(pup);
+                            mTracePage.add(mCurTrace);
+                        }
+                    }
+
+                    mCurTrace = null;
+                    setModified(true);
+                    isMemoEmpty = false;
+                }
                 continue;
             }
 
@@ -363,6 +382,11 @@ public class HandWriteNoteView extends NoteView {
         }
 
         if (bUp) {
+            mHandler.postDelayed(() -> {
+                if (!bPenDown)
+                    canBeFresh = true;
+                }, 1000);
+
             if (timer != null) {
                 timer.cancel();
                 timer = null;
@@ -376,14 +400,15 @@ public class HandWriteNoteView extends NoteView {
                 @Override
                 public void run() {
                     if (!lastPoint.isOutside()) {
-                        Message message = new Message();
-                        message.what = MESSAGE_WHAT1;
-                        handler.sendMessage(message);
-                        canBeFresh = true;
+                        if (canBeFresh && !bPenDown) {
+                            Message message = new Message();
+                            message.what = MESSAGE_WHAT1;
+                            handler.sendMessage(message);
+                        }
                     }
                 }
             };
-            timer.schedule(timerTask, 2000);//延时2s
+            timer.schedule(timerTask, 1200);//延时2s
         }
         return new FlushInfo(dirtyRect);
     }
