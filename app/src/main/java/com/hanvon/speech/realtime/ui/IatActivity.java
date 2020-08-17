@@ -1713,36 +1713,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         freshEditPageState(currentPage);
     }
 
-    private void freshSpeecnSentenceList(int currentPage) {
-        if (mTempSpeechResultList == null) {
-            mTempSpeechResultList = new ArrayList<SpeechResult>();
-        } else {
-            mTempSpeechResultList.clear();
-        }
 
-        for (int i = currentPage * PAGE_CATEGORY; i < mTotalResultList.size()
-                && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
-            mTempSpeechResultList.add(mTotalSpeechResultList.get(i));
-        }
-
-        if (mTempSpeechResultList.size() == 0) {
-            if ((currentPage - 1) >= 0) {
-                currentPage--;
-                for (int i = currentPage * PAGE_CATEGORY; i < mTotalResultList.size()
-                        && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
-                    mTempSpeechResultList.add(mTotalSpeechResultList.get(i));
-                }
-            }
-        }
-
-        if (mSpeechSequenceAdapter == null) {
-            mSpeechSequenceAdapter = new SpeechSequenceAdapter(mTempSpeechResultList, this);
-            mEditListView.setAdapter(mSpeechSequenceAdapter);
-        } else {
-            mSequenceAdapter.notifyDataSetChanged();
-        }
-        freshEditPageState(currentPage);
-    }
 
     private void freshEditPageState(int currentPage) {
         if (currentPage == 0 && nPageCount > 1) {
@@ -1899,6 +1870,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
      * @return
      */
     protected boolean AddNoteNewEmptyPage(int index) {
+
         saveNoteCurTracePage();
         TraPage newPage = new TraPage();
         NoteBaseData.gTraFile.addPage(index, newPage);
@@ -1994,10 +1966,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         // TODO Auto-generated method stub
         // 保存当前页
 
-        //NoteBaseData.gTraFile.pages.get(1).traces.get(1);
         // 如果当前页最后一页
         if (mNotePageIndex == NoteBaseData.gTraFile.getCount() - 1) {
             // 新建页
+            LogUtils.printErrorLog(TAG, "NoteBaseData.gTraFile.getPage(mNotePageIndex).getTraces();" + NoteBaseData.gTraFile.getPage(mNotePageIndex).getTraces());
+            if (NoteBaseData.gTraFile.getPage(mNotePageIndex).getTraces() == null) {
+                String path = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + "/" + mNotePageIndex + ".png";
+                mNoteView.saveCanvasInfo(path);
+            }
             AddNoteNewEmptyPage(mNotePageIndex + 1);
         } else {
             saveNoteCurTracePage();
@@ -2008,7 +1984,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         mHandler.postDelayed(() -> {
             mNoteView.setInputEnabled(true);
-        }, 500);
+        }, 800);
     }
 
     /***
@@ -2016,8 +1992,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
      */
     public void jumpToPage(int index) {
         mNoteView.setInputEnabled(false);
-
-
         if (index >= NoteBaseData.gTraFile.getCount())
             return;
         mNotePageIndex = index;
@@ -2028,7 +2002,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (FileBeanUils.isRecoding())
                 enterHandwrite(true);
         }, 800);
-
     }
 
     /**
