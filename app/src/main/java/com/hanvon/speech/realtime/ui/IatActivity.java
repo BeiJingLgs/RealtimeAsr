@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.hwebook.HANVONEBK;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.NetworkInfo;
@@ -190,6 +191,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private int index = 0;
 
+    private HANVONEBK hv_ebk;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -313,8 +315,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void init() {
-       // saveLog();
         TAG = getLocalClassName();
+        hv_ebk = new HANVONEBK();
         mAudioManager = (AudioManager) HvApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
         mCtlVolBar.AdjustVolume(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);
         mHandler = new AudioHandler(this);
@@ -741,7 +743,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (mEditLayout.getVisibility() == View.VISIBLE) {
             hideSoftInput(this);
             mEditLayout.setVisibility(View.GONE);
-            mResultLayout.setVisibility(View.VISIBLE);
+            if (mGotoUndisturb) {
+                mUndisturb_layout.setVisibility(View.VISIBLE);
+                mGotoUndisturb = false;
+            } else {
+                mResultLayout.setVisibility(View.VISIBLE);
+            }
+
             mWriteLayout.setVisibility(View.VISIBLE);
             mBottomLayout.setVisibility(View.VISIBLE);
             mNoteView.setVisibility(View.VISIBLE);
@@ -768,6 +776,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void saveAndExitActivity() {
+        hv_ebk.ASRVolumeEnable(0);
         DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
         if (!TextUtils.equals(con, mFileBean.getContent())) {
@@ -996,6 +1005,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     if (mTimer != null)
                         mTimer.cancel();
+                    hv_ebk.ASRVolumeEnable(0);
                     CommonUtils.setOnValidate(true, this);
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
@@ -1005,6 +1015,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
+
+                    hv_ebk.ASRVolumeEnable(1);
                     //AlSpeechEngine.getInstance().cancelSpeechRecog();
                     CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
@@ -1127,6 +1139,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    hv_ebk.ASRVolumeEnable(0);
                     mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
                     stopPlayRecord();
                     mSeekBar.setProgress(0);
@@ -1212,7 +1225,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }
         }
     }
-
+    private boolean mGotoUndisturb;
     private void freEditSentenceshPage() {
         saveNoteCurTracePage();
         if (IatResults.getAsrEditResults().size() == 0 && HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
@@ -1227,6 +1240,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mWriteLayout.setVisibility(View.GONE);
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
+        if (mUndisturb_layout.getVisibility() == View.VISIBLE)  {
+            mGotoUndisturb = true;
+            mUndisturb_layout.setVisibility(View.GONE);
+        }
+
 
         if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             mTotalResultList.clear();
@@ -1297,7 +1315,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 DialogUtil.getInstance().disWaitingDialog();
                 Gson gson2 = new Gson();
                 VerificationResult c = gson2.fromJson(result, VerificationResult.class);
-                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE) || TextUtils.equals(c.getCode(), Constant.NOTIME)) {
                     ToastUtils.show(IatActivity.this, c.getMsg());
                 } else {
                     SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
@@ -1315,7 +1333,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private boolean checkUserStatus() {
-
+        String id = checkId();
+        if (TextUtils.isEmpty(id)) {
+            return false;
+        }
         if (TextUtils.isEmpty(HvApplication.TOKEN)) {
             ToastUtils.show(this, getString(R.string.tips6));
             return false;
@@ -1504,6 +1525,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 index = 7;
+                if (mEditLayout.getVisibility() == View.VISIBLE) {
+                    ToastUtils.showLong(IatActivity.this, "编辑状态无法进入免打扰模式");
+                    return;
+                }
 
                 if (mUndisturb_layout.getVisibility() == View.GONE) {
                     mUndisturb_layout.setVisibility(View.VISIBLE);

@@ -200,7 +200,7 @@ public class AlSpeechEngine {
         config.setAuthTimeout(5000);
         config.setAudioRecorderType(DUILiteConfig.TYPE_COMMON_MIC);
 
-        config.openLog();//仅输出SDK logcat日志，须在init之前调用.
+        //config.openLog();//仅输出SDK logcat日志，须在init之前调用.
         //config.openLog(Environment.getExternalStorageDirectory() + "/DUILite_SDK.log");//输出SDK logcat日志，同时保存日志文件在/sdcard/duilite/DUILite_SDK.log，须在init之前调用.
 
 

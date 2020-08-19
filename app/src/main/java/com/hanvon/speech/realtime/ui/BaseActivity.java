@@ -104,13 +104,11 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
         mMenus = findViewById(R.id.btn_option_menus);
         mCreateFile = findViewById(R.id.btn_option_create);
         mMineBtn = findViewById(R.id.btn_option_mine);
-        //mUpdateBtn = findViewById(R.id.btn_option_update);
         mBackBtn.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
         mMenus.setOnClickListener(this);
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
-        //mUpdateBtn.setOnClickListener(this);
         init();
     }
 
@@ -119,49 +117,54 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     }
 
 
-
+    public String checkId() {
+        String id = "";
+        if (HvApplication.ISDEBUG) {
+            id = DEVICEID;
+        } else {
+            if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId()))) {
+                ToastUtils.show(this, getString(R.string.tips5));
+                return "";
+            }
+            id = MethodUtils.getDeviceId();
+        }
+        return id;
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
         //if (TextUtils.equals(SharedPreferencesUtils.getLoginStatesprefer(this, SharedPreferencesUtils.LOGIN), "login")) {
+        String id = checkId();
+        if (TextUtils.isEmpty(id)) {
+            return;
+        }
 
-            String id = "";
-            if (HvApplication.ISDEBUG) {
-                id = DEVICEID;
-            } else {
-                if ((TextUtils.isEmpty(MethodUtils.getDeviceId()) || TextUtils.equals("unavailable", MethodUtils.getDeviceId()))) {
-                    ToastUtils.show(this, getString(R.string.tips5));
-                    return;
+        if (!TextUtils.isEmpty(HvApplication.TOKEN))
+            return;
+
+        LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
+        RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
+            @Override
+            public void successData(String result) {
+                Gson gson2 = new Gson();
+                LoginResult c = gson2.fromJson(result, LoginResult.class);
+
+                if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
+                    LogUtils.printErrorLog("A", "onResponse: " + result + "返回值");
+                    HvApplication.TOKEN = c.getToken();
+                } else {
+                    ToastUtils.showLong(BaseActivity.this, c.getMsg());
                 }
-                id = MethodUtils.getDeviceId();
             }
-            if (!TextUtils.isEmpty(HvApplication.TOKEN))
-                return;
 
-            LogUtils.printErrorLog(TAG, "===onResume： " + HvApplication.TOKEN);
-            RetrofitManager.getInstance(this).loginByDeviceId(id, new RetrofitManager.ICallBack() {
-                @Override
-                public void successData(String result) {
-                    Gson gson2 = new Gson();
-                    LoginResult c = gson2.fromJson(result, LoginResult.class);
-
-                    if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
-                        LogUtils.printErrorLog("A", "onResponse: " + result + "返回值");
-                        HvApplication.TOKEN = c.getToken();
-                        //SharedPreferencesUtils.saveLoginStatesSharePrefer(BaseActivity.this, SharedPreferencesUtils.LOGIN);
-                    } else {
-                        ToastUtils.showLong(BaseActivity.this, c.getMsg());
-                    }
-                }
-                @Override
-                public void failureData(String error) {
-                    LogUtils.printErrorLog("AA", "error: " + error + "错");
-                }
-            });
-            LogUtils.printErrorLog("onNewIntent", "===onResume");
-        //}
+            @Override
+            public void failureData(String error) {
+                LogUtils.printErrorLog("AA", "error: " + error + "错");
+            }
+        });
+        LogUtils.printErrorLog("onNewIntent", "===onResume");
     }
 
     @Override
