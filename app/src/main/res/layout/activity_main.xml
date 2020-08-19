@@ -375,7 +375,7 @@
 
         <TextView
             android:id="@+id/note_pg_info"
-            android:layout_width="@dimen/edit_w5"
+            android:layout_width="@dimen/page_w"
             android:layout_height="@dimen/toolbar_height"
             android:background="@color/white"
             android:gravity="center"

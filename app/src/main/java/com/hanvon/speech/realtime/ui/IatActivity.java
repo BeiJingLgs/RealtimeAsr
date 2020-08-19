@@ -268,6 +268,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
         mNotePageInfo.setOnClickListener(this);
+
         mNoteView.setZOrderOnTop(true);
         SimplePen pencil = new SimplePen();
         mNoteView.setPen(pencil);
@@ -2103,6 +2104,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
     }
 
+    //String mTemp;
     private String saveAsrTxt() {
         File file, file1;
         String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
@@ -2110,7 +2112,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!file.exists()) {
             file.mkdirs();
         }
-        String srcTmpFilePath = path + mFileBean.getTitle() + ".txt";
+
+        String srcTmpFilePath = path + mFileBean.getTitle().replace(" ", "_").replace(":", "_") + ".txt";
 
         file1 = new File(srcTmpFilePath);
         if (!file1.exists()) {

@@ -84,7 +84,7 @@
     <dimen name="textSizeXXL">21.3sp</dimen>
     <dimen name="textSizeXL">18.7sp</dimen>
     <dimen name="textSizeL">16sp</dimen>
-    <dimen name="textSizeM">13.3sp</dimen>
+    <dimen name="textSizeM">13sp</dimen>
     <dimen name="textSizeS">9.3sp</dimen>
 
     <dimen name="textSizexL">16sp</dimen>

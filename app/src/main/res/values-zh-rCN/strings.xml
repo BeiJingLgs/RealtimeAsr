@@ -153,7 +153,7 @@
     <string name="undisturb">免打扰模式</string>
     <string name="exitundisturb">退出免打扰</string>
     <string name="undisturbTip">免打扰模式,点击后退出</string>
-    <string name="readcheck">点击录音过程中的文字，自动播放对应的录音(勾选后划线功能失效)</string>
+    <string name="readcheck">勾选状态下,点击录音过程中的手写笔迹自动播放对应的录音,此状态下不能书写</string>
     <string name="tips">提示</string>
     <string name="anthfailue">授权失败</string>
 </resources>
