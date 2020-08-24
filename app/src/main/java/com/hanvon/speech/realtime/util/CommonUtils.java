@@ -3,6 +3,8 @@ package com.hanvon.speech.realtime.util;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Context;
 import android.content.Intent;
@@ -52,6 +54,19 @@ public class CommonUtils {
 			}
 		}
 	}
+
+	public static void showIME() {
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}, 1000);
+	}
+
+
 
 	/**
 	 * dp转成px

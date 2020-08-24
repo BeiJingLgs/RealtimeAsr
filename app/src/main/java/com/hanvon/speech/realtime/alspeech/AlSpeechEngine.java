@@ -185,11 +185,7 @@ public class AlSpeechEngine {
      *                 "ae625a43ec270c237a799334b9e5f29f",
      *                 "b6bd6fa75a70105df1919a17ab41d4bd"
      */
-    /*
-                "e341a0dbbca18e81be4e44aa5f2d229b",
-                        "279596358",
-                        "1d21d043ffb787fae93ec490a34a0dfd",
-                        "6e60862844d44355acc7447491b76909" */
+
     private void auth() {//
         DUILiteConfig config = new DUILiteConfig(
                 "e341a0dbbca18e81be4e44aa5f2d229b",

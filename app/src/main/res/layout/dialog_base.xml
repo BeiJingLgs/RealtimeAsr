@@ -35,7 +35,12 @@
         android:layout_height="@dimen/mydialog_separator_H"
         android:background="@android:color/background_dark" />
     -->
-
+    <ViewStub
+        android:id="@+id/viewstub_dialog_text_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mydialog_margin_stubview"
+        android:layout="@layout/dialog_text_edit" />
     <RelativeLayout
         android:id="@+id/relativeLayoutBtns"
         android:layout_width="match_parent"

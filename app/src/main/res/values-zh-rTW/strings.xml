@@ -147,5 +147,20 @@
     <string name="ocr_type_local">本地引擎</string>
     <string name="ocr_type_online">在線引擎（需聯網）</string>
     <string name="tips">提示</string>
-    <string name="recog_recordtxt">/我的文档/录音记事/</string><string name="tips7">服务器返回错误代码2</string>
+    <string name="recog_recordtxt">/我的文档/录音记事/</string>
+    <string name="tips7">服务器返回错误代码2</string>
+
+    <string name="timeOut">網絡異常，請檢查後重試</string>
+    <string name="rename">重命名</string>
+    <string name="large_layout">全文顯示</string>
+    <string name="close_large_layout">收起全文</string>
+    <string name="namenull">文件名不能為空</string>
+    <string name="search">搜&#160;&#160;&#160;索</string>
+    <string name="nomatchName">命名文件只能包含中英文、數字、下劃線、中劃線</string>
+    <string name="search_history">搜索歷史</string>
+    <string name="clear_his">清除歷史記錄</string>
+    <string name="content_null">搜索內容不能為空！！！</string>
+    <string name="no_search_result">沒有找到相關內容...</string>
+    <string name="select_file">请选择重命名文件</string>
+    <string name="only_one_file">重命名只支持一个文件，请重新选择</string>
 </resources>

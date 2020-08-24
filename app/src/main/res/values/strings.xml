@@ -152,20 +152,18 @@
     <string name="anthfailue">授权失败</string>
     <string name="tips7">服务器返回错误代码2</string>
 
-    <string name="timeOut">网络异常，请检查后重试</string>
-    <string name="tips6">获取验证信息失败，请退出后重试</string>
-
-    <string name="rename">重命名</string>
-
-    <string name="large_layout">全文显示</string>
-    <string name="close_large_layout">收起全文</string>
-    <string name="namenull">文件名不能为空</string>
-
-
-    <string name="search">搜&#160;&#160;&#160;索</string>
-    <string name="nomatchName">命名文件只能包含中英文、数字、下划线、中划线</string>
-    <string name="search_history">搜索历史</string>
-    <string name="clear_his">清除历史记录</string>
-    <string name="content_null">搜索内容不能为空！！！</string>
-    <string name="no_search_result">没有找到相关内容...</string>
+    <string name="tips6">Failed to obtain validation information, please exit and try again</string>
+    <string name="timeOut">Network exception, please check and try again</string>
+    <string name="rename">Rename</string>
+    <string name="large_layout">Full text display</string>
+    <string name="close_large_layout">Close the full text</string>
+    <string name="namenull">The file name cannot be empty</string>
+    <string name="search">Search</string>
+    <string name="nomatchName">The name file can only contain Chinese and English, numbers, underscores and dashes</string>
+    <string name="search_history">Search history</string>
+    <string name="clear_his">Clear history</string>
+    <string name="content_null">Search content cannot be empty！！！</string>
+    <string name="no_search_result">No relevant content was found...</string>
+    <string name="select_file">Please choose to rename the file</string>
+    <string name="only_one_file">Renaming only supports one file, please re select</string>
 </resources>

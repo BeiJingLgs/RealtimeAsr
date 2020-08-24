@@ -364,4 +364,18 @@ public class hvFileCommonUtils {
 		return 0;
 	}
 
+	/**
+	 * oldPath 和 newPath必须是新旧文件的绝对路径
+	 * */
+	public static void renameFile(String oldPath, String newPath) {
+		if(TextUtils.isEmpty(oldPath)) {
+			return;
+		}
+		if(TextUtils.isEmpty(newPath)) {
+			return;
+		}
+		File file = new File(oldPath);
+		file.renameTo(new File(newPath));
+	}
+
 }

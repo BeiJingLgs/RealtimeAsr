@@ -3,14 +3,18 @@ package com.hanvon.speech.realtime.ui;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -24,21 +28,25 @@ import com.hanvon.speech.realtime.adapter.FileAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
+import com.hanvon.speech.realtime.util.CommonUtils;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
+import com.hanvon.speech.realtime.view.CommonDialog;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn, mReNameBtn;
+    private Button mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn, mReNameBtn;
     public static final int TOIAT_RECORD = 11, TORENAME_DIALOGACTIVITY = 12;
     private ArrayList<FileBean> mTotalFileList, mTempFileList;
     private FileAdapter mFileAdapter;
@@ -51,6 +59,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     private FileBean mFileTitle;
     private static Logger logger = Logger.getLogger("IatListActivity");
     private boolean IS_FIRST = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +73,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         return R.layout.activity_iat_list;
     }
 
-    public void initView(Bundle savedInstanceState,View view) {
+    public void initView(Bundle savedInstanceState, View view) {
         mMenus.setVisibility(View.GONE);
         mCreateFile.setVisibility(View.VISIBLE);
         mMineBtn.setVisibility(View.GONE);
@@ -262,7 +271,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                             //        TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s + ".pcm");
                             deleteFileTxt(fileBean.title);
                             hvFileCommonUtils.recursiveDeleteAll(this, ConstBroadStr.GetAudioRootPath(this,
-                                    TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
+                                    TextUtils.equals(fileBean.mSd, "sd") ? true : false) + s);
                             //FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
                             //               TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
                             break;
@@ -293,16 +302,17 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 break;
             case R.id.rename_btn:
                 if (mFileAdapter.getmSelectStates().size() == 0) {
-                    ToastUtils.showLong(this, "请选择重命名文件");
+                    ToastUtils.showLong(this, getResources().getString(R.string.select_file));
                     return;
                 }
                 if (mFileAdapter.getmSelectStates().size() > 1) {
-                    ToastUtils.showLong(this, "重命名只支持一个文件，请重新选择");
+                    ToastUtils.showLong(this, getString(R.string.only_one_file));
                     return;
                 }
-                intent = new Intent(this, RenameActivity.class);
-                TranslateBean.getInstance().setFileBean(mFileTitle);
-                startActivityForResult(intent, TORENAME_DIALOGACTIVITY);
+                showRenameDialog(mFileTitle);
+                // intent = new Intent(this, RenameActivity.class);
+                //TranslateBean.getInstance().setFileBean(mFileTitle);
+                // startActivityForResult(intent, TORENAME_DIALOGACTIVITY);
                 break;
             case R.id.btn_option_search:
                 intent = new Intent(this, LocalSearchActivity.class);
@@ -343,7 +353,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         TextView menuItem2 = view.findViewById(R.id.popup_me);
         menuItem2.setOnClickListener(view12 -> {
             if (popupWindow != null) {
-                Intent intent=new Intent(this,MeActivity.class);
+                Intent intent = new Intent(this, MeActivity.class);
                 startActivity(intent);
                 popupWindow.dismiss();
             }
@@ -379,7 +389,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
 
             if (mFileAdapter.getmSelectStates().size() == 1) {
                 //mReNameBtn.setEnabled(true);
-                Set<String> nameset= mFileAdapter.getmSelectStates().keySet();
+                Set<String> nameset = mFileAdapter.getmSelectStates().keySet();
                 for (FileBean bean : mTotalFileList) {
                     if (nameset.contains(String.valueOf(bean.createmillis))) {
                         mFileTitle = bean;
@@ -431,7 +441,79 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     private void deleteFileTxt(String title) {
         String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
         String srcTmpFilePath = path + title.replace(" ", "_").replace(":", "_") + ".txt";
-       // LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
+        // LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
         hvFileCommonUtils.recursiveDeleteAll(this, srcTmpFilePath);
     }
+
+    private void modifyFileTxt(String title, FileBean mFileBean) {
+        String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
+        String srcTmpFilePath = path + title.replace(" ", "_").replace(":", "_") + ".txt";
+        LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
+        String newTitle = mFileBean.getTitle();
+        String newPathFile = path + newTitle.replace(" ", "_").replace(":", "_") + ".txt";
+        hvFileCommonUtils.renameFile(srcTmpFilePath, newPathFile);
+    }
+
+    private void showRenameDialog(FileBean filebean) {
+        final CommonDialog dialog = new CommonDialog(this, R.id.viewstub_dialog_text_edit);
+        EditText mRenameEd = (EditText) dialog.getView().findViewById(R.id.editTextInfo);
+        String oldName = filebean.title;
+        mRenameEd.getPaint().setAntiAlias(false);
+        mRenameEd.setText(filebean.title);
+        mRenameEd.setSelection(filebean.title.length());
+        mRenameEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 24) {
+                    ToastUtils.showLong(getApplication(), "文件名最多支持25个字符");
+                }
+            }
+        });
+
+        dialog.setTitle(R.string.rename);
+        dialog.setPositiveButton(R.string.ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.printErrorLog(TAG, "setPositiveButton");
+                if (TextUtils.isEmpty(mRenameEd.getText().toString().trim())) {
+                    ToastUtils.showLong(getApplication(), getString(R.string.namenull));
+                    return;
+                }
+                String regex = "^[a-zA-Z0-9_:： \\-\u4e00-\u9fa5]+$";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher match = pattern.matcher(mRenameEd.getText().toString().trim());
+                if (match.matches()) {
+                    filebean.setTitle(mRenameEd.getText().toString().trim());
+                    DatabaseUtils.getInstance(getApplicationContext()).updateTileByMillis(filebean);
+                    modifyFileTxt(oldName, filebean);
+                    dialog.dismiss();
+                    setCheckGone();
+                    freshPage();
+                } else {
+                    ToastUtils.showLong(getApplication(), getString(R.string.nomatchName));
+                }
+            }
+        });
+        dialog.setNegativeButton(R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.printErrorLog(TAG, "setNegativeButton");
+                setCheckGone();
+                dialog.dismiss();
+            }
+        });
+
+        CommonUtils.showIME();
+        dialog.show();
+    }
+
+
 }

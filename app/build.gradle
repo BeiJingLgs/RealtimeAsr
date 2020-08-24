@@ -8,8 +8,8 @@ android {
         applicationId "com.asr.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 34
-        versionName "1.34"
+        versionCode 37
+        versionName "1.37"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 

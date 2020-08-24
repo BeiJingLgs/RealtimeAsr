@@ -25,6 +25,8 @@
                 android:layout_marginTop="@dimen/Margin_XXS"
                 android:layout_marginRight="@dimen/Margin_S"
                 android:layout_marginBottom="@dimen/Margin_XXS"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/textSizeM"
                 android:textStyle="bold" />

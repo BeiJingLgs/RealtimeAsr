@@ -1258,11 +1258,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
         }
+        if (mLargeLayout.getVisibility() == View.VISIBLE) {
+            exitLargeLayout();
+        }
         mEditLayout.setVisibility(View.VISIBLE);
         mResultLayout.setVisibility(View.GONE);
         mWriteLayout.setVisibility(View.GONE);
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
+
         if (mUndisturb_layout.getVisibility() == View.VISIBLE)  {
             mGotoUndisturb = true;
             mUndisturb_layout.setVisibility(View.GONE);
@@ -1281,7 +1285,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             nPageCount = getTotalqlPageCount(mTotalResultList.size());
             initPage();
             freshSentenceList(nPageIsx);
-            //freshSpeecnSentenceList(nPageIsx);
         }
 
     }
@@ -1573,7 +1576,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (mLargeLayout.getVisibility() == View.GONE) {
                     mInnerLayout.setVisibility(View.GONE);
                     mNoteView.setVisibility(View.GONE);
-                    mLargeRecogTv.setText(mFileBean.getContent());
+                    mLargeRecogTv.setText(mRecogResultTv.getText());
                     mLargeLayout.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(() ->{freshFullScreenResultPage();}, 200);
                 } else {

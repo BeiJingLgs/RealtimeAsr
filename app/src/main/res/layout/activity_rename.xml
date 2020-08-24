@@ -28,7 +28,7 @@
            android:id="@+id/renameEd"
            android:padding="@dimen/Margin_l"
            android:layout_margin="@dimen/Margin_L"
-           android:background="@null"
+           android:maxLength="25"
            android:hint="@string/rename"/>
     </LinearLayout>
 

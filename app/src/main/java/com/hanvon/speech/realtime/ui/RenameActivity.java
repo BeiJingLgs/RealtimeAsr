@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +53,22 @@ public class RenameActivity extends Activity implements View.OnClickListener {
         mFilePath = mFileBean.title;
         mRenameEd.setText(mFileBean.title);
         mRenameEd.setSelection(mFileBean.title.length());
+
+        mRenameEd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 24) {
+                    ToastUtils.showLong(getApplication(), "文件名最多支持25个字符");
+                }
+            }
+        });
     }
 
     @Override
@@ -62,7 +81,7 @@ public class RenameActivity extends Activity implements View.OnClickListener {
                 if (TextUtils.isEmpty(mRenameEd.getText().toString().trim())) {
                     ToastUtils.showLong(this, getString(R.string.namenull));
                 }
-                String regex = "^[a-zA-Z0-9_\\-\u4e00-\u9fa5]+$";
+                String regex = "^[a-zA-Z0-9_:： \\-\u4e00-\u9fa5]+$";
                 Pattern pattern = Pattern.compile(regex);
                 Matcher match=pattern.matcher(mRenameEd.getText().toString().trim());
                 if (match.matches()) {
@@ -83,6 +102,10 @@ public class RenameActivity extends Activity implements View.OnClickListener {
         String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
         String srcTmpFilePath = path + title.replace(" ", "_").replace(":", "_") + ".txt";
         LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
-        hvFileCommonUtils.recursiveDeleteAll(this, srcTmpFilePath);
+        String newTitle = mFileBean.getTitle();
+        String newPathFile = path + newTitle.replace(" ", "_").replace(":", "_") + ".txt";
+        hvFileCommonUtils.renameFile(srcTmpFilePath, newPathFile);
     }
+
+
 }
