@@ -3,6 +3,6 @@
     <bool name="IS_133">false</bool>
     <integer name="device_inch">9</integer>
     <integer name="PAGE_CATEGORY">8</integer>
-    <integer name="OFFSET_LINE">66</integer>
+    <integer name="OFFSET_LINE">56</integer>
     <integer name="VERSION_TYPE">12</integer>
 </resources>

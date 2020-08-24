@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:layout_marginTop="@dimen/Margin_XS"
+    android:layout_marginLeft="@dimen/Margin_M" 
+    android:layout_marginRight="@dimen/Margin_M"
+    android:background="@drawable/btn_background">
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hotword_text"
+        android:layout_marginTop="@dimen/Margin_S"
+        android:layout_marginBottom="@dimen/Margin_S"
+        android:textColor="@color/dark"
+        android:ellipsize="middle"
+        android:textSize="@dimen/Common_Text_Font_Size"
+        android:singleLine="true"/>
+    
+
+</LinearLayout>

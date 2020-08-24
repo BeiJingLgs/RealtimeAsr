@@ -88,7 +88,7 @@
     <dimen name="textSizeS">9.3sp</dimen>
 
     <dimen name="textSizexL">16sp</dimen>
-    <dimen name="textSizexLSP">20.5sp</dimen>
+    <dimen name="textSizexLSP">16sp</dimen>
 
     <dimen name="linePaddingS">0.3dp</dimen>
     <dimen name="linePaddingM">0.5dp</dimen>
@@ -102,9 +102,9 @@
     <dimen name="flippager_H">66.7dp</dimen>
     <dimen name="flippager_btn_size">56dp</dimen>
     <dimen name="flippager_margin">13.3dp</dimen>
-    <dimen name="dialog_wide_button_width">93.3dp</dimen>
+    <dimen name="dialog_wide_button_width">85dp</dimen>
     <dimen name="dialog_high_button_height">53.3dp</dimen>
-    <dimen name="bar_item_image_height">37.3dp</dimen>
+    <dimen name="bar_item_image_height">32dp</dimen>
     <dimen name="bar_more_width_port">133.3dp</dimen>
     <!-- 普通标准 -->
     <dimen name="Common_Text_Font_Size">14.7sp</dimen>
@@ -166,4 +166,6 @@
     <dimen name="marginZ2">10dp</dimen>
     <dimen name="marginZ">10dp</dimen>
     <dimen name="button_large">250dp</dimen>
+
+    <dimen name="check_h">90dp</dimen>
 </resources>

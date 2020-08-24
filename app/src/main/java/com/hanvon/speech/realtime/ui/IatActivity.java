@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.hwebook.HANVONEBK;
 import android.media.AudioManager;
@@ -150,16 +151,16 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private SequenceAdapter mSequenceAdapter;
     private SpeechSequenceAdapter mSpeechSequenceAdapter;
     private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn,
-            mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord;
-    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv;
-    private HVTextView mRecogResultTv;
+            mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord, mPreLargeBtn, mNextLargeBtn;
+    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv, mCloseLargeTv;
+    private HVTextView mRecogResultTv, mLargeRecogTv;
     private SeekBar mSeekBar;
     public CheckBox mCheckbox, mNoRecogCheckbox, mReadCheckbox;
     private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout, mViewTips;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout, mViewTips, mLargeLayout, mInnerLayout;
     private boolean isNEW, isTips = false;
 
     private int nPageCount = 0; // 当前分类的页总数
@@ -210,6 +211,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
+        mSearchBtn.setVisibility(View.GONE);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
@@ -217,6 +219,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mSeekBar.setOnSeekBarChangeListener(seekListener);
         mRecogResultTv = findViewById(R.id.iatContent_tv);
         mRecogResultTv.getPaint().setAntiAlias(false);
+        mRecogResultTv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         //mRecogResultTv.setOnTouchListener(this);
         mEditLayout = findViewById(R.id.edit_layout);
         mEditPrePageBtn = findViewById(R.id.ivpre_page);
@@ -245,7 +248,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mVolumLayout = findViewById(R.id.volum_layout);
         mExitUndisturbTv = findViewById(R.id.undisturb_tv);
         mViewTips = findViewById(R.id.tip_view);
+        mLargeLayout = findViewById(R.id.large_tv_layout);//inner_Layout
+        mInnerLayout = findViewById(R.id.inner_Layout);
+        mLargeRecogTv = findViewById(R.id.large_iatContent_tv);
+        mLargeRecogTv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        mCloseLargeTv = findViewById(R.id.close_largeTv);
+        mPreLargeBtn = findViewById(R.id.large_result_ivpre_page);
+        mNextLargeBtn = findViewById(R.id.large_result_ivnext_page);
 
+        mPreLargeBtn.setOnClickListener(this);
+        mNextLargeBtn.setOnClickListener(this);
+        mCloseLargeTv.setOnClickListener(this);
         mIncreaseVolImg.setOnClickListener(this);
         mDecreaseVolImg.setOnClickListener(this);
         mRecordStatusImg.setOnClickListener(this);
@@ -1038,10 +1051,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
                 break;
             case R.id.result_ivpre_page:
-                preResultPage();
+                preResultPage(false);
                 break;
             case R.id.result_ivnext_page:
-                nextResultPage();
+                nextResultPage(false);
                 break;
             case R.id.suspendRecord:
                 stopRecognize();
@@ -1072,6 +1085,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     if (mNoRecogCheckbox.isChecked()) {
                         FileBeanUils.setRecoding(true);
                         startRecord();
+                        mRecognizeStatusTv.setText(R.string.recognizing);
                         mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
                         return;
                     }
@@ -1095,8 +1109,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 dialogUtil.regListener(this);
                 dialogUtil.showJumpDialog(this, mNotePageIndex);
                 break;
+            case R.id.large_result_ivpre_page:
+                preResultPage(true);
+                break;
+            case R.id.large_result_ivnext_page:
+                nextResultPage(true);
+                break;
             case R.id.undisturb_tv:
                 exitUnDisturp();
+                break;
+            case R.id.close_largeTv:
+                exitLargeLayout();
                 break;
             default:
                 break;
@@ -1109,7 +1132,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (FileBeanUils.isRecoding())
             enterHandwrite(true);
         freshRecogContent();
-
     }
 
     public void adjustVolume(boolean up) {
@@ -1352,6 +1374,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (mEditLayout.getVisibility() == View.VISIBLE) {
                 onReturn();
             }
+            if (mLargeLayout.getVisibility() == View.VISIBLE) {
+                exitLargeLayout();
+            }
 
             if (mNoRecogCheckbox.isChecked()) {
                 FileBeanUils.setRecoding(true);
@@ -1460,7 +1485,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 saveCurTraNoteFile();
                 saveAsrTxt();
                 ToastUtils.show(this, getString(R.string.saved));
-                //mHandler.postDelayed(()->{ToastUtils.show(this, getString(R.string.saved));}, 500);
             }
         });
         TextView menuItem2 = view.findViewById(R.id.popup_delete);
@@ -1539,10 +1563,34 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 }
             }
         });
+        TextView menuItem8 = view.findViewById(R.id.popup_largelayout);
+        if (FileBeanUils.isRecoding()) {
+            menuItem8.setVisibility(View.GONE);
+        }
+        menuItem8.setOnClickListener(view1 -> {
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+                if (mLargeLayout.getVisibility() == View.GONE) {
+                    mInnerLayout.setVisibility(View.GONE);
+                    mNoteView.setVisibility(View.GONE);
+                    mLargeRecogTv.setText(mFileBean.getContent());
+                    mLargeLayout.setVisibility(View.VISIBLE);
+                    mHandler.postDelayed(() ->{freshFullScreenResultPage();}, 200);
+                } else {
+                    exitLargeLayout();
+                }
+            }
+        });
         if (mUndisturb_layout.getVisibility() == View.GONE) {
             menuItem7.setText(getString(R.string.undisturb));
         } else {
             menuItem7.setText(getString(R.string.exitundisturb));
+        }
+
+        if (mLargeLayout.getVisibility() == View.GONE) {
+            menuItem8.setText(getString(R.string.large_layout));
+        } else {
+            menuItem8.setText(getString(R.string.close_large_layout));
         }
 
         if (mNoteView.penType == mNoteView.TP_PEN) {
@@ -1558,6 +1606,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         popupWindow.setTouchable(true);
         popupWindow.setOutsideTouchable(true);
         return popupWindow;
+    }
+
+    private void exitLargeLayout() {
+        mNoteView.setVisibility(View.VISIBLE);
+        mInnerLayout.setVisibility(View.VISIBLE);
+        mLargeLayout.setVisibility(View.GONE);
     }
 
 
@@ -1757,6 +1811,29 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
     }
 
+    private void freshFullScreenResultPage() {
+        int index = mLargeRecogTv.getPageIdx();
+        int count = mLargeRecogTv.getPageCount();
+        LogUtils.printErrorLog(TAG, "index: " + index);
+        LogUtils.printErrorLog(TAG, "count: " + count);
+        if (index == 0 && count > 1) {
+            mPreLargeBtn.setBackgroundResource(R.drawable.arrow_left_gray);
+            mNextLargeBtn.setBackgroundResource(R.drawable.arrow_right_black);
+        } else if (index == 0 && count == 1) {
+            mPreLargeBtn.setBackgroundResource(R.drawable.arrow_left_gray);
+            mNextLargeBtn.setBackgroundResource(R.drawable.arrow_right_gray);
+        } else if ((index + 1) == count) {
+            mPreLargeBtn.setBackgroundResource(R.drawable.arrow_left_black);
+            mNextLargeBtn.setBackgroundResource(R.drawable.arrow_right_gray);
+        } else if (index > 0 && count > 1) {
+            mPreLargeBtn.setBackgroundResource(R.drawable.arrow_left_black);
+            mNextLargeBtn.setBackgroundResource(R.drawable.arrow_right_black);
+        } else {
+            mPreLargeBtn.setBackgroundResource(R.drawable.arrow_left_gray);
+            mNextLargeBtn.setBackgroundResource(R.drawable.arrow_right_gray);
+        }
+    }
+
     private void freshResultPage() {
         int index = mRecogResultTv.getPageIdx();
         int count = mRecogResultTv.getPageCount();
@@ -1780,25 +1857,39 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
     }
 
-    private void preResultPage() {
+    private void preResultPage(boolean isFullScreen) {
 
-        logger.info("preResultPage");
-        int curPage = mRecogResultTv.getPageIdx();
-        logger.info("getPageCount: " + mRecogResultTv.getPageCount());
-        if (curPage > 0) {
-            mRecogResultTv.pagerPrev();
+        if (isFullScreen) {
+            int curPage = mLargeRecogTv.getPageIdx();
+            if (curPage > 0) {
+                mLargeRecogTv.pagerPrev();
+            }
+            freshFullScreenResultPage();
+        } else {
+            int curPage = mRecogResultTv.getPageIdx();
+            if (curPage > 0) {
+                mRecogResultTv.pagerPrev();
+            }
+            freshResultPage();
         }
-        freshResultPage();
+
     }
 
-    private void nextResultPage() {
-        logger.info("nextResultPage");
-        int curPage = mRecogResultTv.getPageIdx();
-        logger.info("getPageCount: " + mRecogResultTv.getPageCount());
-        if (curPage < mRecogResultTv.getPageCount() - 1) {
-            mRecogResultTv.pagerNext();
+    private void nextResultPage(boolean isFullScreen) {
+        if (isFullScreen) {
+            int curPage = mLargeRecogTv.getPageIdx();
+            if (curPage < mLargeRecogTv.getPageCount() - 1) {
+                mLargeRecogTv.pagerNext();
+            }
+            freshFullScreenResultPage();
+        } else {
+            int curPage = mRecogResultTv.getPageIdx();
+            if (curPage < mRecogResultTv.getPageCount() - 1) {
+                mRecogResultTv.pagerNext();
+            }
+            freshResultPage();
         }
-        freshResultPage();
+
     }
 
 
@@ -2106,6 +2197,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     //String mTemp;
     private String saveAsrTxt() {
+        if (TextUtils.isEmpty(mRecogResultTv.getText().toString().trim()))
+            return "";
         File file, file1;
         String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
         file = new File(path);

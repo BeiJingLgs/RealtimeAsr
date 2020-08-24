@@ -197,4 +197,7 @@
     <dimen name="marginZ2">40dp</dimen>
     <dimen name="marginZ">20dp</dimen>
     <dimen name="button_large">350dp</dimen>
+    <dimen name="check_h">90dp</dimen>
+    <dimen name="Search_Bar_H">60.1dp</dimen>
+    <dimen name="Search_Button_H">43.6dp</dimen>
 </resources>

@@ -170,4 +170,6 @@
     <dimen name="marginZ2">40dp</dimen>
     <dimen name="marginZ">20dp</dimen>
     <dimen name="button_large">350dp</dimen>
+
+    <dimen name="check_h">140dp</dimen>
 </resources>

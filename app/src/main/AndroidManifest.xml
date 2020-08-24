@@ -18,11 +18,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
-
-    <!-- 获取手机录音机使用权限，识别、语义理解需要用到此权限 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" /> <!-- 获取手机录音机使用权限，识别、语义理解需要用到此权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 授权需要 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 保存文件需要用到此权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 保存文件需要用到此权限 -->
@@ -32,8 +28,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- demo 需要 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- demo 需要，语法文件添加手机通讯录内的联系人时需要 -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
-        android:name="com.asr.ai.speech.realtime.android.HvApplication"
+        android:name=".android.HvApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -41,6 +38,12 @@
         android:supportsRtl="true"
         android:theme="@style/ContentOverlay"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name="com.hanvon.speech.realtime.ui.LocalSearchActivity"></activity>
+        <activity
+            android:name="com.hanvon.speech.realtime.ui.RenameActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/myProgressDialog"
+            android:windowSoftInputMode="adjustPan"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -60,8 +63,9 @@
             android:launchMode="singleTask" />
         <activity
             android:name="com.hanvon.speech.realtime.ui.IatListActivity"
+            android:launchMode="singleTask"
             android:theme="@style/ContentOverlay"
-            android:launchMode="singleTask">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -84,14 +88,11 @@
         <activity
             android:name="com.hanvon.speech.realtime.ui.RegisterActivity"
             android:launchMode="singleTask" />
-
         <activity
             android:name="com.hanvon.speech.realtime.ui.HtmlActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="HtmlView"
-            android:screenOrientation="behind"></activity>
+            android:screenOrientation="behind" />
     </application>
-
-
 
 </manifest>

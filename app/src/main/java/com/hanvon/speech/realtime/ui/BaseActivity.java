@@ -2,21 +2,14 @@ package com.hanvon.speech.realtime.ui;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.asr.ai.speech.realtime.Const;
-import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.google.gson.Gson;
@@ -25,7 +18,6 @@ import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.services.RetrofitManager;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
-import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 
 import androidx.core.app.ActivityCompat;
@@ -34,7 +26,7 @@ import androidx.core.content.ContextCompat;
 public abstract class BaseActivity extends Activity implements View.OnClickListener {
     protected Button mHomeBtn;
     protected Button mBackBtn;
-    protected ImageButton mMenus, mCreateFile, mMineBtn, mUpdateBtn;
+    protected ImageButton mMenus, mCreateFile, mMineBtn, mSearchBtn;
     public String TAG;//1000000000000021
     public static String DEVICEID = "1000000000000021";
     public String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -104,11 +96,13 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
         mMenus = findViewById(R.id.btn_option_menus);
         mCreateFile = findViewById(R.id.btn_option_create);
         mMineBtn = findViewById(R.id.btn_option_mine);
+        mSearchBtn = findViewById(R.id.btn_option_search);
         mBackBtn.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
         mMenus.setOnClickListener(this);
         mCreateFile.setOnClickListener(this);
         mMineBtn.setOnClickListener(this);
+        mSearchBtn.setOnClickListener(this);
         init();
     }
 

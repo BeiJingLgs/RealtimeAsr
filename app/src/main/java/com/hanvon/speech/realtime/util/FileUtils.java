@@ -71,7 +71,7 @@ public class FileUtils {
         File dirFile = new File(dir);
         // 如果dir对应的文件不存在，或者不是一个目录，则退出
         if ((!dirFile.exists()) || (!dirFile.isDirectory())) {
-            logger.info("删除目录失败：" + dir + "不存在！");
+            //logger.info("删除目录失败：" + dir + "不存在！");
             return false;
         }
         boolean flag = true;
@@ -93,12 +93,12 @@ public class FileUtils {
             }
         }
         if (!flag) {
-            logger.info("删除目录失败！");
+            //logger.info("删除目录失败！");
             return false;
         }
         // 删除当前目录
         if (dirFile.delete()) {
-            logger.info("删除目录" + dir + "成功！");
+            //logger.info("删除目录" + dir + "成功！");
             return true;
         } else {
             return false;

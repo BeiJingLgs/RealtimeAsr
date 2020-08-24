@@ -48,7 +48,13 @@
         style="@style/menu_item"
         android:textSize="@dimen/textSizeL"
         android:text="@string/mail" />
-
+    <View
+        style="@style/view_line"/>
+    <TextView
+        android:id="@+id/popup_largelayout"
+        style="@style/menu_item"
+        android:textSize="@dimen/textSizeL"
+        android:text="@string/large_layout" />
     <View
         style="@style/view_line"/>
     <TextView

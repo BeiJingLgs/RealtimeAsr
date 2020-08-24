@@ -3,7 +3,6 @@ package com.hanvon.speech.realtime.ui;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -16,31 +15,22 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.asr.ai.speech.realtime.Const;
 import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.Constants;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
-import com.google.gson.Gson;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
-import com.hanvon.speech.realtime.alspeech.AlSpeechEngine;
 import com.hanvon.speech.realtime.bean.FileBean;
-import com.hanvon.speech.realtime.bean.Result.Constant;
-import com.hanvon.speech.realtime.bean.Result.LoginResult;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
 import com.hanvon.speech.realtime.model.TranslateBean;
-import com.hanvon.speech.realtime.services.RetrofitManager;
-import com.hanvon.speech.realtime.util.FileUtils;
 import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
-import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
 import com.hanvon.speech.realtime.util.UpdateUtil;
 import com.hanvon.speech.realtime.util.WifiUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,9 +38,9 @@ import java.util.logging.Logger;
 
 
 public class IatListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn;
-    public static final int READ_DIALOG_REQUEST = 11;
-    private ArrayList<FileBean> mTotalFileList, mTempBookList;
+    private Button  mPreBtn, mNextBtn, mSelectAllBtn, mDeleteBtn, mReNameBtn;
+    public static final int TOIAT_RECORD = 11, TORENAME_DIALOGACTIVITY = 12;
+    private ArrayList<FileBean> mTotalFileList, mTempFileList;
     private FileAdapter mFileAdapter;
     private ListView mFileList;
     private static String TAG;
@@ -58,6 +48,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     private int nPageIsx = 0; // 当前显示的页idx
     protected static int PAGE_CATEGORY = 8;// 每页显示几个
     private TextView mPagetTv;
+    private FileBean mFileTitle;
     private static Logger logger = Logger.getLogger("IatListActivity");
     private boolean IS_FIRST = false;
     @Override
@@ -83,8 +74,11 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         mPagetTv = (TextView) findViewById(R.id.tvprogress);
         mSelectAllBtn = findViewById(R.id.select_all);
         mDeleteBtn = findViewById(R.id.delete_btn);
+        mReNameBtn = findViewById(R.id.rename_btn);
+        mSearchBtn.setVisibility(View.GONE);
         View emptyView = findViewById(R.id.emptyList);
         mFileList.setEmptyView(emptyView);
+        mReNameBtn.setOnClickListener(this);
         mNextBtn.setOnClickListener(this);
         mPreBtn.setOnClickListener(this);
         mFileList.setOnItemClickListener(this);
@@ -105,12 +99,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         Constants.WIDTH = display.getWidth();
         Constants.HEIGHT = display.getHeight();
 
-        /*HvApplication.Recognition_Engine = SharedPreferencesUtils.getRecogEngineSharePrefer(this);
-        if (HvApplication.Recognition_Engine == 2) {
-            if (HvApplication.HaveAuth == false) {
-                AlSpeechEngine.getInstance();
-            }
-        }*/
+
         freshPage();
     }
 
@@ -152,8 +141,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         mTotalFileList.addAll(DatabaseUtils.getInstance(this).findAll());
         nPageCount = getTotalqlPageCount(mTotalFileList.size());
         initPage();
-       // File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio");
-       // hvFileCommonUtils.notifySystemToScan(this, file);
         freshFileList(nPageIsx);
     }
 
@@ -165,30 +152,29 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     private void freshFileList(int currentPage) {
-        if (mTempBookList == null) {
-            mTempBookList = new ArrayList<FileBean>();
+        if (mTempFileList == null) {
+            mTempFileList = new ArrayList<FileBean>();
         } else {
-            mTempBookList.clear();
+            mTempFileList.clear();
         }
 
         for (int i = currentPage * PAGE_CATEGORY; i < mTotalFileList.size()
                 && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
-            mTempBookList.add(mTotalFileList.get(i));
+            mTempFileList.add(mTotalFileList.get(i));
         }
 
-        if (mTempBookList.size() == 0) {
+        if (mTempFileList.size() == 0) {
             if ((currentPage - 1) >= 0) {
                 currentPage--;
                 for (int i = currentPage * PAGE_CATEGORY; i < mTotalFileList.size()
                         && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
-                    mTempBookList.add(mTotalFileList.get(i));
-
+                    mTempFileList.add(mTotalFileList.get(i));
                 }
             }
         }
 
         if (mFileAdapter == null) {
-            mFileAdapter = new FileAdapter(mTempBookList, this);
+            mFileAdapter = new FileAdapter(mTempFileList, this);
             mFileList.setAdapter(mFileAdapter);
         } else {
             //Log.e("tag", "getCreatemillis: " + mTotalFileList.get(0).getCreatemillis());
@@ -232,6 +218,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
 
     @Override
     public void onClick(View v) {
+        Intent intent = null;
         switch (v.getId()) {
             case R.id.btn_Return:
                 onBackPressed();
@@ -273,8 +260,11 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                         if (fileBean.getCreatemillis() == s) {
                             //FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
                             //        TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s + ".pcm");
-                            FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
-                                            TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
+                            deleteFileTxt(fileBean.title);
+                            hvFileCommonUtils.recursiveDeleteAll(this, ConstBroadStr.GetAudioRootPath(this,
+                                    TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
+                            //FileUtils.deleteDirectory(ConstBroadStr.GetAudioRootPath(this,
+                            //               TextUtils.equals(fileBean.mSd,"sd") ? true : false) + s);
                             break;
                         }
                     }
@@ -298,7 +288,25 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 newFile();
                 break;
             case R.id.btn_option_mine:
-                Intent intent=new Intent(this,MeActivity.class);
+                intent = new Intent(this, MeActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.rename_btn:
+                if (mFileAdapter.getmSelectStates().size() == 0) {
+                    ToastUtils.showLong(this, "请选择重命名文件");
+                    return;
+                }
+                if (mFileAdapter.getmSelectStates().size() > 1) {
+                    ToastUtils.showLong(this, "重命名只支持一个文件，请重新选择");
+                    return;
+                }
+                intent = new Intent(this, RenameActivity.class);
+                TranslateBean.getInstance().setFileBean(mFileTitle);
+                startActivityForResult(intent, TORENAME_DIALOGACTIVITY);
+                break;
+            case R.id.btn_option_search:
+                intent = new Intent(this, LocalSearchActivity.class);
+                TranslateBean.getInstance().setmFileBeanList(mTotalFileList);
                 startActivity(intent);
                 break;
             default:
@@ -318,7 +326,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         FileBean fileBean = new FileBean(title, content, "", create, modify, String.valueOf(System.currentTimeMillis()), "", 0, 0, HvApplication.Recognition_Engine);
         databaseUtils.insert(fileBean);
         TranslateBean.getInstance().setFileBean(fileBean);
-        startActivityForResult(intent, READ_DIALOG_REQUEST);
+        startActivityForResult(intent, TOIAT_RECORD);
     }
 
 
@@ -354,22 +362,43 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        logger.info("onActivityResult: ");
-        freshPage();
+        LogUtils.printErrorLog(TAG, "onActivityResult  requestCode: " + requestCode);
+        if (requestCode == TOIAT_RECORD) {
+            freshPage();
+        } else if (requestCode == TORENAME_DIALOGACTIVITY) {
+            setCheckGone();
+            freshPage();
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mFileAdapter.ismShowCheck()) {
-            mFileAdapter.addCheck(String.valueOf(mTempBookList.get(position).createmillis));
+            mFileAdapter.addCheck(String.valueOf(mTempFileList.get(position).createmillis));
             mFileAdapter.notifyDataSetChanged();
+
+            if (mFileAdapter.getmSelectStates().size() == 1) {
+                //mReNameBtn.setEnabled(true);
+                Set<String> nameset= mFileAdapter.getmSelectStates().keySet();
+                for (FileBean bean : mTotalFileList) {
+                    if (nameset.contains(String.valueOf(bean.createmillis))) {
+                        mFileTitle = bean;
+                        break;
+                    }
+                }
+                //mReNameBtn.setTextColor(R.color.black);
+                LogUtils.printErrorLog(TAG, "mReNameBtn.setEnabled(true)");
+            } else {
+                LogUtils.printErrorLog(TAG, "mReNameBtn.setEnabled(false)");
+                //mReNameBtn.setEnabled(false);
+                //mReNameBtn.setTextColor(R.color.gray);
+            }
         } else {
             Intent intent = new Intent(this, IatActivity.class);
             intent.putExtra("isNew", false);
-            TranslateBean.getInstance().setFileBean(mTotalFileList.get(position));
-            startActivityForResult(intent, READ_DIALOG_REQUEST);
+            TranslateBean.getInstance().setFileBean(mTempFileList.get(position));
+            startActivityForResult(intent, TOIAT_RECORD);
         }
-
     }
 
     @Override
@@ -378,6 +407,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         mFileAdapter.notifyDataSetChanged();
         mSelectAllBtn.setVisibility(View.VISIBLE);
         mDeleteBtn.setVisibility(View.VISIBLE);
+        mReNameBtn.setVisibility(View.VISIBLE);
         return false;
     }
 
@@ -395,5 +425,13 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         mFileAdapter.setmCheckGone();
         mSelectAllBtn.setVisibility(View.GONE);
         mDeleteBtn.setVisibility(View.GONE);
+        mReNameBtn.setVisibility(View.GONE);
+    }
+
+    private void deleteFileTxt(String title) {
+        String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
+        String srcTmpFilePath = path + title.replace(" ", "_").replace(":", "_") + ".txt";
+       // LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
+        hvFileCommonUtils.recursiveDeleteAll(this, srcTmpFilePath);
     }
 }

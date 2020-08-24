@@ -48,14 +48,14 @@
         android:background="@drawable/ic_setting_normal" />
 
     <ImageButton
-        android:id="@+id/btn_option_update"
+        android:id="@+id/btn_option_search"
         android:layout_width="@dimen/Button_H"
         android:layout_height="@dimen/Button_H"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/Margin_L"
         android:visibility="gone"
-        android:background="@drawable/ic_setting_normal" />
+        android:background="@drawable/search" />
 
     <ImageButton
         android:id="@+id/btn_option_menus"

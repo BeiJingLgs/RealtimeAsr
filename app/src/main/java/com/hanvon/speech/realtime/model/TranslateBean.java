@@ -29,6 +29,17 @@ public class TranslateBean {
     private List<UsageBeen> usageList;
     private List<ShopType> shopTypes;
 
+
+    public void setmFileBeanList(List<FileBean> mFileBeanList) {
+        this.mFileBeanList = mFileBeanList;
+    }
+
+    public List<FileBean> getmFileBeanList() {
+        return mFileBeanList;
+    }
+
+    private List<FileBean> mFileBeanList;
+
     public List<DeviceBean> getDeviceList() {
         return deviceList;
     }
