@@ -2,65 +2,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/button_w_edge"
+    android:orientation="vertical"
     android:padding="@dimen/padding_s">
 
     <TextView
         android:id="@+id/popup_savePic"
         style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/save" />
-    <View
-       style="@style/view_line"/>
-    <TextView
-        android:id="@+id/popup_delete"
-        style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/delete2" />
-    <View
-        style="@style/view_line"/>
+        android:text="@string/save"
+        android:textSize="@dimen/textSizeL" />
+
+    <View style="@style/view_line" />
+
     <TextView
         android:id="@+id/popup_rubber"
         style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/errase" />
+        android:text="@string/errase"
+        android:textSize="@dimen/textSizeL" />
+
+    <View style="@style/view_line" />
+
+    <TextView
+        android:id="@+id/popup_delete"
+        style="@style/menu_item"
+        android:text="@string/delete2"
+        android:textSize="@dimen/textSizeL" />
 
 
-    <View
-        style="@style/view_line"/>
+    <View style="@style/view_line" />
+
     <TextView
         android:id="@+id/popup_recog"
         style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/recog" />
-    <View
-        style="@style/view_line"/>
+        android:text="@string/recog"
+        android:textSize="@dimen/textSizeL" />
+
+    <View style="@style/view_line" />
+
     <TextView
         android:id="@+id/popup_share"
         style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/share" />
-    <View
-        style="@style/view_line"/>
+        android:text="@string/share"
+        android:textSize="@dimen/textSizeL" />
+
+    <View style="@style/view_line" />
+
     <TextView
         android:id="@+id/popup_mail"
         style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/mail" />
-    <View
-        style="@style/view_line"/>
-    <TextView
-        android:id="@+id/popup_largelayout"
-        style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/large_layout" />
-    <View
-        style="@style/view_line"/>
-    <TextView
-        android:id="@+id/popup_undisturp"
-        style="@style/menu_item"
-        android:textSize="@dimen/textSizeL"
-        android:text="@string/undisturb" />
+        android:text="@string/mail"
+        android:textSize="@dimen/textSizeL" />
 
 </LinearLayout>

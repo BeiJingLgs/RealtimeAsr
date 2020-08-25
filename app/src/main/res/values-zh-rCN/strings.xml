@@ -34,7 +34,7 @@
     <string name="delete">删除</string>
     <string name="allselect">全选/全不选</string>
     <string name="save">保&#160;&#160;存</string>
-    <string name="delete2">删&#160;&#160;除</string>
+    <string name="delete2">笔迹删除</string>
     <string name="errase">橡&#160;&#160;皮</string>
     <string name="newbuild">新&#160;&#160;建</string>
     <string name="mine">我&#160;&#160;的</string>
@@ -61,7 +61,7 @@
     <string name="hasLogined">已经登录</string>
     <string name="unLogined">未登录</string>
     <string name="saveSd">录音存放Sd卡</string>
-    <string name="content">内容</string>
+    <string name="content">暂无转写内容</string>
     <string name="setPassword">重置密码</string>
     <string name="tips1">正在转写音频，结束后才能编辑</string>
     <string name="tips2">正在录制音频，播放失败</string>
@@ -102,7 +102,7 @@
     <string name="loginByPass">获取服务器信息失败，请退出重试</string>
     <string name="logined">您已登录</string>
     <string name="validTime">有效期：&#160;&#160;</string>
-    <string name="share">分&#160;&#160;享</string>
+    <string name="share">扫码分享</string>
     <string name="pen">笔</string>
     <string name="recog_error">服务器出错了，请检查网络连接</string>
     <string name="sc_qrCode_tips">请扫描二维码查看链接</string>
@@ -121,7 +121,7 @@
     <string name="processing">正在识别处理，请稍候……</string>
     <string name="recog_picpath">/我的文档/在线识别/录音记事在线识别/</string>
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
-    <string name="recog">识&#160;&#160;别</string>
+    <string name="recog">手写识别</string>
     <string name="saveTo">保存到:</string>
     <string name="save_to_local">保存到本地</string>
     <string name="recog_txt">录音记事识别文本.txt</string>

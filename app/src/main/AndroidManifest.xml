@@ -39,11 +39,6 @@
         android:theme="@style/ContentOverlay"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="com.hanvon.speech.realtime.ui.LocalSearchActivity"></activity>
-        <activity
-            android:name="com.hanvon.speech.realtime.ui.RenameActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/myProgressDialog"
-            android:windowSoftInputMode="adjustPan"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

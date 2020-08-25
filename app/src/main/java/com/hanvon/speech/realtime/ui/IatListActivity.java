@@ -310,9 +310,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                     return;
                 }
                 showRenameDialog(mFileTitle);
-                // intent = new Intent(this, RenameActivity.class);
-                //TranslateBean.getInstance().setFileBean(mFileTitle);
-                // startActivityForResult(intent, TORENAME_DIALOGACTIVITY);
                 break;
             case R.id.btn_option_search:
                 intent = new Intent(this, LocalSearchActivity.class);
@@ -396,12 +393,9 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                         break;
                     }
                 }
-                //mReNameBtn.setTextColor(R.color.black);
                 LogUtils.printErrorLog(TAG, "mReNameBtn.setEnabled(true)");
             } else {
                 LogUtils.printErrorLog(TAG, "mReNameBtn.setEnabled(false)");
-                //mReNameBtn.setEnabled(false);
-                //mReNameBtn.setTextColor(R.color.gray);
             }
         } else {
             Intent intent = new Intent(this, IatActivity.class);

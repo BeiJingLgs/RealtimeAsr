@@ -103,7 +103,8 @@ public class FileAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.title.setText(cateList.get(position).getTitle());
-        viewHolder.content.setText(cateList.get(position).getContent());
+        viewHolder.content.setText(
+                TextUtils.isEmpty(cateList.get(position).getContent())? "【暂无转写内容】" : cateList.get(position).getContent());
 
         viewHolder.time.setText(cateList.get(position).getCreatetime() +
         " " + context.getResources().getString(R.string.file_create) +

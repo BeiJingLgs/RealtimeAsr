@@ -152,7 +152,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private SpeechSequenceAdapter mSpeechSequenceAdapter;
     private Button mTextBegin, mEditBtn, mAudioPlayBtn, mEditPrePageBtn,
             mEditNextPageBtn, mResultPreBtn, mResultNextBtn, mNoteNextBtn, mNotePreBtn, mSuspendRecord, mPreLargeBtn, mNextLargeBtn;
-    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv, mCloseLargeTv;
+    private TextView mTimeTv, mNotePageInfo, mRecognizeStatusTv, mExitUndisturbTv, mCloseLargeTv, mUnDisturpTv, mFullScreesnTv;
     private HVTextView mRecogResultTv, mLargeRecogTv;
     private SeekBar mSeekBar;
     public CheckBox mCheckbox, mNoRecogCheckbox, mReadCheckbox;
@@ -160,7 +160,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     private FileBean mFileBean;
     private ListView mEditListView;
-    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout, mViewTips, mLargeLayout, mInnerLayout;
+    private View mEditLayout, mResultLayout, mWriteLayout, mBottomLayout, mRecordLayout, mIatLayout, mVolumLayout, mUndisturb_layout, mViewTips, mLargeLayout, mInnerLayout, mOperationLayout;
     private boolean isNEW, isTips = false;
 
     private int nPageCount = 0; // 当前分类的页总数
@@ -228,6 +228,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mSuspendRecord = findViewById(R.id.suspendRecord);
         mIatLayout = findViewById(R.id.iat_layout);
         mRecognizeStatusTv = findViewById(R.id.recording);
+        mOperationLayout = findViewById(R.id.operation_layout);
+        mUnDisturpTv = findViewById(R.id.undisturbbtn);
+        mFullScreesnTv = findViewById(R.id.fullScreenbtn);
         mEditBtn.setVisibility(View.VISIBLE);
         mEditListView = (ListView) findViewById(R.id.sentence_list);
         mAudioPlayBtn = (Button) findViewById(R.id.iat_play);
@@ -271,7 +274,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mResultNextBtn.setOnClickListener(this);
         mSuspendRecord.setOnClickListener(this);
         mExitUndisturbTv.setOnClickListener(this);
-        //mUnDisturbCheckox.setOnCheckedChangeListener(this);
+        mFullScreesnTv.setOnClickListener(this);
+        mUnDisturpTv.setOnClickListener(this);
         mWriteLayout = findViewById(R.id.write_layout);
         mBottomLayout = findViewById(R.id.bottom_layout);
         mNoteView = view.findViewById(R.id.MyNoteView);
@@ -404,6 +408,10 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         }
 
         mRecogResultTv.setText(mFileBean.getContent());
+        if (TextUtils.isEmpty(mFileBean.getContent())) {
+            mFullScreesnTv.setVisibility(View.INVISIBLE);
+        }
+
         mRecogResultTv.getPageCount();
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -612,6 +620,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     setRecordStatus();
                     startRecord();
                     mViewTips.setVisibility(View.GONE);
+                    mFullScreesnTv.setVisibility(View.GONE);
+                    mUnDisturpTv.setVisibility(View.VISIBLE);
                     mReadCheckbox.setChecked(false);
                     AlSpeechEngine.getInstance().startSpeechRecog();
                     LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
@@ -767,6 +777,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mWriteLayout.setVisibility(View.VISIBLE);
             mBottomLayout.setVisibility(View.VISIBLE);
             mNoteView.setVisibility(View.VISIBLE);
+            mOperationLayout.setVisibility(View.VISIBLE);
             updateNoteCurPage();
             nPageIsx = 0;
             if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
@@ -1025,13 +1036,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
                     mUsagePlayTime = System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime;
                 } else {
-                    if (mRecordFilePath == null) {
+                    if (mRecordFilePath == null || !hvFileCommonUtils.isFileExist(mRecordFilePath)) {
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
 
                     hv_ebk.ASRVolumeEnable(1);
-                    //AlSpeechEngine.getInstance().cancelSpeechRecog();
                     CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
@@ -1058,6 +1068,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 break;
             case R.id.suspendRecord:
                 stopRecognize();
+                if (mUndisturb_layout.getVisibility() != View.VISIBLE) {
+                    mOperationLayout.setVisibility(View.VISIBLE);
+                    mFullScreesnTv.setVisibility(View.VISIBLE);
+                    mUnDisturpTv.setVisibility(View.GONE);
+                }
                 mIatLayout.setVisibility(View.VISIBLE);
                 mRecordLayout.setVisibility(View.GONE);
                 break;
@@ -1121,6 +1136,37 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             case R.id.close_largeTv:
                 exitLargeLayout();
                 break;
+            case R.id.undisturbbtn:
+                if (mEditLayout.getVisibility() == View.VISIBLE) {
+                    ToastUtils.showLong(IatActivity.this, "编辑状态无法进入免打扰模式");
+                    return;
+                }
+                if (mUndisturb_layout.getVisibility() == View.GONE) {
+                    mUndisturb_layout.setVisibility(View.VISIBLE);
+                    mResultLayout.setVisibility(View.GONE);
+                    mOperationLayout.setVisibility(View.INVISIBLE);
+                } else {
+                    exitUnDisturp();
+                }
+
+                break;
+            case R.id.fullScreenbtn:
+                if (mLargeLayout.getVisibility() == View.GONE) {
+                    if (TextUtils.isEmpty(mRecogResultTv.getText().toString())) {
+                        ToastUtils.showLong(this, "当前内容为空");
+                        return;
+                    }
+                    mMenus.setVisibility(View.GONE);
+                    mInnerLayout.setVisibility(View.GONE);
+                    mNoteView.setVisibility(View.GONE);
+                    mLargeRecogTv.setText(mRecogResultTv.getText());
+                    mLargeLayout.setVisibility(View.VISIBLE);
+                    mOperationLayout.setVisibility(View.GONE);
+                    mHandler.postDelayed(() ->{freshFullScreenResultPage();}, 200);
+                } else {
+                    exitLargeLayout();
+                }
+                break;
             default:
                 break;
         }
@@ -1129,6 +1175,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private void exitUnDisturp() {
         mUndisturb_layout.setVisibility(View.GONE);
         mResultLayout.setVisibility(View.VISIBLE);
+        mOperationLayout.setVisibility(View.VISIBLE);
+        if (mRecordLayout.getVisibility() != View.VISIBLE) {
+            mFullScreesnTv.setVisibility(View.VISIBLE);
+            mUnDisturpTv.setVisibility(View.GONE);
+        } else {
+            mFullScreesnTv.setVisibility(View.GONE);
+            mUnDisturpTv.setVisibility(View.VISIBLE);
+        }
+        mOperationLayout.setVisibility(View.VISIBLE);
         if (FileBeanUils.isRecoding())
             enterHandwrite(true);
         freshRecogContent();
@@ -1250,7 +1305,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
     private boolean mGotoUndisturb;
     private void freEditSentenceshPage() {
-        saveNoteCurTracePage();
+        if (mNoteView.getVisibility() == View.VISIBLE)
+            saveNoteCurTracePage();
         if (IatResults.getAsrEditResults().size() == 0 && HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             ToastUtils.show(this, getString(R.string.noEditText));
             return;
@@ -1266,7 +1322,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mWriteLayout.setVisibility(View.GONE);
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
-
+        mOperationLayout.setVisibility(View.GONE);
         if (mUndisturb_layout.getVisibility() == View.VISIBLE)  {
             mGotoUndisturb = true;
             mUndisturb_layout.setVisibility(View.GONE);
@@ -1548,53 +1604,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
             }
         });
-        TextView menuItem7 = view.findViewById(R.id.popup_undisturp);
-        menuItem7.setOnClickListener(view1 -> {
-            if (popupWindow != null) {
-                popupWindow.dismiss();
-                index = 7;
-                if (mEditLayout.getVisibility() == View.VISIBLE) {
-                    ToastUtils.showLong(IatActivity.this, "编辑状态无法进入免打扰模式");
-                    return;
-                }
-
-                if (mUndisturb_layout.getVisibility() == View.GONE) {
-                    mUndisturb_layout.setVisibility(View.VISIBLE);
-                    mResultLayout.setVisibility(View.GONE);
-                } else {
-                    exitUnDisturp();
-                }
-            }
-        });
-        TextView menuItem8 = view.findViewById(R.id.popup_largelayout);
-        if (FileBeanUils.isRecoding()) {
-            menuItem8.setVisibility(View.GONE);
-        }
-        menuItem8.setOnClickListener(view1 -> {
-            if (popupWindow != null) {
-                popupWindow.dismiss();
-                if (mLargeLayout.getVisibility() == View.GONE) {
-                    mInnerLayout.setVisibility(View.GONE);
-                    mNoteView.setVisibility(View.GONE);
-                    mLargeRecogTv.setText(mRecogResultTv.getText());
-                    mLargeLayout.setVisibility(View.VISIBLE);
-                    mHandler.postDelayed(() ->{freshFullScreenResultPage();}, 200);
-                } else {
-                    exitLargeLayout();
-                }
-            }
-        });
-        if (mUndisturb_layout.getVisibility() == View.GONE) {
-            menuItem7.setText(getString(R.string.undisturb));
-        } else {
-            menuItem7.setText(getString(R.string.exitundisturb));
-        }
-
-        if (mLargeLayout.getVisibility() == View.GONE) {
-            menuItem8.setText(getString(R.string.large_layout));
-        } else {
-            menuItem8.setText(getString(R.string.close_large_layout));
-        }
 
         if (mNoteView.penType == mNoteView.TP_PEN) {
             menuItem3.setText(getString(R.string.erase));
@@ -1615,6 +1624,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteView.setVisibility(View.VISIBLE);
         mInnerLayout.setVisibility(View.VISIBLE);
         mLargeLayout.setVisibility(View.GONE);
+        mOperationLayout.setVisibility(View.VISIBLE);
+        mMenus.setVisibility(View.VISIBLE);
     }
 
 
