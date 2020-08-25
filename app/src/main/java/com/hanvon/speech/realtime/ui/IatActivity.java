@@ -615,13 +615,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
-
                 if (HvApplication.HaveAuth) {
+                    LogUtils.printErrorLog(TAG, "HvApplication.HaveAuth");
                     setRecordStatus();
                     startRecord();
+                    LogUtils.printErrorLog(TAG, "mFullScreesnTv.setVisibility(View.GONE)");
                     mViewTips.setVisibility(View.GONE);
-                    mFullScreesnTv.setVisibility(View.GONE);
-                    mUnDisturpTv.setVisibility(View.VISIBLE);
+                    LogUtils.printErrorLog(TAG, "mUnDisturpTv.setVisibility(View.VISIBLE)");
+                    LogUtils.printErrorLog(TAG, "mFullScreesnTv.getVisibility: " + mFullScreesnTv.getVisibility());
+                    LogUtils.printErrorLog(TAG, "mUnDisturpTv.getVisibility: " + mUnDisturpTv.getVisibility());
                     mReadCheckbox.setChecked(false);
                     AlSpeechEngine.getInstance().startSpeechRecog();
                     LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
@@ -1457,9 +1459,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     LogUtils.printErrorLog("A", "onResponse: " + "TextUtils.equals(c.getCode(), Constant.SUCCESSCODE): " + TextUtils.equals(c.getCode(), Constant.SUCCESSCODE));
 
                     LogUtils.printErrorLog("A", "onResponse: " + "c.getShopType().size(): " + c.getPackBean().size());
+
                     if (TextUtils.equals(c.getCode(), Constant.SUCCESSCODE)) {
                         if (c.getPackBean() != null) {
                             PackBean packBean = c.getPackBean().get(0);
+                            LogUtils.printErrorLog("A", "onResponse: " + "packBean.VoiceEngineTypeID: " + packBean.VoiceEngineTypeID);
                             HvApplication.Recognition_Engine = packBean.VoiceEngineTypeID;
                             startASR();
                         } else {
@@ -1503,6 +1507,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mRecordLayout.setVisibility(View.VISIBLE);
         mRecognizeStatusTv.setText(R.string.recognizing);
         mRecordStatusImg.setBackgroundResource(R.drawable.ps_pause);
+
+        mFullScreesnTv.setVisibility(View.GONE);
+        mUnDisturpTv.setVisibility(View.VISIBLE);
     }
 
     private void createFile(String name) {
