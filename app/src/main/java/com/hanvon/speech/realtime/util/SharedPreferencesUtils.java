@@ -108,6 +108,18 @@ public class SharedPreferencesUtils {
         editor.remove(key);
         editor.commit();
     }
+
+	/**
+	 * 清除指定数据
+	 * @param context
+	 */
+	public static void clearAll(Context context, String key) {
+		SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.remove(key);
+		editor.commit();
+	}
     
     public static void saveHistory(Context context, String key, String searchStr) { 
     	String history = getStringSharedprefer(context, key);

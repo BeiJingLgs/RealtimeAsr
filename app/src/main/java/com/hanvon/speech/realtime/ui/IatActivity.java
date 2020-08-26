@@ -567,10 +567,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         MediaPlayerManager.getInstance().stop();
         mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
         mUsagePlayTime = startTime;
+        seekToProgress(startTime);
+        playRecord();
+    }
+
+    private void seekToProgress(long startTime) {
         float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
         int du = (int) (mFileBean.getDuration() * index);
         mSeekBar.setProgress(du);
-        playRecord();
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -590,6 +594,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + "System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime: " + (System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime) );
                     LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + mUsagePlayTime +  " + mUsagePlayTime");
                 } else if (mUsagePlayTime > 0) {
+                    LogUtils.printErrorLog(TAG, "pauseRecognize  mFileBean.getTime()： "  + mUsagePlayTime +  " + mUsagePlayTime");
                     SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME, mUsagePlayTime);
                 }
                 stopPlayRecord();
@@ -613,20 +618,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mUsagePlayTime = SharedPreferencesUtils.getUsageTimeSharedprefer(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
                 LogUtils.printErrorLog(TAG, "mUsagePlayTime: " + mUsagePlayTime);
                 SharedPreferencesUtils.clear(HvApplication.mContext, SharedPreferencesUtils.PLAYTIME);
+                seekToProgress(mUsagePlayTime);
                 mTimeTv.setText(TimeUtil.calculateTime((int) (mUsagePlayTime / 1000)) + "/" + TimeUtil.calculateTime((int) (mFileBean.getTime() / 1000)));
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.SPEENCH_AUTH)) {
                 if (HvApplication.HaveAuth) {
-                    LogUtils.printErrorLog(TAG, "HvApplication.HaveAuth");
                     setRecordStatus();
                     startRecord();
-                    LogUtils.printErrorLog(TAG, "mFullScreesnTv.setVisibility(View.GONE)");
                     mViewTips.setVisibility(View.GONE);
-                    LogUtils.printErrorLog(TAG, "mUnDisturpTv.setVisibility(View.VISIBLE)");
-                    LogUtils.printErrorLog(TAG, "mFullScreesnTv.getVisibility: " + mFullScreesnTv.getVisibility());
-                    LogUtils.printErrorLog(TAG, "mUnDisturpTv.getVisibility: " + mUnDisturpTv.getVisibility());
                     mReadCheckbox.setChecked(false);
                     AlSpeechEngine.getInstance().startSpeechRecog();
-                    LogUtils.printErrorLog(TAG, "AlSpeechEngine.getInstance().startSpeechRecog()");
                 } else {
                     if (mDuration != 0) {
                         mViewTips.setVisibility(View.VISIBLE);
@@ -775,7 +775,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             } else {
                 mResultLayout.setVisibility(View.VISIBLE);
             }
-
+            mMenus.setVisibility(View.VISIBLE);
             mWriteLayout.setVisibility(View.VISIBLE);
             mBottomLayout.setVisibility(View.VISIBLE);
             mNoteView.setVisibility(View.VISIBLE);
@@ -1319,6 +1319,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (mLargeLayout.getVisibility() == View.VISIBLE) {
             exitLargeLayout();
         }
+        mMenus.setVisibility(View.GONE);
         mEditLayout.setVisibility(View.VISIBLE);
         mResultLayout.setVisibility(View.GONE);
         mWriteLayout.setVisibility(View.GONE);
@@ -1329,7 +1330,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mGotoUndisturb = true;
             mUndisturb_layout.setVisibility(View.GONE);
         }
-
 
         if (HvApplication.Recognition_Engine == Constants.BAIDU_ENGINE) {
             mTotalResultList.clear();
@@ -1344,7 +1344,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             initPage();
             freshSentenceList(nPageIsx);
         }
-
     }
 
     public long getCurrrentRecordTime() {

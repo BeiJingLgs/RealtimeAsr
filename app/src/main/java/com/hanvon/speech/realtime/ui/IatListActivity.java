@@ -76,7 +76,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     public void initView(Bundle savedInstanceState, View view) {
         mMenus.setVisibility(View.GONE);
         mCreateFile.setVisibility(View.VISIBLE);
-        mMineBtn.setVisibility(View.GONE);
         mFileList = (ListView) findViewById(R.id.file_list);
         mPreBtn = (Button) findViewById(R.id.ivpre_page);
         mNextBtn = (Button) findViewById(R.id.ivnext_page);
@@ -313,7 +312,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 break;
             case R.id.btn_option_search:
                 intent = new Intent(this, LocalSearchActivity.class);
-                TranslateBean.getInstance().setmFileBeanList(mTotalFileList);
+                //TranslateBean.getInstance().setmFileBeanList(mTotalFileList);
                 startActivity(intent);
                 break;
             default:
@@ -435,7 +434,6 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
     private void deleteFileTxt(String title) {
         String path = ConstBroadStr.ROOT_PATH + getResources().getString(R.string.recog_recordtxt);
         String srcTmpFilePath = path + title.replace(" ", "_").replace(":", "_") + ".txt";
-        // LogUtils.printErrorLog(TAG, "srcTmpFilePath: " + srcTmpFilePath);
         hvFileCommonUtils.recursiveDeleteAll(this, srcTmpFilePath);
     }
 

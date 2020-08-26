@@ -66,6 +66,17 @@ public class CommonUtils {
 		}, 1000);
 	}
 
+	public static void hideIME() {
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInput(1, InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}, 1000);
+	}
+
 
 
 	/**
