@@ -56,7 +56,7 @@ public class SequenceAdapter extends BaseAdapter {
             viewHolder = new SequenceAdapter.ViewHolder();
             convertView = LayoutInflater.from(this.context).inflate(R.layout.edit_item, parent, false);
             viewHolder.timeTv = (TextView)convertView.findViewById(R.id.sentence_time);
-            viewHolder.sentenceEd = (TextView) convertView.findViewById(R.id.sentence_edit);
+            viewHolder.sentenceEd = (EditText) convertView.findViewById(R.id.sentence_edit);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (SequenceAdapter.ViewHolder) convertView.getTag();
@@ -71,7 +71,7 @@ public class SequenceAdapter extends BaseAdapter {
          * 获取到焦点的监听
          */
         //viewHolder.sentenceEd.setOnFocusChangeListener(this);
-        /*viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
+        viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,7 +86,7 @@ public class SequenceAdapter extends BaseAdapter {
             public void afterTextChanged(Editable s) {
 
             }
-        });*/
+        });
         return convertView;
     }
 
@@ -98,7 +98,7 @@ public class SequenceAdapter extends BaseAdapter {
 
     static class ViewHolder {
         public TextView timeTv;
-        public TextView sentenceEd;
+        public EditText sentenceEd;
     }
 
 }

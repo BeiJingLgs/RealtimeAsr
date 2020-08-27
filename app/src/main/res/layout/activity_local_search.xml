@@ -135,7 +135,7 @@
             android:textSize="@dimen/Second_Title_Font_Size" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/search_result_layout"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
@@ -158,7 +158,14 @@
             android:listSelector="@android:color/transparent"
             android:paddingLeft="@dimen/dialog_margin4"
             android:paddingRight="@dimen/dialog_margin4" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/search_file_list"
+            android:paddingLeft="@dimen/dialog_margin4"
+            android:paddingRight="@dimen/dialog_margin4"
+            android:id="@+id/line_bottom"
+            android:background="@android:color/black" />
         <include
             android:id="@+id/flip_pager"
             layout="@layout/flip_pager"
@@ -166,6 +173,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

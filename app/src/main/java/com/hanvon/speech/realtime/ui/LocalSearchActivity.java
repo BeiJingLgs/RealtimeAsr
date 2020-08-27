@@ -53,6 +53,7 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
 
     void initView(Bundle savedInstanceState, View view) {
         mMineBtn.setVisibility(View.GONE);
+        mMenus.setVisibility(View.GONE);
         mSearchHistoryView = findViewById(R.id.search_info);
         mSearchResultView = findViewById(R.id.search_result_layout);
         mSearchEd = findViewById(R.id.search_edit);
@@ -63,6 +64,10 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
         mSearchListView = findViewById(R.id.search_file_list);
         mReturnBtn2 = findViewById(R.id.btnReturn2);
         mHeaderView = findViewById(R.id.activity_header);
+
+        mPreFilePageBtn = (Button) findViewById(R.id.ivpre_page);
+        mNextFilePageBtn = (Button) findViewById(R.id.ivnext_page);
+        mPageNumTv = (TextView) findViewById(R.id.tvprogress);
 
         mSearchListView.setOnItemClickListener(this);
         mHistoryGrid.setOnItemClickListener(this);
@@ -171,7 +176,7 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 mHistoryList.clear();
                 mHistoryList.addAll(SharedPreferencesUtils.getLocalSearchHistory(getApplicationContext(),
                         SharedPreferencesUtils.LOCAL_SEARCH_HISTORY));
-                mFileAdapter.notifyDataSetChanged();
+                mHistoryAdapter.notifyDataSetChanged();
                 break;
             case R.id.clear_history:
                 mSearchHistoryView.setVisibility(View.GONE);
@@ -187,6 +192,7 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
         switch (adapterView.getId()) {
             case R.id.gridview_history:
                 mSearchEd.setText(mHistoryList.get(position));
+                mSearchEd.setSelection(mHistoryList.get(position).length());
                 search(mHistoryList.get(position));
                 break;
             case R.id.search_file_list:

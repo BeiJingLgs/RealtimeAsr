@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:descendantFocusability="blocksDescendants">
+    android:gravity="center_vertical">
 
     
     <TextView 
@@ -24,7 +23,7 @@
     
 
     
-    <TextView
+    <EditText
         android:id="@+id/sentence_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +41,6 @@
         android:paddingRight="@dimen/Margin_XS"
         android:paddingTop="@dimen/length_3dp"
         android:paddingBottom="@dimen/length_3dp"
-        android:textSize="@dimen/Third_Title_Font_Size"
-        android:focusable="false"/>
+        android:textSize="@dimen/Third_Title_Font_Size"/>
 
 </RelativeLayout>

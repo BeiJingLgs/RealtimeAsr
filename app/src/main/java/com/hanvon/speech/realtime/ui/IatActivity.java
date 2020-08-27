@@ -290,7 +290,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
         mNotePageInfo.setOnClickListener(this);
-        mEditListView.setOnItemClickListener(this);
+        //mEditListView.setOnItemClickListener(this);
 
         mNoteView.setZOrderOnTop(true);
         SimplePen pencil = new SimplePen();
@@ -483,24 +483,37 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             points.add((short) -1);
             points.add((short) -1);
             Short[] traceBuf = new Short[points.size()];
-            short[] traceBuf2 = new short[points.size()];
+            traceBuf2 = new short[points.size()];
             traceBuf = points.toArray(traceBuf);
 
             for (int j = 0; j < traceBuf.length; j++) {
                 traceBuf2[j] = traceBuf[j].shortValue();
             }
-
-            mExecutor.execute(new Runnable() {
+            mTimer = new Timer();
+            mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    reco(traceBuf2);
+                    LogUtils.printErrorLog(TAG, "isOCRing: " + isOCRing);
+                    if (!isOCRing) {
+                        isOCRing = true;
+                        isShowOCRing = true;
+                        LogUtils.printErrorLog(TAG, "before reco(traceBuf2)");
+                        reco(traceBuf2);
+                        LogUtils.printErrorLog(TAG, "after reco(traceBuf2)");
+                        cancel();
+                    } else {
+                        isShowOCRing = false;
+                    }
                 }
-            });
+            }, 0, 5000);
         } else {
             RecognmizeImageAyncTask recognmizeImageAyncTask = new RecognmizeImageAyncTask();
             recognmizeImageAyncTask.execute();
         }
     }
+    short[] traceBuf2;
+    boolean isOCRing = false;
+    boolean isShowOCRing = true;
 
 
     void reco(short[] traceBuf) {
@@ -510,12 +523,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             ArrayList<Integer> rects = new ArrayList<>();
             int cnt = Native.nativeHwRecoDoc(traceBuf, strings, rects);
             for (String s : strings) {
-                Log.e("nativeHwRecoDoc", "===strings: " + s);
+                LogUtils.printErrorLog(TAG, "===strings: " + s);
             }
-            Message message = Message.obtain();
-            message.what = MESSAGE_WHAT3;
-            message.obj = strings;
-            mHandler.sendMessage(message);
+            isOCRing = false;
+            if (isShowOCRing) {
+                Message message = Message.obtain();
+                message.what = MESSAGE_WHAT3;
+                message.obj = strings;
+                mHandler.sendMessage(message);
+            }
         } catch (Exception e) {
 
         }
@@ -1450,6 +1466,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }
 
             if (mNoRecogCheckbox.isChecked()) {
+                mViewTips.setVisibility(View.GONE);
                 FileBeanUils.setRecoding(true);
                 startRecord();
                 setRecordStatus();
@@ -2296,7 +2313,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 dialog.dismiss();
             }
         });
-        dialog.show();
+        if (!dialog.isShowing())
+            dialog.show();
     }
 
     @Override
