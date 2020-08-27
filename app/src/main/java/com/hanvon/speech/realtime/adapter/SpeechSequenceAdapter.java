@@ -54,7 +54,7 @@ public class SpeechSequenceAdapter extends BaseAdapter {
             viewHolder = new SpeechSequenceAdapter.ViewHolder();
             convertView = LayoutInflater.from(this.context).inflate(R.layout.edit_item, parent, false);
             viewHolder.timeTv = (TextView)convertView.findViewById(R.id.sentence_time);
-            viewHolder.sentenceEd = (EditText) convertView.findViewById(R.id.sentence_edit);
+            viewHolder.sentenceEd = (TextView) convertView.findViewById(R.id.sentence_edit);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (SpeechSequenceAdapter.ViewHolder) convertView.getTag();
@@ -88,7 +88,7 @@ public class SpeechSequenceAdapter extends BaseAdapter {
 
     static class ViewHolder {
         public TextView timeTv;
-        public EditText sentenceEd;
+        public TextView sentenceEd;
 
     }
 }

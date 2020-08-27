@@ -166,4 +166,5 @@
     <string name="no_search_result">No relevant content was found...</string>
     <string name="select_file">Please choose to rename the file</string>
     <string name="only_one_file">Renaming only supports one file, please re select</string>
+    <string name="edit">编辑</string>
 </resources>

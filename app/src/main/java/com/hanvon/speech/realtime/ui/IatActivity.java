@@ -22,15 +22,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -130,7 +134,8 @@ import static com.hanvon.speech.realtime.util.MethodUtils.hideSoftInput;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
-public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener, View.OnTouchListener {
+public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener,
+        View.OnTouchListener, AdapterView.OnItemClickListener {
 
     // ============== 以下参数请勿修改 ================
 
@@ -285,6 +290,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
         mNotePageInfo.setOnClickListener(this);
+        mEditListView.setOnItemClickListener(this);
 
         mNoteView.setZOrderOnTop(true);
         SimplePen pencil = new SimplePen();
@@ -575,6 +581,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         float index = (float) ((startTime * 1.0f) / mFileBean.getTime());
         int du = (int) (mFileBean.getDuration() * index);
         mSeekBar.setProgress(du);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        showEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -1992,14 +2003,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         onReturn();
     }
-
-    /*public boolean isRecording() {
-        return isRecording;
-    }*/
-
     /**
      * 添加一页新的空白页
      *
@@ -2007,7 +2012,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
      * @return
      */
     protected boolean AddNoteNewEmptyPage(int index) {
-
         saveNoteCurTracePage();
         TraPage newPage = new TraPage();
         NoteBaseData.gTraFile.addPage(index, newPage);
@@ -2333,18 +2337,34 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     public void enterHandwrite(boolean isEnter) {
         Log.e(TAG, "**enterHandwrite, " + isEnter);
 
-        /*if (isEnter){
-            if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_DU_MODE)
-                return;
-            mHandler.postDelayed(() -> {getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_DU_MODE);}, 500);
-        } else {
-            if (getWindow().getRefreshMode() == WindowManager.LayoutParams.EINK_GU16_MODE)
-                return;
-            getWindow().setRefreshMode(WindowManager.LayoutParams.EINK_GU16_MODE); //
-        }*/
-
     }
 
+    private void showEditDialog(String title, int index) {
+        final CommonDialog dialog = new CommonDialog(this, R.id.viewstub_dialog_text_edit2);
+        EditText mRenameEd = (EditText) dialog.getView().findViewById(R.id.editTextInforecog);
+        mRenameEd.getPaint().setAntiAlias(false);
+        mRenameEd.setText(title);
+        mRenameEd.setSelection(title.length());
 
+        dialog.setTitle(R.string.edit);
+        dialog.setPositiveButton(R.string.ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonUtils.hideIME();
+                mTempResultList.get(index).setContent(mRenameEd.getText().toString());
+                dialog.dismiss();
+                freshSentenceList(nPageIsx);
+            }
+        });
+        dialog.setNegativeButton(R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonUtils.hideIME();
+                dialog.dismiss();
+            }
+        });
+        CommonUtils.showIME();
+        dialog.show();
+    }
 
 }
