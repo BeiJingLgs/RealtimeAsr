@@ -290,7 +290,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
         mNotePageInfo.setOnClickListener(this);
-        //mEditListView.setOnItemClickListener(this);
 
         mNoteView.setZOrderOnTop(true);
         SimplePen pencil = new SimplePen();
@@ -413,7 +412,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }.getType()));
         }
 
-        mRecogResultTv.setText(mFileBean.getContent());
+       mRecogResultTv.setText(mFileBean.getContent());
         if (TextUtils.isEmpty(mFileBean.getContent())) {
             mFullScreesnTv.setVisibility(View.INVISIBLE);
         }
@@ -630,13 +629,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
                     mNoteView.setInputEnabled(false);
                     freshRecogContent();
-                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 500);
+                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 100);
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.UPDATEALSPEECHRECOG)) {
                 if (mNoteView.canBeFresh() && mResultLayout.getVisibility() == View.VISIBLE) {
                     mNoteView.setInputEnabled(false);
                     freshRecogContent();
-                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 500);
+                    mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 100);
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
                 saveAndExitActivity();
@@ -830,7 +829,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void saveAndExitActivity() {
-        hv_ebk.ASRVolumeEnable(0);
+        if (!HvApplication.ISDEBUG)
+            hv_ebk.ASRVolumeEnable(0);
         DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
         if (!TextUtils.equals(con, mFileBean.getContent())) {
@@ -1059,7 +1059,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     if (mTimer != null)
                         mTimer.cancel();
-                    hv_ebk.ASRVolumeEnable(0);
+                    if (!HvApplication.ISDEBUG)
+                        hv_ebk.ASRVolumeEnable(0);
                     CommonUtils.setOnValidate(true, this);
                     MediaPlayerManager.getInstance().stop();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_play));
@@ -1069,8 +1070,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
-
-                    hv_ebk.ASRVolumeEnable(1);
+                    if (!HvApplication.ISDEBUG)
+                        hv_ebk.ASRVolumeEnable(1);
                     CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
                     mAudioPlayBtn.setText(getResources().getString(R.string.iat_stop));
@@ -1185,6 +1186,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.showLong(this, "当前内容为空");
                         return;
                     }
+                    saveNoteCurTracePage();
                     mMenus.setVisibility(View.GONE);
                     mInnerLayout.setVisibility(View.GONE);
                     mNoteView.setVisibility(View.GONE);
@@ -1198,6 +1200,18 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 break;
             default:
                 break;
+        }
+    }
+
+    private void addNoteView() {
+
+    }
+
+    private void removeNoteView() {
+        WindowManager windowManager = (WindowManager)this.getSystemService("window");
+        if (mNoteView != null) {
+            windowManager.removeView(mNoteView);
+            mNoteView = null;
         }
     }
 
@@ -1246,7 +1260,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    hv_ebk.ASRVolumeEnable(0);
+                    if (!HvApplication.ISDEBUG)
+                        hv_ebk.ASRVolumeEnable(0);
                     mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
                     stopPlayRecord();
                     mSeekBar.setProgress(0);
@@ -1352,6 +1367,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mWriteLayout.setVisibility(View.GONE);
         mBottomLayout.setVisibility(View.GONE);
         mNoteView.setVisibility(View.GONE);
+        //removeNoteView();
         mOperationLayout.setVisibility(View.GONE);
         if (mUndisturb_layout.getVisibility() == View.VISIBLE)  {
             mGotoUndisturb = true;
@@ -2097,6 +2113,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (mNoteView == null) {
             return;
         }
+        if (mNoteView.getVisibility() == View.GONE)
+            return;
         // 如果是修改方式且没有被修改则不需要操作
         if (!mNoteView.isModified()) {
             return;

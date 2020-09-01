@@ -42,4 +42,8 @@ public class Constants {
 
     public static final int BAIDU_ENGINE = 1;
     public static final int SPEECH_ENGINE = 2;
+
+
+
+    public static final int REFRESH_DELAY = 2000;
 }

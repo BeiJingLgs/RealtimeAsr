@@ -1,6 +1,7 @@
 package com.hanvon.speech.realtime.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,7 +19,9 @@ import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.adapter.FileAdapter;
 import com.hanvon.speech.realtime.bean.FileBean;
 import com.hanvon.speech.realtime.database.DatabaseUtils;
+import com.hanvon.speech.realtime.model.TranslateBean;
 import com.hanvon.speech.realtime.util.CommonUtils;
+import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.MethodUtils;
 import com.hanvon.speech.realtime.util.SharedPreferencesUtils;
 import com.hanvon.speech.realtime.util.ToastUtils;
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 
 public class LocalSearchActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    private ArrayList<FileBean> mTotalFileList, mTempBookList, mSearchResultList;
+    private ArrayList<FileBean> mTotalFileList, mTempFileList, mSearchResultList;
     private ArrayList<String>mHistoryList;
     private EditText mSearchEd;
     private Button mSearchBtn, mPreFilePageBtn, mNextFilePageBtn, mReturnBtn2;
@@ -40,6 +43,9 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
     private HistoryGridAdapter mHistoryAdapter;
     private View mSearchHistoryView, mSearchResultView, mHeaderView;
 
+    private int nPageCount = 0; // 当前分类的页总数
+    private int nPageIsx = 0; // 当前显示的页idx
+    protected static int PAGE_CATEGORY = 8;// 每页显示几个
 
     @Override
     int provideContentViewId() {
@@ -68,6 +74,9 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
         mPreFilePageBtn = (Button) findViewById(R.id.ivpre_page);
         mNextFilePageBtn = (Button) findViewById(R.id.ivnext_page);
         mPageNumTv = (TextView) findViewById(R.id.tvprogress);
+        mPreFilePageBtn = findViewById(R.id.ivpre_page);
+        mNextFilePageBtn = findViewById(R.id.ivnext_page);
+        mPageNumTv = findViewById(R.id.tvprogress);
 
         mSearchListView.setOnItemClickListener(this);
         mHistoryGrid.setOnItemClickListener(this);
@@ -75,16 +84,16 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
         mClearImg.setOnClickListener(this);
         mClearHisTv.setOnClickListener(this);
         mReturnBtn2.setOnClickListener(this);
+        mPreFilePageBtn.setOnClickListener(this);
+        mNextFilePageBtn.setOnClickListener(this);
 
         mSearchEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -92,25 +101,24 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 if (editable.toString().length() == 0) {
                     mClearImg.setVisibility(View.GONE);
                     setSearchStatus(false);
-
                 } else {
                     mClearImg.setVisibility(View.VISIBLE);
                 }
             }
         });
-
-
         init();
     }
 
     private void init() {
-        //mTotalFileList = (ArrayList<FileBean>) TranslateBean.getInstance().getmFileBeanList();
+        PAGE_CATEGORY = getResources().getInteger(R.integer.item_num);
         mHistoryList = new ArrayList<>();
-        mTempBookList = new ArrayList<>();
+        mTempFileList = new ArrayList<>();
         mSearchResultList = new ArrayList<>();
-        mFileAdapter = new FileAdapter(mSearchResultList, this);
+        mFileAdapter = new FileAdapter(mTempFileList, this);
         mSearchListView.setAdapter(mFileAdapter);
-        mHistoryList.addAll(SharedPreferencesUtils.getLocalSearchHistory(getApplication(), SharedPreferencesUtils.LOCAL_SEARCH_HISTORY));
+        if (SharedPreferencesUtils.getLocalSearchHistory(getApplication(), SharedPreferencesUtils.LOCAL_SEARCH_HISTORY) != null) {
+            mHistoryList.addAll(SharedPreferencesUtils.getLocalSearchHistory(getApplication(), SharedPreferencesUtils.LOCAL_SEARCH_HISTORY));
+        }
         mHistoryAdapter = new HistoryGridAdapter(mHistoryList, getApplication());
         mHistoryGrid.setAdapter(mHistoryAdapter);
         if (mHistoryList.size() == 0) {
@@ -133,8 +141,10 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 ToastUtils.showLong(getApplicationContext(), getResources().getString(R.string.no_search_result));
                 return;
             } else {
+               // mFileAdapter.setSpannable(searchWord);
                 setSearchStatus(true);
-                mFileAdapter.notifyDataSetChanged();
+                nPageCount = getTotalqlPageCount(mSearchResultList.size());
+                freshFileList(nPageIsx);
             }
         }
     }
@@ -170,6 +180,7 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 CommonUtils.showIME();
                 mHeaderView.setVisibility(View.VISIBLE);
                 mReturnBtn2.setVisibility(View.GONE);
+                LogUtils.printErrorLog(TAG, "");
                 if (SharedPreferencesUtils.getLocalSearchHistory(getApplicationContext(),
                         SharedPreferencesUtils.LOCAL_SEARCH_HISTORY) == null)
                     return;
@@ -184,6 +195,18 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 mHistoryAdapter.notifyDataSetChanged();
                 SharedPreferencesUtils.clearAll(getApplicationContext(), SharedPreferencesUtils.LOCAL_SEARCH_HISTORY);
                 break;
+            case R.id.ivpre_page:
+                if ((nPageIsx - 1) >= 0) {
+                    nPageIsx--;
+                    freshFileList(nPageIsx);
+                }
+                break;
+            case R.id.ivnext_page:
+                if ((nPageIsx) < (nPageCount - 1)) {
+                    nPageIsx++;
+                    freshFileList(nPageIsx);
+                }
+                break;
         }
     }
 
@@ -196,9 +219,65 @@ public class LocalSearchActivity extends BaseActivity implements AdapterView.OnI
                 search(mHistoryList.get(position));
                 break;
             case R.id.search_file_list:
-                //mSearchEd.setText(mHistoryList.get(position));
-                //search(mHistoryList.get(mHistoryList.get(position)));
+                Intent intent = new Intent(this, IatActivity.class);
+                intent.putExtra("isNew", false);
+                TranslateBean.getInstance().setFileBean(mTempFileList.get(position));
+                startActivityForResult(intent, 11);
                 break;
+        }
+    }
+
+    private int getTotalqlPageCount(int size) {
+        size = size % PAGE_CATEGORY == 0 ? size / PAGE_CATEGORY : size / PAGE_CATEGORY + 1;
+        if (size == 0)
+            return size + 1;
+        else
+            return size;
+    }
+
+
+    private void freshFileList(int currentPage) {
+        if (mTempFileList == null) {
+            mTempFileList = new ArrayList<FileBean>();
+        } else {
+            mTempFileList.clear();
+        }
+
+        for (int i = currentPage * PAGE_CATEGORY; i < mSearchResultList.size()
+                && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
+            mTempFileList.add(mSearchResultList.get(i));
+        }
+
+        if (mTempFileList.size() == 0) {
+            if ((currentPage - 1) >= 0) {
+                currentPage--;
+                for (int i = currentPage * PAGE_CATEGORY; i < mTotalFileList.size()
+                        && i < ((currentPage + 1) * PAGE_CATEGORY); i++) {
+                    mTempFileList.add(mSearchResultList.get(i));
+                }
+            }
+        }
+
+        if (mFileAdapter == null) {
+            mFileAdapter = new FileAdapter(mTempFileList, this);
+            mSearchListView.setAdapter(mFileAdapter);
+        } else {
+            //Log.e("tag", "getCreatemillis: " + mTotalFileList.get(0).getCreatemillis());
+            mFileAdapter.notifyDataSetChanged();
+        }
+        mPageNumTv.setText((currentPage + 1) + "/" + nPageCount);
+        if (currentPage == 0 && nPageCount > 1) {
+            mPreFilePageBtn.setBackgroundResource(R.drawable.pre_page_grey);
+            mNextFilePageBtn.setBackgroundResource(R.drawable.next_page);
+        } else if (currentPage == 0 && nPageCount == 1) {
+            mPreFilePageBtn.setBackgroundResource(R.drawable.pre_page_grey);
+            mNextFilePageBtn.setBackgroundResource(R.drawable.next_page_grey);
+        } else if ((currentPage + 1) == nPageCount) {
+            mPreFilePageBtn.setBackgroundResource(R.drawable.pre_page);
+            mNextFilePageBtn.setBackgroundResource(R.drawable.next_page_grey);
+        } else {
+            mPreFilePageBtn.setBackgroundResource(R.drawable.pre_page);
+            mNextFilePageBtn.setBackgroundResource(R.drawable.next_page);
         }
     }
 }

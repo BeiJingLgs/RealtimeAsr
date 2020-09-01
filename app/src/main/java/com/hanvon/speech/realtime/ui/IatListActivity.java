@@ -83,7 +83,7 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
         mSelectAllBtn = findViewById(R.id.select_all);
         mDeleteBtn = findViewById(R.id.delete_btn);
         mReNameBtn = findViewById(R.id.rename_btn);
-        mSearchBtn.setVisibility(View.GONE);
+        mSearchBtn.setVisibility(View.VISIBLE);
         View emptyView = findViewById(R.id.emptyList);
         mFileList.setEmptyView(emptyView);
         mReNameBtn.setOnClickListener(this);

@@ -77,8 +77,8 @@
     <dimen name="margin_xl">50dp</dimen>
     <dimen name="margin_l">0dp</dimen>
     <dimen name="margin_m">15dp</dimen>
-    <dimen name="margin_s">5dp</dimen>
-    <dimen name="margin_h">15dp</dimen>
+    <dimen name="margin_s">3dp</dimen>
+    <dimen name="margin_h">10dp</dimen>
     <dimen name="margin_xm">35dp</dimen>
     <dimen name="margin_other">15dp</dimen>
 
@@ -90,13 +90,14 @@
     <dimen name="textSizexL">28sp</dimen>
     <dimen name="textSizeM">20sp</dimen>
     <dimen name="textSizeS">14sp</dimen>
+    <dimen name="hvtextSizexLSP">24sp</dimen>
 
     <dimen name="linePaddingS">0.5dp</dimen>
     <dimen name="linePaddingM">0.7dp</dimen>
     <dimen name="linePaddingL">1dp</dimen>
     <dimen name="linePaddingXL">1.3dp</dimen>
     <dimen name="linePaddingXXL">1.5dp</dimen>
-    <dimen name="PaddingXXL">3dp</dimen>
+    <dimen name="PaddingXXL">0dp</dimen>
     <dimen name="First_Title_Font_Size">32sp</dimen>
     <dimen name="dialog_margin4">15dp</dimen>
     <dimen name="Third_Title_Font_Size">26sp</dimen>
@@ -112,7 +113,7 @@
     <dimen name="Text_Font_Size_S">16sp</dimen>
     <dimen name="Margin_XXS">8dp</dimen>
     <dimen name="Margin_S">13dp</dimen>
-    <dimen name="Margin_SS">13dp</dimen>
+    <dimen name="Margin_SS">3dp</dimen>
     <dimen name="Margin_XS">15dp</dimen>
     <dimen name="margin_M">20dp</dimen>
     <dimen name="marginTop">80dp</dimen>
@@ -133,7 +134,7 @@
     <dimen name="image_margin_top">50dp</dimen>
     <dimen name="image_margin_left2">150dp</dimen>
 
-    <dimen name="textView_w">226dp</dimen>
+    <dimen name="textView_w">240dp</dimen>
     <dimen name="pre_button_w">22dp</dimen>
     <dimen name="pre_button_h">40dp</dimen>
 
@@ -144,6 +145,7 @@
     <dimen name="Margin_left">280dp</dimen>
     <dimen name="Margin_l">0dp</dimen>
 
+    <dimen name="Margin_Top">250dp</dimen>
     <dimen name="Margin_top2">16.5dp</dimen>
     <dimen name="record_img_w">310dp</dimen>
     <dimen name="record_img_h">88dp</dimen>
@@ -155,6 +157,7 @@
     <dimen name="w_player_vol">300dp</dimen>
 
     <dimen name="Margin_top_bottom">0dp</dimen>
+    <dimen name="Margin_bottom">5dp</dimen>
 
     <dimen name="volbar_width">10dp</dimen>
     <dimen name="volbar_height">36dp</dimen>

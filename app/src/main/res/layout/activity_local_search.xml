@@ -67,7 +67,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="@dimen/Margin_XXS"
                 android:layout_weight="1"
-                android:src="@drawable/cancel"
+                android:src="@drawable/clear"
                 android:visibility="gone" />
         </LinearLayout>
 

@@ -263,7 +263,7 @@
                 android:paddingLeft="@dimen/margin_s"
                 android:paddingRight="@dimen/margin_s"
                 android:textColor="@color/black"
-                android:textSize="@dimen/textSizexLSP" />
+                android:textSize="@dimen/hvtextSizexLSP" />
             <!--
                         android:lineSpacingExtra="5.5dp"
                         android:letterSpacing="0.06"-->
@@ -292,8 +292,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/undisturbbtn"
-                android:textSize="@dimen/textSizexLSP"
-                android:padding="2dp"
+                android:textSize="@dimen/hvtextSizexLSP"
+                android:padding="@dimen/PaddingXXL"
                 android:layout_marginRight="20dp"
                 android:layout_gravity="right"
                 android:textStyle="bold"
@@ -304,9 +304,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fullScreenbtn"
-                android:textSize="@dimen/textSizexLSP"
-                android:padding="2dp"
+                android:padding="@dimen/PaddingXXL"
                 android:layout_marginRight="20dp"
+                android:textSize="@dimen/hvtextSizexLSP"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:layout_gravity="right"
@@ -476,7 +476,7 @@
             android:layout_height="@dimen/pre_button_h"
             android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="@dimen/Margin_Top"
             android:background="@drawable/arrow_left_gray"
             android:clickable="true"
             android:focusable="true"
@@ -489,7 +489,7 @@
             android:layout_marginLeft="@dimen/margin_s"
             android:layout_marginTop="@dimen/Margin_top_bottom"
             android:layout_marginRight="@dimen/margin_s"
-            android:layout_marginBottom="16.4dp"
+            android:layout_marginBottom="@dimen/Margin_bottom"
             android:hint="@string/content"
             android:layout_toLeftOf="@+id/large_result_ivnext_page"
             android:layout_toRightOf="@+id/large_result_ivpre_page"
@@ -498,13 +498,13 @@
             android:layout_above="@+id/close_largeTv"
             android:paddingRight="@dimen/margin_s"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizexLSP" />
+            android:textSize="@dimen/hvtextSizexLSP" />
 
         <Button
             android:id="@+id/large_result_ivnext_page"
             android:layout_width="@dimen/pre_button_w"
             android:layout_height="@dimen/pre_button_h"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="@dimen/Margin_Top"
             android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
             android:background="@drawable/arrow_right_gray"
@@ -517,7 +517,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/close_largeTv"
             android:textColor="@color/black"
-            android:textSize="@dimen/textSizexLSP"
+            android:textSize="@dimen/hvtextSizexLSP"
             android:layout_margin="@dimen/margin_m"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"

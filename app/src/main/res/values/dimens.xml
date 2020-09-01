@@ -130,6 +130,8 @@
     <dimen name="textSizexL">20sp</dimen>
     <dimen name="textSizexLSP">28sp</dimen>
 
+    <dimen name="hvtextSizexLSP">28sp</dimen>
+
     <dimen name="linePaddingS">0.5dp</dimen>
     <dimen name="linePaddingM">0.7dp</dimen>
     <dimen name="linePaddingL">1dp</dimen>
@@ -174,6 +176,7 @@
     <dimen name="pre_button_h">40dp</dimen>
     <dimen name="Margin_sp">15dp</dimen>
 
+    <dimen name="Margin_Top">150dp</dimen>
     <dimen name="handwriteTv_h">720dp</dimen>
     <dimen name="Margin_sp2">0dp</dimen>
     <dimen name="Margin_top">500dp</dimen>
@@ -189,6 +192,8 @@
     <dimen name="record_susend">70dp</dimen>
 
     <dimen name="Margin_top_bottom">5dp</dimen>
+
+    <dimen name="Margin_bottom">16.4dp</dimen>
     <dimen name="button_h">40dp</dimen>
     <dimen name="button_w">75dp</dimen>
 

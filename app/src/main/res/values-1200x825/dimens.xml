@@ -90,6 +90,8 @@
     <dimen name="textSizexL">16sp</dimen>
     <dimen name="textSizexLSP">16sp</dimen>
 
+    <dimen name="hvtextSizexLSP">16sp</dimen>
+
     <dimen name="linePaddingS">0.3dp</dimen>
     <dimen name="linePaddingM">0.5dp</dimen>
     <dimen name="linePaddingL">0.7dp</dimen>
@@ -126,6 +128,8 @@
     <dimen name="edit_w5">120dp</dimen>
     <dimen name="register_ed_w">86.7dp</dimen>
     <dimen name="Meui_Width">45dp</dimen>
+
+    <dimen name="Margin_Top">150dp</dimen>
 
     <dimen name="image_margin_left">100dp</dimen>
     <dimen name="image_margin_top">30dp</dimen>

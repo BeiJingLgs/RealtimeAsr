@@ -1,7 +1,11 @@
 package com.hanvon.speech.realtime.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,7 @@ import android.widget.TextView;
 
 import com.asr.ai.speech.realtime.R;
 import com.hanvon.speech.realtime.bean.FileBean;
+import com.hanvon.speech.realtime.util.LogUtils;
 import com.hanvon.speech.realtime.util.hvFileCommonUtils;
 
 import java.util.HashMap;
@@ -26,10 +31,12 @@ import java.util.Set;
 
 public class FileAdapter extends BaseAdapter {
 
+    private static final String TAG = "FileAdapter";
     List<FileBean> cateList;
     private Context context;
     private boolean mShowCheck;
     private HashMap<String, Boolean> mSelectStates ;
+    private String mSpanable;
 
 
     public FileAdapter(List<FileBean> litms, Context context) {
@@ -42,6 +49,10 @@ public class FileAdapter extends BaseAdapter {
     public void setmShowCheck(boolean mShowCheck, int po) {
         this.mShowCheck = mShowCheck;
         //mSelectStates.put(String.valueOf(cateList.get(po).getCreatemillis()), true);
+    }
+
+    public void setSpannable(String sp) {
+        this.mSpanable = sp;
     }
 
     public void setmCheckGone() {
@@ -102,7 +113,17 @@ public class FileAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.title.setText(cateList.get(position).getTitle());
+        if (TextUtils.isEmpty(mSpanable)) {
+            viewHolder.title.setText(cateList.get(position).getTitle());
+        } else {
+            LogUtils.printErrorLog(TAG, cateList.get(position).getTitle().indexOf(mSpanable) + "");
+            LogUtils.printErrorLog(TAG, cateList.get(position).getTitle().lastIndexOf(mSpanable) + "");
+            if (cateList.get(position).getTitle().contains(mSpanable)) {
+                SpannableString ss5 = new SpannableString(cateList.get(position).getTitle());
+                ss5.setSpan(new BackgroundColorSpan(Color.LTGRAY), cateList.get(position).getTitle().indexOf(mSpanable), mSpanable.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                viewHolder.title.setText(ss5);
+            }
+        }
         viewHolder.content.setText(
                 TextUtils.isEmpty(cateList.get(position).getContent())? "【暂无转写内容】" : cateList.get(position).getContent());
 

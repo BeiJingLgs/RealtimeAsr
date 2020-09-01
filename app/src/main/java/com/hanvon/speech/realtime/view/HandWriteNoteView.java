@@ -42,7 +42,7 @@ import static com.asr.ai.speech.realtime.Constants.MESSAGE_WHAT2;
 
 public class HandWriteNoteView extends NoteView {
 
-    private static final String TAG = "MyNoteView";
+    private static final String TAG = "HandWriteNoteView";
     private Context mContext;
     private PenPoint lastPoint = new PenPoint();
     private PenPoint prevPoint = new PenPoint(); // 接收到的前一个点。
@@ -145,7 +145,7 @@ public class HandWriteNoteView extends NoteView {
         Path path = new Path();
         int border = mStrokeWidth;
         canBeFresh = false;
-
+        mHandler.removeCallbacks(runnable);
         boolean bUp = false;
         if (lastPoint.isValid()) {
             path.moveTo(lastPoint.getX(), lastPoint.getY());
@@ -382,11 +382,9 @@ public class HandWriteNoteView extends NoteView {
         }
 
         if (bUp) {
-            mHandler.postDelayed(() -> {
-                if (!bPenDown)
-                    canBeFresh = true;
-                }, 1000);
-
+            LogUtils.printErrorLog(TAG, "up outside canBeFresh: " + canBeFresh);
+            //mHandler.postDelayed(runnable, Constants.REFRESH_DELAY);
+            mHandler.postDelayed(runnable,  Constants.REFRESH_DELAY);
             if (timer != null) {
                 timer.cancel();
                 timer = null;
@@ -401,6 +399,7 @@ public class HandWriteNoteView extends NoteView {
                 public void run() {
                     if (!lastPoint.isOutside()) {
                         if (canBeFresh && !bPenDown) {
+                            LogUtils.printErrorLog(TAG, "timerTask canBeFresh: " + canBeFresh);
                             Message message = new Message();
                             message.what = MESSAGE_WHAT1;
                             handler.sendMessage(message);
@@ -408,10 +407,20 @@ public class HandWriteNoteView extends NoteView {
                     }
                 }
             };
-            timer.schedule(timerTask, 1200);//延时2s
+            timer.schedule(timerTask, 3000);//延时2s
         }
         return new FlushInfo(dirtyRect);
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!bPenDown) {
+                LogUtils.printErrorLog(TAG, "postDelayed canBeFresh: " + canBeFresh);
+                canBeFresh = true;
+            }
+        }
+    };
 
     private Rect getRecordTrace() {
         // 判断当前的轨迹是否是一点

@@ -8,6 +8,7 @@ import java.util.List;
 import android.R.string;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class SharedPreferencesUtils {
@@ -195,7 +196,7 @@ public class SharedPreferencesUtils {
     
     public static List<String> getLocalSearchHistory(Context context, String key) {
     	String history = getStringSharedprefer(context, key);
-    	if (history == null)
+    	if (TextUtils.isEmpty(history))
     			return null;
     	String[] tmpHistory = history.split("h#v");
     	Log.i("tmpHistory", "tmpHistory[] : " + tmpHistory);
