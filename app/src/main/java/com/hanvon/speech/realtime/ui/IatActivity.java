@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -263,6 +264,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mCloseLargeTv = findViewById(R.id.close_largeTv);
         mPreLargeBtn = findViewById(R.id.large_result_ivpre_page);
         mNextLargeBtn = findViewById(R.id.large_result_ivnext_page);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mPreLargeBtn.setOnClickListener(this);
         mNextLargeBtn.setOnClickListener(this);

@@ -175,4 +175,7 @@
     <dimen name="button_large">350dp</dimen>
 
     <dimen name="check_h">140dp</dimen>
+
+    <dimen name="Search_Bar_H">80.1dp</dimen>
+    <dimen name="Search_Button_H">63.6dp</dimen>
 </resources>
