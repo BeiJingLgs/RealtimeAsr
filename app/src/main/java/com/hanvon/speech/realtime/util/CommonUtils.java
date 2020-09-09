@@ -110,23 +110,6 @@ public class CommonUtils {
 		return (int) (px / scale + 0.5f);
 	}
 
-	private static long lastClickTime = 0;
-
-	public static boolean isFastDoubleClick() {
-		
-		long time = System.currentTimeMillis();
-		long timeD = time - lastClickTime;
-		
-		LogUtils.printLog("", "isFastDoubleClick:  lastClickTime:" + lastClickTime + "  now: " + time + "  cha: " + timeD);
-		if (0 < timeD && timeD < 1000) {
-			LogUtils.printLog("", "isFastDoubleClick2");
-			return true;
-		}
-		LogUtils.printLog("", "isFastDoubleClick3");
-		lastClickTime = time;
-		return false;
-	}
-
 	/** 
      * 将px值转换为sp值，保证文字大小不变 
      * 
@@ -331,5 +314,20 @@ public class CommonUtils {
 		} else {
 			unsleep(mContext);
 		}
+	}
+
+	// 两次点击按钮接口之间的点击间隔不能少于1000毫秒
+	private static final int MIN_CLICK_DELAY_TIME = 3000;
+	private static long lastClickTime = 0;
+
+	public static boolean isNoFastClick() {
+		boolean flag = false;
+		long curClickTime = System.currentTimeMillis();
+		if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+			flag = true;
+		}
+		lastClickTime = curClickTime;
+		LogUtils.printErrorLog(TAG, "flag: " + flag);
+		return flag;
 	}
 }

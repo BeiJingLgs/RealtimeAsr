@@ -15,6 +15,7 @@ import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.full.download.Result;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
 import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
+import com.hanvon.speech.realtime.util.CommonUtils;
 import com.hanvon.speech.realtime.util.LogUtils;
 
 import java.util.List;
@@ -28,10 +29,15 @@ public class SequenceAdapter extends BaseAdapter {
     private final static String TAG = "SequenceAdapter";
     List<AsrEditSentence> cateList;
     private Context context;
+    OnCall onCall;
     public SequenceAdapter(List<AsrEditSentence> litms, Context context) {
         super();
         cateList = litms;
         this.context = context;
+    }
+
+    public void setOnCall(OnCall onCall) {
+        this.onCall = onCall;
     }
 
     @Override
@@ -70,8 +76,19 @@ public class SequenceAdapter extends BaseAdapter {
         /*
          * 获取到焦点的监听
          */
-        //viewHolder.sentenceEd.setOnFocusChangeListener(this);
-        viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
+        viewHolder.sentenceEd.setOnFocusChangeListener(new android.view.View.
+                OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    if (CommonUtils.isNoFastClick()) {
+                        onCall.setOnEditClick(position);
+                    }
+                }
+            }
+        });
+
+        /*viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,7 +103,7 @@ public class SequenceAdapter extends BaseAdapter {
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
         return convertView;
     }
 
@@ -99,6 +116,10 @@ public class SequenceAdapter extends BaseAdapter {
     static class ViewHolder {
         public TextView timeTv;
         public EditText sentenceEd;
+    }
+
+    public interface OnCall {
+        public void setOnEditClick(int position);
     }
 
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mydialog_edge"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mydialog_title_height"
+        android:background="@drawable/mydialog_title"
+        android:text="编辑"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/mydialog_title_font" />
+
+    <TextView
+        android:id="@+id/textInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mydialog_margin_message"
+        android:text="TextView"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/mydialog_message_font"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/editTextInfor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dialog_margin_mid"
+        android:gravity="center_vertical"
+        android:hint="编辑"
+        android:paddingTop="@dimen/margin_s"
+        android:paddingBottom="@dimen/margin_s"
+        android:paddingLeft="@dimen/dialog_margin_mini"
+        android:paddingRight="@dimen/dialog_margin_mini"
+        android:background="@drawable/edit_edge"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/mydialog_button_font">
+        <requestFocus />
+    </EditText>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/mydialog_margin_small"
+        android:paddingLeft="@dimen/mydialog_margin_small"
+        android:paddingRight="@dimen/mydialog_margin_small" >
+
+        <Button
+            android:id="@+id/btnOK"
+            android:layout_width="@dimen/mydialog_button_width"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:background="@drawable/mydialog_basebtn"
+            android:text="OK"
+            android:textSize="@dimen/mydialog_button_font"
+            android:layout_margin="@dimen/margin_M"
+            android:visibility="invisible" />
+
+
+
+        <Button
+            android:id="@+id/btnNeutral"
+            android:layout_width="@dimen/mydialog_button_width"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:background="@drawable/mydialog_basebtn"
+            android:text="确定"
+            android:textSize="@dimen/mydialog_button_font"
+            android:layout_margin="@dimen/margin_M"
+            android:layout_toLeftOf="@+id/btnCancel"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="@dimen/mydialog_button_width"
+            android:layout_height="@dimen/mydialog_button_height"
+            android:background="@drawable/mydialog_basebtn"
+            android:text="取消"
+            android:textSize="@dimen/mydialog_button_font"
+            android:layout_margin="@dimen/margin_M"
+            android:layout_alignParentRight="true"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+</LinearLayout>

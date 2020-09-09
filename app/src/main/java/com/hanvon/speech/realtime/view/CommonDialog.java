@@ -156,6 +156,7 @@ public class CommonDialog {
 		// ˢ��һ�½���
 		((Activity)(context)).getWindow().getDecorView().invalidate();
 		popup = new PopupWindow(view, (int)context.getResources().getDimension(R.dimen.mydialog_width), LayoutParams.WRAP_CONTENT, true);
+
 		// ��Ļ������ʾ
 		if (view == null)
 			return;

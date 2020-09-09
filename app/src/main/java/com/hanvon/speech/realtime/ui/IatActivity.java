@@ -1,8 +1,10 @@
 package com.hanvon.speech.realtime.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -22,10 +24,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,10 +43,7 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.core.app.ActivityCompat;
-
 import com.alibaba.fastjson.JSON;
-import com.asr.ai.speech.realtime.Const;
 import com.asr.ai.speech.realtime.ConstBroadStr;
 import com.asr.ai.speech.realtime.Constants;
 import com.asr.ai.speech.realtime.MiniMain;
@@ -136,7 +134,7 @@ import static com.hanvon.speech.realtime.util.MethodUtils.parseMapKey;
 import static com.hanvon.speech.realtime.util.MethodUtils.parseRequestBody;
 
 public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged, CompoundButton.OnCheckedChangeListener,
-        View.OnTouchListener, AdapterView.OnItemClickListener {
+        View.OnTouchListener, AdapterView.OnItemClickListener, SequenceAdapter.OnCall {
 
     // ============== 以下参数请勿修改 ================
 
@@ -239,6 +237,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mFullScreesnTv = findViewById(R.id.fullScreenbtn);
         mEditBtn.setVisibility(View.VISIBLE);
         mEditListView = (ListView) findViewById(R.id.sentence_list);
+        //mEditListView.setOnItemClickListener(this);
         mAudioPlayBtn = (Button) findViewById(R.id.iat_play);
         mResultLayout = findViewById(R.id.result_layout);
         mUndisturb_layout = findViewById(R.id.undisturb_layout);
@@ -602,7 +601,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        showEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
+        if (CommonUtils.isNoFastClick())
+            showEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
+    }
+
+    @Override
+    public void setOnEditClick(int position) {
+        showEditDialog(mTempResultList.get(position).getContent(), position);
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -1853,6 +1858,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (mSequenceAdapter == null) {
             mSequenceAdapter = new SequenceAdapter(mTempResultList, this);
             mEditListView.setAdapter(mSequenceAdapter);
+            mSequenceAdapter.setOnCall(this);
         } else {
             mSequenceAdapter.notifyDataSetChanged();
         }
@@ -2376,33 +2382,44 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         Log.e(TAG, "**enterHandwrite, " + isEnter);
 
     }
-
+    EditText mRenameEd;
     private void showEditDialog(String title, int index) {
-        final CommonDialog dialog = new CommonDialog(this, R.id.viewstub_dialog_text_edit2);
-        EditText mRenameEd = (EditText) dialog.getView().findViewById(R.id.editTextInforecog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this.getBaseContext()).inflate(R.layout.dialog_edit,null,false);
+        builder.setView(view);
+        builder.setCancelable(false);
+
+
+        mRenameEd = view.findViewById(R.id.editTextInfor);
         mRenameEd.getPaint().setAntiAlias(false);
         mRenameEd.setText(title);
         mRenameEd.setSelection(title.length());
+        AlertDialog dialog = builder.create();
 
-        dialog.setTitle(R.string.edit);
-        dialog.setPositiveButton(R.string.ok, new View.OnClickListener() {
+
+        view.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                CommonUtils.hideIME();
+                dialog.dismiss();
+                mSequenceAdapter.notifyDataSetChanged();
+            }
+        });
+        view.findViewById(R.id.btnNeutral).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 CommonUtils.hideIME();
                 mTempResultList.get(index).setContent(mRenameEd.getText().toString());
                 dialog.dismiss();
                 freshSentenceList(nPageIsx);
             }
         });
-        dialog.setNegativeButton(R.string.cancel, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CommonUtils.hideIME();
-                dialog.dismiss();
-            }
-        });
-        CommonUtils.showIME();
         dialog.show();
+
+        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+        lp.gravity = Gravity.CENTER;
+        lp.width = ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth() * 5 / 6;
+        dialog.getWindow().setAttributes(lp);
     }
 
 }
