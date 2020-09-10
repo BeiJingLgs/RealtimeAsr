@@ -71,7 +71,8 @@
             android:name="com.hanvon.speech.realtime.ui.IatActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
         <activity
             android:name="com.hanvon.speech.realtime.ui.MeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

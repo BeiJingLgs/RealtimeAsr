@@ -172,4 +172,6 @@
     <dimen name="button_large">250dp</dimen>
 
     <dimen name="check_h">90dp</dimen>
+    <dimen name="phoneWindow_line">1.5dp</dimen>
+    <dimen name="phoneWindow_marginTop">28dp</dimen>
 </resources>

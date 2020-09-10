@@ -205,4 +205,6 @@
     <dimen name="check_h">90dp</dimen>
     <dimen name="Search_Bar_H">60.1dp</dimen>
     <dimen name="Search_Button_H">43.6dp</dimen>
+    <dimen name="phoneWindow_line">1.5dp</dimen>
+    <dimen name="phoneWindow_marginTop">43.5dp</dimen>
 </resources>

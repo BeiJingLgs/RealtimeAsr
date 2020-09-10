@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.android.internal.telephony.DctConstants;
 import com.asr.ai.speech.realtime.R;
 import com.asr.ai.speech.realtime.android.HvApplication;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
@@ -329,5 +331,11 @@ public class CommonUtils {
 		lastClickTime = curClickTime;
 		LogUtils.printErrorLog(TAG, "flag: " + flag);
 		return flag;
+	}
+
+	public static void showStatusBar(Activity context) {
+		WindowManager.LayoutParams attrs = context.getWindow().getAttributes();
+		attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+		context.getWindow().setAttributes(attrs);
 	}
 }

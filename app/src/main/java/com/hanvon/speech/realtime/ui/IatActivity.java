@@ -38,6 +38,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -305,6 +306,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
         LogUtils.printErrorLog(TAG, "===onStop");
         forbiddenDropDown(0);
+        //showStatusBar();
     }
 
     private void forbiddenDropDown(int i) {
@@ -645,6 +647,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                     mHandler.postDelayed(() ->{mNoteView.setInputEnabled(true);}, 100);
                 }
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.ACTION_HOME_PAGE)) {
+
                 saveAndExitActivity();
             } else if (TextUtils.equals(intent.getAction(), ConstBroadStr.HIDE_BACKLOGO)) {
                 LogUtils.printErrorLog(TAG, "===HIDE_BACKLOGO");//SPEENCH_AUTH
@@ -1041,6 +1044,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 onBackPressed();
                 break;
             case R.id.btn_Home:
+                findViewById(R.id.line_top).setVisibility(View.GONE);
+                CommonUtils.showStatusBar(IatActivity.this);
                 saveAndExitActivity();
                 new MethodUtils(this).getHome();
                 break;
@@ -2422,4 +2427,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         dialog.getWindow().setAttributes(lp);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        CommonUtils.showStatusBar(IatActivity.this);
+    }
 }
