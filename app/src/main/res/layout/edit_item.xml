@@ -5,8 +5,8 @@
     android:orientation="vertical"
     android:gravity="center_vertical">
 
-    
-    <TextView 
+
+    <TextView
         android:id="@+id/sentence_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,9 +20,9 @@
         android:background="@drawable/button_w_edge"
         android:textSize="@dimen/textSizeM"
         />
-    
 
-    
+
+
     <EditText
         android:id="@+id/sentence_edit"
         android:layout_width="match_parent"

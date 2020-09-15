@@ -415,7 +415,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }.getType()));
         }
 
-       mRecogResultTv.setText(mFileBean.getContent());
+        mRecogResultTv.setText(mFileBean.getContent());
         if (TextUtils.isEmpty(mFileBean.getContent())) {
             mFullScreesnTv.setVisibility(View.INVISIBLE);
         }
@@ -990,7 +990,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         if (!FileBeanUils.isRecoding()) {
 
             if (HvApplication.Recognition_Engine == BAIDU_ENGINE) {
-            if (!mNoRecogCheckbox.isChecked()) {
+                if (!mNoRecogCheckbox.isChecked()) {
                     mRecognizeStatusTv.setText(getString(R.string.recognizing));
                     mExecutor.execute(new Runnable() {
                         @Override

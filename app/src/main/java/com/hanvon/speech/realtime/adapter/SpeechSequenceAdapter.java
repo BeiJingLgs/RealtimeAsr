@@ -10,9 +10,13 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 import com.asr.ai.speech.realtime.R;
+import com.asr.ai.speech.realtime.full.download.Result;
 import com.asr.ai.speech.realtime.full.util.TimeUtil;
-import com.hanvon.speech.realtime.bean.speechBean.SpeechResult;
+import com.hanvon.speech.realtime.bean.speechBean.AsrEditSentence;
+import com.hanvon.speech.realtime.util.CommonUtils;
+import com.hanvon.speech.realtime.util.LogUtils;
 
 import java.util.List;
 
@@ -22,14 +26,18 @@ import java.util.List;
 
 public class SpeechSequenceAdapter extends BaseAdapter {
 
-    List<SpeechResult> cateList;
+    private final static String TAG = "SequenceAdapter";
+    List<AsrEditSentence> cateList;
     private Context context;
-
-    public SpeechSequenceAdapter(List<SpeechResult> litms, Context context) {
+    OnCall onCall;
+    public SpeechSequenceAdapter(List<AsrEditSentence> litms, Context context) {
         super();
         cateList = litms;
         this.context = context;
+    }
 
+    public void setOnCall(OnCall onCall) {
+        this.onCall = onCall;
     }
 
     @Override
@@ -49,21 +57,38 @@ public class SpeechSequenceAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        SpeechSequenceAdapter.ViewHolder viewHolder = null;
+        SequenceAdapter.ViewHolder viewHolder = null;
         if (convertView == null) {
-            viewHolder = new SpeechSequenceAdapter.ViewHolder();
+            viewHolder = new SequenceAdapter.ViewHolder();
             convertView = LayoutInflater.from(this.context).inflate(R.layout.edit_item, parent, false);
             viewHolder.timeTv = (TextView)convertView.findViewById(R.id.sentence_time);
-            viewHolder.sentenceEd = (TextView) convertView.findViewById(R.id.sentence_edit);
+            viewHolder.sentenceEd = (EditText) convertView.findViewById(R.id.sentence_edit);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (SpeechSequenceAdapter.ViewHolder) convertView.getTag();
+            viewHolder = (SequenceAdapter.ViewHolder) convertView.getTag();
         }
 
-        viewHolder.timeTv.setText(TimeUtil.convertMillions2Time(cateList.get(position).getData().getBg()) + " - "
-                + TimeUtil.convertMillions2Time(cateList.get(position).getData().getEd()));
-        viewHolder.sentenceEd.setText(cateList.get(position).getData().getOnebest());
-        viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
+        viewHolder.timeTv.setText(TimeUtil.convertMillions2Time(cateList.get(position).getBg()) + " - "
+                + TimeUtil.convertMillions2Time(cateList.get(position).getEd()));
+        viewHolder.sentenceEd.setText(cateList.get(position).getContent());
+
+
+        /*
+         * 获取到焦点的监听
+         */
+        viewHolder.sentenceEd.setOnFocusChangeListener(new android.view.View.
+                OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    if (CommonUtils.isNoFastClick()) {
+                        onCall.setOnEditClick(position);
+                    }
+                }
+            }
+        });
+
+        /*viewHolder.sentenceEd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -71,24 +96,30 @@ public class SpeechSequenceAdapter extends BaseAdapter {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                cateList.get(position).getData().setOnebest(s.toString());
+                cateList.get(position).setContent(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
         return convertView;
     }
 
-    public List<SpeechResult>getCateList() {
+    public List<AsrEditSentence>getCateList() {
         return cateList;
     }
 
+
+
     static class ViewHolder {
         public TextView timeTv;
-        public TextView sentenceEd;
-
+        public EditText sentenceEd;
     }
+
+    public interface OnCall {
+        public void setOnEditClick(int position);
+    }
+
 }
