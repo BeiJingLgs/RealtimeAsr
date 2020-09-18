@@ -332,9 +332,13 @@ public class HandWriteNoteView extends NoteView {
 
             // 笔末端橡皮擦，抬笔时切换为笔状态
             if (p.getEventType() == NoteView.ACTION_UP && p.getToolType() == 1) {
-                Pencil pencil = new Pencil();
-                setPen(pencil);
-                setPenType(TP_PEN);
+                if (!(getPen() instanceof MyRuber)) {
+                    //LogUtils.printErrorLog(TAG, "---MyRuber " );
+                    Pencil pencil = new Pencil();
+                    setPen(pencil);
+                    getPen();
+                    setPenType(TP_PEN);
+                }
             }
         }
 

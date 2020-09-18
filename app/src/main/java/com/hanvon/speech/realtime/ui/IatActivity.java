@@ -161,7 +161,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     private HVTextView mRecogResultTv, mLargeRecogTv;
     private SeekBar mSeekBar;
     public CheckBox mCheckbox, mNoRecogCheckbox, mReadCheckbox;
-    private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg;
+    private ImageView mRecordStatusImg, mIncreaseVolImg, mDecreaseVolImg, mPenOrEraseImg;
 
     private FileBean mFileBean;
     private ListView mEditListView;
@@ -289,6 +289,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mNoteNextBtn = (Button) findViewById(R.id.note_nextpage);
         mNotePreBtn = (Button) findViewById(R.id.note_prevpage);
         mNotePageInfo = (TextView) findViewById(R.id.note_pg_info);
+        mPenOrEraseImg = findViewById(R.id.pen_or_erase);
         mNoteNextBtn.setOnClickListener(this);
         mNotePreBtn.setOnClickListener(this);
         mNotePageInfo.setOnClickListener(this);
@@ -609,6 +610,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     @Override
     public void setOnEditClick(int position) {
+        LogUtils.printErrorLog(TAG, "setOnEditClick");
         showEditDialog(mTempResultList.get(position).getContent(), position);
     }
 
@@ -1463,7 +1465,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
             @Override
             public void failureData(String error) {
-                Log.e("AA", "error: " + error);
+               // Log.e("AA", "error: " + error);
                 SharedPreferencesUtils.saveUsageTimeSharePrefer(HvApplication.mContext, SharedPreferencesUtils.USAGETIME, tempTime);
                 DialogUtil.getInstance().disWaitingDialog();
             }
@@ -1620,13 +1622,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             if (popupWindow != null) {
                 popupWindow.dismiss();
                 if (mNoteView.penType == mNoteView.TP_PEN) {
-
                     mNoteView.penType = mNoteView.TP_ERASER;
-
+                    mPenOrEraseImg.setBackgroundResource(R.drawable.ic_erase);
                     MyRuber rubber = new MyRuber();
                     mNoteView.setPen(rubber);
                 } else {
-
+                    mPenOrEraseImg.setBackgroundResource(R.drawable.ic_pen);
                     mNoteView.penType = mNoteView.TP_PEN;
                     Pencil pencil = new Pencil();
                     mNoteView.setPen(pencil);
@@ -2384,7 +2385,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
      * @param isEnter 是否进入二值模式，true为进入，false为退出
      */
     public void enterHandwrite(boolean isEnter) {
-        Log.e(TAG, "**enterHandwrite, " + isEnter);
+        //Log.e(TAG, "**enterHandwrite, " + isEnter);
 
     }
     EditText mRenameEd;

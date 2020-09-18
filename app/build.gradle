@@ -8,8 +8,8 @@ android {
         applicationId "com.asr.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 48
-        versionName "1.48"
+        versionCode 51
+        versionName "1.51"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -40,7 +40,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'com.google.code.gson:gson:2.7'
     compileOnly files('libs/xrzframework.jar')
-    implementation files('libs/xrzhandwritten.jar')
     implementation 'com.android.support:multidex:1.0.1'
     //noinspection GradleCompatible
     implementation 'io.reactivex:rxandroid:1.2.1'
@@ -56,6 +55,7 @@ dependencies {
     implementation 'com.squareup.okio:okio:1.13.0'
     implementation files('libs/HANVONEBK.jar')
     implementation files('libs/DUI-lite-SDK-for-Android-2.5.1.jar')
+    implementation files('libs/xrzhandwritten.jar')
 }
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
