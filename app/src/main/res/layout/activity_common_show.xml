@@ -154,7 +154,6 @@
             android:textColor="@color/dark"
             android:textSize="@dimen/Second_Title_Font_Size" />
     <View
-        android:id="@+id/line6"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/describe"
@@ -182,7 +181,6 @@
             android:textSize="@dimen/Second_Title_Font_Size" />
 
         <View
-            android:id="@+id/mid_line"
             android:layout_width="@dimen/Separate_Line_H"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@+id/purchase"
@@ -220,7 +218,6 @@
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/weixin_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

@@ -3,18 +3,13 @@
 
 
     <!-- 听写 -->
-    <string name="text_record">录音</string>
     <string name="text_begin">开始录制</string>
-    <string name="text_end">结束录制</string>
-    <string name="text_recognize">识别中…</string>
-    <string name="new_file">新建</string>
     <string name="file_create">创建</string>
     <string name="file_modify">修改</string>
     <string name="text_edit">转写编辑</string>
     <string name="iat_play">开始播放</string>
     <string name="iat_stop">暂停播放</string>
 
-    <string name="no_trans">还没有创建文件哦</string>
     <string name="cancel">取消</string>
     <string name="get_again">再次获取</string>
     <string name="register">注&#160;&#160;册</string>
@@ -28,7 +23,6 @@
     <string name="findPassword">找回密码</string>
     <string name="nofile">当前还没有文件，快来创建吧！！</string>
     <string name="nullList">当前列表为空！！</string>
-    <string name="listEmpty">当前列表为空</string>
     <string name="start">开始</string>
     <string name="setting">设置</string>
     <string name="delete">删除</string>
@@ -50,16 +44,11 @@
     <string name="descrip">简介</string>
     <string name="title">名称</string>
     <string name="purchase">购&#160;&#160;买</string>
-    <string name="insufficientmemory">请注意：内存不足</string>
-    <string name="progress">当前进度:&#160;</string>
     <string name="checkNeterror">网络连接出现问题，请检查网络连接</string>
     <string name="checkNet">请检查网络连接</string>
     <string name="playingAudio">正在播放音频，录制失败</string>
     <string name="startrecording">开始录制</string>
-    <string name="hasend">已结束</string>
     <string name="loading">正在加载，请稍候。。</string>
-    <string name="hasLogined">已经登录</string>
-    <string name="unLogined">未登录</string>
     <string name="saveSd">录音存放Sd卡</string>
     <string name="content">暂无转写内容</string>
     <string name="setPassword">重置密码</string>
@@ -73,29 +62,22 @@
     <string name="tips5">设备id为空，无法正常使用</string>
     <string name="getVcode">重新获取验证码</string>
     <string name="reSendCode">秒后可重新发送</string>
-    <string name="record_time">录制时长：</string>
     <string name="lastTime">剩余时长：&#160;&#160;</string>
     <string name="erase">橡&#160;&#160;皮</string>
-    <string name="noonLine">该功能还未上线</string>
     <string name="success_Cancel">取消成功！</string>
     <string name="contecting">正在连接，请稍候</string>
-    <string name="ending">正在结束，请稍候</string>
     <string name="nonullPass">账号或密码不能为空</string>
     <string name="noPhone">手机号输入错误</string>
     <string name="noPhone2">账号不能为空</string>
-    <string name="suspand">暂停</string>
     <string name="wechatPay">微信支付</string>
-    <string name="openwifi">请打开网络连接,否侧无法进入APP</string>
     <string name="end">结束</string>
     <string name="pausing">暂停中</string>
     <string name="recognizing">录制中</string>
-    <string name="version_update">检查升级</string>
     <string name="version_latest">当前已是最新版本</string>
     <string name="check_version_updata1">检测到语音记录新版本V</string>
     <string name="check_version_updata2">，确认是否更新</string>
     <string name="downing_apk">语音记录正在下载</string>
     <string name="downapk_fail">下载失败</string>
-    <string name="net_work_try_again_toast">再试一次</string>
     <string name="dialog_hint">版本更新</string>
     <string name="dialog_positive_button">确认</string>
     <string name="dialog_negative_button">取消</string>
@@ -104,7 +86,6 @@
     <string name="validTime">有效期：&#160;&#160;</string>
     <string name="share">扫码分享</string>
     <string name="pen">笔</string>
-    <string name="recog_error">服务器出错了，请检查网络连接</string>
     <string name="sc_qrCode_tips">请扫描二维码查看链接</string>
     <string name="unwifi">当前Wifi未打开，请打开网络连接</string>
     <string name="ok">确定</string>
@@ -142,25 +123,18 @@
     <string name="unmailsetting">邮件客户端未进行配置，请先进行配置</string>
 
 
-    <string name="outputing">正在生成...</string>
-    <string name="save_path">文件保存路径：</string>
     <string name="select_ocr_type">选择识别引擎：</string>
     <string name="ocr_type_local">本地引擎</string>
     <string name="ocr_type_online">在线引擎（需联网）</string>
 
     <string name="page_jump_info">第   %d   页</string>
     <string name="noRecog">仅录制</string>
-    <string name="undisturb">免打扰模式</string>
-    <string name="exitundisturb">退出免打扰</string>
     <string name="undisturbTip">免打扰模式,点击后退出</string>
     <string name="readcheck">勾选状态下,点击录音过程中的手写笔迹自动播放对应的录音,此状态下不能书写</string>
     <string name="tips">提示</string>
-    <string name="anthfailue">授权失败</string>
 
     <string name="timeOut">网络异常，请检查后重试</string>
     <string name="rename">重命名</string>
-    <string name="large_layout">全文显示</string>
-    <string name="close_large_layout">收起全文</string>
     <string name="namenull">文件名不能为空</string>
     <string name="search">搜&#160;&#160;&#160;索</string>
     <string name="nomatchName">文件名只能包含中英文、数字、下划线、中划线、空格与冒号</string>

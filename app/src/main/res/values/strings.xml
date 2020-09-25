@@ -3,18 +3,13 @@
 
 
     <!-- 听写 -->
-    <string name="text_record">Record</string>
     <string name="text_begin">Start recording</string>
-    <string name="text_end">Stop recording</string>
-    <string name="text_recognize">Recognizing…</string>
-    <string name="new_file">Create file</string>
     <string name="file_create">Create</string>
     <string name="file_modify">Modify</string>
     <string name="text_edit">Editor</string>
     <string name="iat_play">Start playing</string>
     <string name="iat_stop">Stop playing</string>
 
-    <string name="no_trans">No File</string>
     <string name="cancel">Cancel</string>
     <string name="get_again">Reget</string>
     <string name="register">Register</string>
@@ -28,7 +23,6 @@
     <string name="findPassword">Retrieve password</string>
     <string name="nofile">Currently there is no file, come and create it!!</string>
     <string name="nullList">Current list is empty!!</string>
-    <string name="listEmpty">Current list is empty</string>
     <string name="start">Start</string>
     <string name="setting">Setting</string>
     <string name="delete">Delete</string>
@@ -50,16 +44,11 @@
     <string name="descrip">Introduction</string>
     <string name="title">Name</string>
     <string name="purchase">Purchase</string>
-    <string name="insufficientmemory">Please note: out of memory</string>
-    <string name="progress">Progress:&#160;</string>
     <string name="checkNeterror">Please check the network connection</string>
     <string name="checkNet">Please check the network connection</string>
     <string name="playingAudio">Audio is playing, recording failed</string>
     <string name="startrecording">Recording</string>
-    <string name="hasend">The End</string>
     <string name="loading">Please e wait while loading</string>
-    <string name="hasLogined">Logged</string>
-    <string name="unLogined">Log out</string>
     <string name="saveSd">Sd card</string>
     <string name="content">Content</string>
     <string name="setPassword">Reset password</string>
@@ -70,27 +59,20 @@
     <string name="tips5">The device id is empty and cannot be used properly</string>
     <string name="getVcode">Retrieve the captcha</string>
     <string name="reSendCode">seconds resending</string>
-    <string name="record_time">Recording duration：</string>
-    <string name="noonLine">This function is not available yet</string>
     <string name="success_Cancel">Cancellation succeeded!</string>
     <string name="contecting">Connecting, please wait</string>
-    <string name="ending">Ending, please wait</string>
     <string name="nonullPass">Account or password cannot be empty</string>
     <string name="noPhone">Phone number input error</string>
     <string name="noPhone2">Account number cannot be empty</string>
-    <string name="suspand">Suspend</string>
     <string name="wechatPay">WeChat payment</string>
-    <string name="openwifi">Please open the network connection, no side cannot access the app</string>
     <string name="end">End</string>
     <string name="pausing">Pause</string>
     <string name="recognizing">In recording</string>
-    <string name="version_update">Check upgrades</string>
     <string name="version_latest">Is currently the latest version</string>
     <string name="check_version_updata1">New hvRecord version detected</string>
     <string name="check_version_updata2">，Confirm whether to update</string>
     <string name="downing_apk">hvRecord.apk is Downloading</string>
     <string name="downapk_fail">Download failed</string>
-    <string name="net_work_try_again_toast">Do it again</string>
     <string name="dialog_hint">Version update</string>
     <string name="dialog_positive_button">Confirm</string>
     <string name="dialog_negative_button">Cancel</string>
@@ -101,7 +83,6 @@
     <string name="share">Share</string>
     <string name="erase">Rubber</string>
     <string name="pen">Pen</string>
-    <string name="recog_error">There is an error with the server. Please check the network connection</string>
     <string name="sc_qrCode_tips">Please scan QR code for links</string>
     <string name="unwifi">The current WiFi is not open, please open the network connection</string>
     <string name="ok">Determine</string>
@@ -137,26 +118,19 @@
 
     <string name="page_jump_info">The   %d   page</string>
     <string name="noRecog">Record only</string>
-    <string name="undisturb">No disturb mode</string>
-    <string name="exitundisturb">Exit without interruption</string>
     <string name="undisturbTip">Do not disturb mode, click to exit</string>
     <string name="readcheck">Click the text in the recording process to automatically play the corresponding recording (the marking function will not work after checking)</string>
-    <string name="outputing">Building...</string>
-    <string name="save_path">File save path：</string>
     <string name="select_ocr_type">Select recognition engine：</string>
     <string name="ocr_type_local">Local engine</string>
     <string name="ocr_type_online">Online engine (need to be connected)</string>
     <string name="tips">Tips</string>
 
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
-    <string name="anthfailue">授权失败</string>
     <string name="tips7">服务器返回错误代码2</string>
 
     <string name="tips6">Failed to obtain validation information, please exit and try again</string>
     <string name="timeOut">Network exception, please check and try again</string>
     <string name="rename">Rename</string>
-    <string name="large_layout">Full text display</string>
-    <string name="close_large_layout">Close the full text</string>
     <string name="namenull">The file name cannot be empty</string>
     <string name="search">Search</string>
     <string name="nomatchName">The name file can only contain Chinese and English, numbers, underscores and dashes</string>
@@ -166,5 +140,4 @@
     <string name="no_search_result">No relevant content was found...</string>
     <string name="select_file">Please choose to rename the file</string>
     <string name="only_one_file">Renaming only supports one file, please re select</string>
-    <string name="edit">编辑</string>
 </resources>

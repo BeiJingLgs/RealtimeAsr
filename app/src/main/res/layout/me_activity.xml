@@ -206,7 +206,6 @@
         android:layout_below="@+id/update_check" />
 
     <View
-        android:id="@+id/view_line7"
         style="@style/view_line2"
         android:layout_above="@+id/btn_logout" />
 

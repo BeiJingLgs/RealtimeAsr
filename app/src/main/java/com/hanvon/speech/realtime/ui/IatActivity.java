@@ -378,6 +378,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             mNotePageIndex = 0;
             String tmpName = mFileBean.getCreatemillis();
             String pathName = ConstBroadStr.GetAudioRootPath(this, mCheckbox.isChecked()) + tmpName + "/" + tmpName + NoteBaseData.NOTE_SUFFIX;
+            LogUtils.printErrorLog(TAG, "===pathName: " + pathName);
             NoteBaseData.gTraFile = TraFile.readTraFile(false, pathName, this);
 
             if (NoteBaseData.gTraFile == null) {

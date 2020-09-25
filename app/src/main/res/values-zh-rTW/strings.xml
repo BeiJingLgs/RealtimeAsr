@@ -1,11 +1,7 @@
 <resources>
     <string name="app_name">錄音記录</string>
     <!-- 听写 -->
-    <string name="text_record">錄音</string>
     <string name="text_begin">開始錄制</string>
-    <string name="text_end">結束錄制</string>
-    <string name="text_recognize">識別中…</string>
-    <string name="new_file">新建</string>
     <string name="file_create">創建</string>
     <string name="file_modify">修改</string>
     <string name="text_edit">轉寫編輯</string>
@@ -13,7 +9,6 @@
     <string name="iat_stop">暫停播放</string>
     <!-- 提示安装语音+对话框 -->
 
-    <string name="no_trans">還沒有創建文件哦</string>
     <string name="cancel">取消</string>
     <string name="get_again">再次獲取</string>
     <string name="register">註&#160;&#160;冊</string>
@@ -27,7 +22,6 @@
     <string name="findPassword">找回密碼</string>
     <string name="nofile">當前還沒有文件，快來創建吧！！</string>
     <string name="nullList">當前列表為空！！</string>
-    <string name="listEmpty">當前列表為空</string>
     <string name="start">開始</string>
     <string name="setting">設置</string>
     <string name="delete">删除</string>
@@ -49,16 +43,11 @@
     <string name="descrip">簡介</string>
     <string name="title">名稱</string>
     <string name="purchase">購&#160;&#160;買</string>
-    <string name="insufficientmemory">請註意：內存不足</string>
-    <string name="progress">當前進度:&#160;</string>
     <string name="checkNeterror">網絡連接出現問題，請檢查網絡連接</string>
     <string name="checkNet">請檢查網絡連接</string>
     <string name="playingAudio">正在播放音頻，錄制失敗</string>
     <string name="startrecording">在開始錄制</string>
-    <string name="hasend">已结束</string>
     <string name="loading">正在加載，請稍候。。</string>
-    <string name="hasLogined">已經登錄</string>
-    <string name="unLogined">未登錄</string>
     <string name="saveSd">錄音存放Sd卡</string>
     <string name="content">內容</string>
     <string name="setPassword">重置密碼</string>
@@ -71,26 +60,20 @@
     <string name="reSendCode">秒後可重新發送</string>
     <string name="lastTime">剩余时长：</string>
     <string name="erase">橡皮</string>
-    <string name="noonLine">該功能還未上線</string>
     <string name="success_Cancel">取消成功！</string>
     <string name="contecting">正在連接，請稍候</string>
-    <string name="ending">正在結束，請稍候</string>
     <string name="nonullPass">賬號或密碼不能為空</string>
     <string name="noPhone">手機號輸入錯誤</string>
     <string name="noPhone2">賬號不能為空</string>
-    <string name="suspand">暫停</string>
     <string name="wechatPay">微信支付</string>
-    <string name="openwifi">請打開網絡連接,否側無法進入APP</string>
     <string name="end">结束</string>
     <string name="pausing">暫停中</string>
     <string name="recognizing">錄制中</string>
-    <string name="version_update">檢查升級</string>
     <string name="version_latest">當前已是最新版本</string>
     <string name="check_version_updata1">檢測到語音記事新版本V</string>
     <string name="check_version_updata2">，確認是否更新</string>
     <string name="downing_apk">錄音記事正在下載</string>
     <string name="downapk_fail">下載失敗</string>
-    <string name="net_work_try_again_toast">再試壹次</string>
     <string name="dialog_hint">版本更新</string>
     <string name="dialog_positive_button">確認</string>
     <string name="dialog_negative_button">取消</string>
@@ -99,7 +82,6 @@
     <string name="validTime">有效期：&#160;&#160;</string>
     <string name="share">分&#160;&#160;享</string>
     <string name="pen">筆</string>
-    <string name="recog_error">服務器出錯了，請檢查網絡連接</string>
     <string name="sc_qrCode_tips">請掃描二維碼查看鏈接</string>
     <string name="unwifi">當前Wifi未打開，請打開網絡連接</string>
     <string name="ok">確定</string>
@@ -137,12 +119,8 @@
 
     <string name="page_jump_info">第   %d   頁</string>
     <string name="noRecog">僅錄制</string>
-    <string name="undisturb">免打擾模式</string>
-    <string name="exitundisturb">退出免打擾</string>
     <string name="undisturbTip">免打擾模式,點擊後退出</string>
     <string name="readcheck">點擊錄音過程中的文字，自動播放對應的錄音(勾選後劃線功能失效)</string>
-    <string name="outputing">正在生成...</string>
-    <string name="save_path">文件保存路徑：</string>
     <string name="select_ocr_type">選擇識別引擎：</string>
     <string name="ocr_type_local">本地引擎</string>
     <string name="ocr_type_online">在線引擎（需聯網）</string>
@@ -152,8 +130,6 @@
 
     <string name="timeOut">網絡異常，請檢查後重試</string>
     <string name="rename">重命名</string>
-    <string name="large_layout">全文顯示</string>
-    <string name="close_large_layout">收起全文</string>
     <string name="namenull">文件名不能為空</string>
     <string name="search">搜&#160;&#160;&#160;索</string>
     <string name="nomatchName">命名文件只能包含中英文、數字、下劃線、中劃線</string>

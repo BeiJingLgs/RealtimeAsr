@@ -19,8 +19,7 @@
     
     
        <RelativeLayout
-        android:id="@+id/relativeLayoutBtns"
-        android:layout_width="match_parent"
+           android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/mydialog_margin_small" 
         android:paddingRight="@dimen/mydialog_margin_small" 
@@ -33,7 +32,6 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/btnExtra"
                 android:layout_width="@dimen/mydialog_button_width"
                 android:layout_height="@dimen/mydialog_button_height"
                 android:background="@drawable/mydialog_basebtn"

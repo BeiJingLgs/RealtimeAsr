@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="IS_133">false</bool>
     <integer name="device_inch">10</integer>
     <integer name="item_num">8</integer>
 
     <integer name="VERSION_TYPE">12</integer>
-    <integer name="PAGE_CATEGORY">10</integer>
 
     <integer name="OFFSET_LINE">48</integer>
 

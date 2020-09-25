@@ -81,7 +81,6 @@
         android:textSize="@dimen/Second_Title_Font_Size" />
 
     <RelativeLayout
-        android:id="@+id/relativeLayoutBtns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/Margin_XXL"

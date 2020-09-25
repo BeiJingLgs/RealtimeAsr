@@ -1,321 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
 
     <!-- 画面背景色 -->
-    <drawable name="layout_backgroud">#000000</drawable>
 
     <!-- 分割线背景色 -->
-    <drawable name="line_background">#161823</drawable>
 
     <color name="white">#FFFFFF</color>
 
     <!-- 控件按下时显示的颜色 -->
-    <color name="list_backgroud_color">#2fb3cb</color>
-    <color name="title_color">#0f8ec5</color>
-    <color name="content_color">#737373</color>
-
 
 
     <!-- common_color_5.0 start -->
-    <color name="text_black_000000">#000000</color>
-    <color name="text_gray_333333">#333333</color>
-    <color name="text_gray_666666">#666666</color>
-    <color name="text_gray_999999">#999999</color>
-    <color name="text_gray_9f9f9f">#9f9f9f</color>
-    <color name="gray_dcdcdc">#dcdcdc</color>
-    <color name="text_red_ff3939">#ff3939</color>
-    <color name="text_blue_2390ec">#2390ec</color>
-    <color name="white_bg_split_line_gray_e6e6e6">#e6e6e6</color>
-    <color name="white_bg_split_line_gray_eaeaea">#eaeaea</color>
-    <color name="gray_bg_split_line_gray_d2d2d2">#d2d2d2</color>
-    <color name="search_split_line_gray_cfcfcf">#cfcfcf</color>
-    <color name="gray_bg_f5f5f5">#f5f5f5</color>
-    <color name="gray_alpha_f5f5f5">#e5f5f5f5</color>
-    <color name="gray_bg_dedede">#dedede</color>
-    <color name="gray_ededed">#ededed</color>
-    <color name="gray_c6c6c6">#c6c6c6</color>
-    <color name="text_green_45c179">#45c179</color>
     <!-- common_color_5.0 end -->
 
-    <color name="background">#F1F1F1</color>
-    <color name="navpage">#FFE1E8EB</color>
-    <color name="dark_yellow">#F99700</color>
     <color name="black">#000000</color>
-    <color name="payblack">#323232</color>
-    <color name="payyellow">#f18f1b</color>
-    <color name="transparent">#00000000</color>
-    <color name="red">#FF0000</color>
-    <color name="red_ff6655">#ff6655</color>
-    <color name="red_ff7f70">#ff7f70</color>
-    <color name="red_f15140">#f15140</color>
-    <color name="red_ff4e4e">#ff4e4e</color>
-    <color name="red_ed7373">#ed7373</color>
-    <color name="red_ffb7b6">#ffb7b6</color>
-    <color name="red_ffebeb">#ffebeb</color>
-    <color name="red_f15353">#f15353</color>
-    <color name="red_ef5555">#ef5555</color>
-    <color name="red_81402f">#81402f</color>
-    <color name="red_ff523f">#ff523f</color>
-    <color name="red_ff6b65">#ff6b65</color>
-    <color name="red_e14947">#e14947</color>
-    <color name="light_red">#FF5A55</color>
-    <color name="red_fc6060">#FC6060</color>
-    <color name="light_orange">#ff7832</color>
-    <color name="loading_transbg">#80666666</color>
-    <color name="new_green">#2eb6aa</color>
-    <color name="green_32">#32a00a</color>
-    <color name="green_006c1f">#006c1f</color>
-    <color name="green_79c620">#79c620</color>
-    <color name="green_79c61f">#79c61f</color>
-    <color name="green_78c71c">#78c71c</color>
-    <color name="green_36ad22">#36ad22</color>
-    <color name="green_3b6b03">#3b6b03</color>
-    <color name="scan_blue">#4c90f9</color>
-    <color name="new_yellow">#f18e1a</color>
-    <color name="new_black">#5c5c5f</color>
-    <color name="new_glay">#707070</color>
-    <color name="new_blue">#79acfb</color>
-    <color name="new_basic_bg">#FFECECEC</color>
-    <color name="gray_565e6b">#565e6b</color>
-    <color name="gray_f5f5f5">#f5f5f5</color>
-    <color name="gray_f8f8f8">#f8f8f8</color>
-    <color name="gray_e5e5e5">#e5e5e5</color>
-    <color name="gray_f6f6f6">#f6f6f6</color>
-    <color name="gray_d6d6d6">#d6d6d6</color>
-    <color name="gray_d2d2d2">#d2d2d2</color>
-    <color name="gray_d7d7d7">#d7d7d7</color>
-    <color name="gray_e9e9e9">#e9e9e9</color>
-    <color name="gray_323232">#323232</color>
-    <color name="gray_969696">#969696</color>
-    <color name="gray_a6a6a6">#a6a6a6</color>
-    <color name="gray_c2c2c2">#c2c2c2</color>
-    <color name="gray_c3c3c3">#c3c3c3</color>
-    <color name="gray_e6e6e6">#e6e6e6</color>
-    <color name="gray_f1f1f1">#f1f1f1</color>
-    <color name="gray_f7aea7">#f7aea7</color>
-    <color name="gray_ffada6">#ffada6</color>
-    <color name="gray_445565">#445565</color>
-    <color name="gray_77818c">#445565</color>
-    <color name="gray_693240">#693240</color>
-    <color name="gray_646464">#646464</color>
-    <color name="gray_aaaaaa">#aaaaaa</color>
-    <color name="gray_5c875c58">#5c875c58</color>
-    <color name="gray_d3d3d3">#d3d3d3</color>
-    <color name="yellow_ff9939">#ff9939</color>
-    <color name="yellow_ffea00">#ffea00</color>
-    <color name="yellow_fffaf3">#fffaf3</color>
-    <color name="yellow_ff9c3c">#ff9c3c</color>
-    <color name="yellow_f27e30">#f27e30</color>
-    <color name="yellow_fdb970">#fdb970</color>
-    <color name="blue_178ceb">#178ceb</color>
-    <color name="blue_2390ec">#2390ec</color>
-    <color name="blue_64aae6">#64aae6</color>
-    <color name="blue_0074e1">#0074e1</color>
-    <color name="blue_a1d5fc">#a1d5fc</color>
-    <color name="blue_0091ff">#0091ff</color>
-    <color name="blue_2c92e9">#2c92e9</color>
-    <color name="reader_battery">#8c8c8c</color>
-    <color name="reader_headfoot_color">#8c8c8c</color>
-    <color name="tts_bottom_bar_tv_color">#666666</color>
-    <color name="shelf_item_select">#99000000</color>
-    <color name="text_gray">#666666</color>
-    <color name="title_bg">#282C33</color>
-    <color name="import_normal">#96979A</color>
-    <color name="percent_70_black">#B3000000</color>
-    <color name="percent_50_black">#7f000000</color>
-    <color name="percent_30_black">#4C000000</color>
-    <color name="percent_70_white">#B3FFFFFF</color>
-    <color name="percent_60_white">#9AFFFFFF</color>
-    <color name="percent_30_white">#4CFFFFFF</color>
-    <color name="alpha_50_white">#7fFFFFFF</color>
-
-    <color name="common_color_b">#ffffff</color>
-    <color name="common_color_c">#cad2dc</color>
-    <color name="common_color_d">#a0aab4</color>
-    <color name="shake_red">#FF5502</color>
-    <color name="shake_price">#f1440e</color>
-    <color name="black_7F000000">#7F000000</color>
-    <color name="black_CC000000">#CC000000</color>
-    <color name="black_B2000000">#b2000000</color>
-    <color name="percent_20_black">#51000000</color>
-    <color name="percent_40_black">#a2000000</color>
-    <color name="percent_60_black">#f3000000</color>
-    <color name="gray_cacaca">#cacaca</color>
-    <color name="gray_eeeeee">#eeeeee</color>
-    <color name="progress_middle">#cce02b</color>
-    <color name="progress_start">#2591ee</color>
-    <color name="progress_text_color">#d0e227</color>
-    <color name="point_normal_color">#c8c8c8</color>
-
-    <color name="login_click">#3a4b63</color>
-    <color name="red_14343">#e14343</color>
-    <color name="red_9ae14343">#9ae14343</color>
-    <color name="red_ff2727_af">#afff2727</color>
-    <color name="red_de393d">#de393d</color>
-    <color name="red_ff6060">#ff6060</color>
-    <color name="blue_af2390ec">#af2390ec</color>
-    <color name="transparentaf">#af000000</color>
-    <color name="transparent_half">#7f000000</color>
-    <color name="share_666666">#666666</color>
-    <color name="vote_state_green">#4bba45</color>
-    <color name="vote_blue">#1f93ec</color>
-    <color name="blue_0581c1">#0581c1</color>
-    <color name="blue_2276b7">#2276b7</color>
-    <color name="blue_0d72bf">#0d72bf</color>
-    <color name="blue_60bdf2">#60bdf2</color>
-    <color name="green_a0d141">#a0d141</color>
-    <color name="red_ff8282">#ff8282</color>
-    <color name="blue_3ec8ff">#3ec8ff</color>
-    <color name="blue_3b76c5">#3b76c5</color>
-    <color name="green_43cf7f">#43cf7f</color>
-    <color name="green_3cad6d">#3cad6d</color>
-    <color name="green_63b50a">#63b50a</color>
-    <color name="yellow_ffa21c">#ffa21c</color>
-    <color name="yellow_f99300">#f99300</color>
-    <color name="violet_d89fe4">#d89fe4</color>
-    <color name="orange_ec902c">#ec902c</color>
-    <color name="percent_30_3333333">#4C333333</color>
-    <color name="orange_f68e14">#f68e14</color>
-    <color name="red_fe605f">#fe605f</color>
-    <color name="bg_plan_default_362c2c">#362c2c</color>
-    <color name="bg_plan_default_364352">#364352</color>
-    <color name="bg_plan_default_b16c5e">#b16c5e</color>
-    <color name="bg_plan_default_4f658f">#4f658f</color>
-    <color name="bg_plan_default_6a785b">#6a785b</color>
-    <color name="yellow_ffb700">#ffb700</color>
 
     <!-- framework -->
-    <color name="list_focus">#dadada</color>
-    <color name="hint_color">#cccccc</color>
-    <color name="type_list_bg">#c9c9c9</color>
-    <color name="type_title_bg">#adadad</color>
-    <color name="transparent2">#5000</color>
-    <color name="pdf_display_mode_selected">#009e7e</color>
 
-    <color name="small_loading_transbg">#BF000000</color>
-    <color name="pdf_display_mode_text_unselect">#9a9a9a</color>
-    <color name="pdf_display_mode_text_selected">#ffffff</color>
-    <color name="jw_color_blank">#FF000000</color>
-    <color name="text_num_gray">#333</color>
     <!-- @addby jiangw end -->
-    <color name="shelf_menu_bg">#F8ffffff</color>
     <!-- add by liguangkui，used for QRCode -->
-    <color name="personal_orders_devider">#C2C2C2</color>
-    <color name="personal_item_default">#FFFFFF</color>
-    <color name="read_set_select">#FDFBF8</color>
-    <color name="gray">#ACACAC</color>
-    <color name="gray_727983">#727983</color>
-    <color name="gray_detail">#969696</color>
-    <color name="gray_press">#d9d9d9</color>
-    <color name="gray_383a45">#383a45</color>
-    <color name="light_gray_detail">#dcdcdc</color>
-    <color name="a">#323232</color>
-    <color name="b">#646464</color>
-    <color name="c">#969696</color>
-    <color name="d">#ebebeb</color>
-    <color name="e">#fafafa</color>
-    <color name="f">#f7f7f7</color>
-    <color name="new_red">#ff5a55</color>
-    <color name="book_store_title_default">#98c1bc</color>
     <color name="bai">#FFFFFF</color>
     <!-- reader -->
-    <color name="list_dmn_devider">#C2C2C2</color>
-    <color name="read_note_content_color">#653a10</color>
-    <color name="read_dir_mark_note_stroke_color">#c8c8c8</color>
-    <color name="read_top_menu_bg_color">#90000000</color>
-    <color name="read_setting_top_bg">#e6e6e6</color>
-    <color name="read_dir_text_default_color">#6f6f6f</color>
-    <color name="read_dir_text_lock_color">#999896</color>
-    <color name="read_text_depth_black">#000000</color>
-    <color name="read_text_light_black">#646464</color>
-    <color name="read_text_light_green">#ff01a08b</color>
-    <color name="read_text_light_orange">#ff9600</color>
-    <color name="reader_new_menu_bg">#e5e5e5</color>
-    <color name="reader_comment_list_bg">#fffafafa</color>
-    <color name="yellow_press_bg">#ffb237</color>
-    <color name="ff323232">#ff323232</color>
-    <color name="scan_select_bg">#f5f5f5</color>
-    <color name="busy_indicator">#C0202020</color>
-    <color name="wifi_bg">#dddddd</color>
-
-    <drawable name="blank">#00ffffff</drawable>
 
     <!-- 财付通支付 -->
     <!-- 输入框hint色值 -->
-    <color name="com_tenpay_form_edit_hint">#cccccc</color>
 
     <!-- 财付通返回按钮的背景色 -->
-    <color name="com_tenpay_back_btn_bg_pressed">#2694cf</color>
 
     <!-- 银行列表项的背景色 -->
-    <color name="com_tenpay_list_item_pressed">#84d2ef</color>
 
     <!-- 提示信息区的背景色 -->
-    <color name="com_tenpay_info_bg">#f8f8f8</color>
 
     <!-- 提示信息区的文字色 -->
-    <color name="com_tenpay_info_text">#333333</color>
 
     <!-- 金额颜色 -->
-    <color name="com_tenpay_money_text">#ee5400</color>
 
     <!-- 表单标题颜色  -->
-    <color name="com_tenpay_form_title">#33b5e5</color>
 
     <!-- 垂直分隔线色值  -->
-    <color name="com_tenpay_info_vertical_divider">#cccccc</color>
 
     <!-- 水平分隔线色值  -->
-    <color name="com_tenpay_info_horizontal_divider">#e5e5e5</color>
 
     <!-- 提交按钮不可用  -->
-    <color name="com_tenpay_submit_button_disable">#c4cacb</color>
 
     <!-- 提交按钮可用  -->
-    <color name="com_tenpay_submit_button_enable">#ef7c2f</color>
 
     <!-- 书评 -->
-    <color name="book_review_title_b_color">#646464</color>
-    <color name="book_review_title_a_color">#323232</color>
-    <color name="book_review_title_d_color">#c8c8c8</color>
-    <color name="book_review_title_e_color">#e9e9e9</color>
-    <color name="book_review_title_c_color">#969696</color>
-    <color name="book_review_listview_bg_color">#ebebeb</color>
-    <color name="book_review_more_listview_container_bg_color">#f7f7f7</color>
-    <color name="book_review_select_color">#b7ffea</color>
-    <color name="book_review_reply_dialog_edit_bg">#26ffffff</color>
 
-    <drawable name="book_review_hot_listitem_bg_drawable">#ebebeb</drawable>
-    <drawable name="book_review_master_listitem_bg_drawable">#ffffff</drawable>
-
-    <color name="read_greencolor">#2eb6aa</color>
-    <color name="read_toolbar_bg">#ff242424</color>
-    <color name="read_toolbar_preview_bg">#ff1e1e1e</color>
-    <color name="read_toolbar_line">#ff494949</color>
-    <color name="read_toolbar_disable_mask">#ff323232</color>
     <!-- 个人中心 -->
-    <color name="personal_history_bg">#efeff0</color>
-    <color name="personal_list_item_press_bg">#D9D9D9</color>
-    <color name="personal_update_head_portrait_popup_menu_bg">#DE000000</color>
     <color name="dark">#000000</color>
 
     <color name="grad">#b0b0b0</color>
-    <color name="gred_1">#444444</color>
-    <color name="gred_2">#888888</color>
-
-    <drawable name="bg_white">#FFFFFF</drawable>
-    <drawable name="bg_dark">#000000</drawable>
-    <drawable name="softbar_press_background">#B2B2B2</drawable>
-    <drawable name="softbar_default_background">#DDDDDD</drawable>
-    <drawable name="tab_press_background">#B2B2B2</drawable>
-    <drawable name="tab_default_background">#FFFFFF</drawable>
-    <drawable name="text_press_background">#E6E6E6</drawable>
-    <drawable name="text_default_background">#FFFFFF</drawable>
 
 
-    <color name="colorTabHostBK">#FFFFFF</color>
-    <color name="colorBlack">#000000</color>
 </resources>

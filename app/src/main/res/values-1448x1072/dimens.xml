@@ -1,51 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="edit_padding">4.5dp</dimen>
     <dimen name="edit_font">22sp</dimen>
-    
-    <dimen name="edit_height2">1037dp</dimen>
-    
-    
+
+
     <dimen name="margin_xl">17dp</dimen>
-    <dimen name="margin_l">0dp</dimen>
     <dimen name="margin_m">7.5dp</dimen>
     <dimen name="margin_s">1.5dp</dimen>
     <dimen name="margin_h">12dp</dimen>
     <dimen name="margin_other">12dp</dimen>
 
-    
-    <dimen name="dialog_titleH">37dp</dimen>
-    <dimen name="dialog_title_marginX">22dp</dimen>
-    <dimen name="dialog_title_font">21sp</dimen>
+
     <dimen name="dialog_separator_H">1.5dp</dimen>
-    <dimen name="dialog_bar_H">41.5dp</dimen>
-    <dimen name="dialog_margin_large">59dp</dimen>
     <dimen name="dialog_margin_mid">29.5dp</dimen>
     <dimen name="dialog_margin_small">22dp</dimen>
     <dimen name="dialog_margin_mini">12dp</dimen>
-    <dimen name="dialog_tip_marginX">30dp</dimen>
-    <dimen name="dialog_tip_font">18sp</dimen>
-    <dimen name="dialog_btn_font">15sp</dimen>
     <dimen name="dialog_edit_font">18sp</dimen>
-    <dimen name="dialog_button_mini">59dp</dimen>
     <dimen name="dialog_button_small">89dp</dimen>
     <dimen name="dialog_button_mid">118dp</dimen>
-    <dimen name="dialog_button_large">237dp</dimen>
-	<dimen name="dialog_button_H">30dp</dimen>
-	<dimen name="margin_small">9dp</dimen>
-	<dimen name="margin_middle">22dp</dimen>
+    <dimen name="margin_middle">22dp</dimen>
 	<dimen name="margin_mini">3dp</dimen>
-	<dimen name="margin_grid_item">1.5dp</dimen>
-	<dimen name="grid_text_font">17sp</dimen>
-	<dimen name="main_text_font">37sp</dimen>
-	<dimen name="link_text_font">21sp</dimen>
-	
-	<dimen name="linePaddingS">0.3dp</dimen>
-    <dimen name="linePaddingM">0.4dp</dimen>
-    <dimen name="linePaddingL">0.5dp</dimen>
-    <dimen name="linePaddingXL">0.7dp</dimen>
-    <dimen name="linePaddingXXL">0.8dp</dimen>                
-    
+    <dimen name="link_text_font">21sp</dimen>
+
     <dimen name="mydialog_title_font">18sp</dimen>
     <dimen name="mydialog_message_font">18dp</dimen>
     <dimen name="mydialog_button_font">18dp</dimen>
@@ -59,37 +34,20 @@
     <dimen name="mydialog_title_height">28dp</dimen>   
     <dimen name="dialog_button_height">63dp</dimen>
     <!-- 菜单项的高度 -->
-	<dimen name="popup_menu_item_height">49dp</dimen>
-	<!-- 菜单项的宽度 -->
-	<dimen name="popup_menu_item_width">170dp</dimen>
-	<!-- 菜单项的两侧横向间距 -->
-	<dimen name="popup_menu_margin_x">9dp</dimen>
-	
-	<!-- 长按菜单项的高度 -->
-	<dimen name="popup_context_menu_item_height">49dp</dimen>
-	<!-- 长按菜单项的宽度 -->
-	<dimen name="popup_context_menu_item_width">170dp</dimen>
-	<!-- 长按菜单项的两侧横向间距 -->
-	<dimen name="popup_context_menu_margin_x">9dp</dimen>
-	<dimen name="Second_Title_Font_Size">18sp</dimen>
+    <!-- 菜单项的宽度 -->
+    <!-- 菜单项的两侧横向间距 -->
+
+    <!-- 长按菜单项的高度 -->
+    <!-- 长按菜单项的宽度 -->
+    <!-- 长按菜单项的两侧横向间距 -->
+    <dimen name="Second_Title_Font_Size">18sp</dimen>
 	<dimen name="toolbar_height">42dp</dimen>
 	<dimen name="toolbar_bin_width">37dp</dimen>
-	<dimen name="margin_xm">15dp</dimen>
-	
-	<!-- danjun添加-->
-	<dimen name="activity_horizontal_margin">12dp</dimen>
-    <dimen name="activity_vertical_margin">12dp</dimen>
-    
-    <dimen name="edit_height">280dp</dimen>
-    
-    <dimen name="imageH">40dp</dimen>
-	<dimen name="imageW">40dp</dimen>
-    
+
+    <!-- danjun添加-->
+
     <dimen name="textSizeXL">18sp</dimen>
     <dimen name="textSizeL">15sp</dimen>
 	<dimen name="textSizeM">12sp</dimen>
-	<dimen name="textSizeS">10sp</dimen>
-	
-	<dimen name="textSizeXXL">32sp</dimen>
 
 </resources>

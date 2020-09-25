@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="esdk_loading">Loading…</string>
-    <string name="esdk_switch_to">Switch to %s</string>
-    <string name="network_no_connected">The network is unconnected, whether to connect WIFI?</string>
-    <string name="connect">connect</string>
-    <string name="cancle">cancle</string>
-    <string name="evernote_upload">Evernote is saving, please wait</string>
 </resources>
