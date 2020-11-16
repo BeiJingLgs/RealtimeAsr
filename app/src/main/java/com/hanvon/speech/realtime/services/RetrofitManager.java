@@ -22,6 +22,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;

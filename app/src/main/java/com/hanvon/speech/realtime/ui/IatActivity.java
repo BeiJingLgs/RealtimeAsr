@@ -212,7 +212,6 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
 
     @Override
     public void initView(Bundle savedInstanceState, View view) {
-        //TODO  初始化
         EPDHelper.getInstance().setWindowRefreshMode(getWindow(), EPDHelper.Mode.GU16_RECT);
         BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
         bfoOptions.inScaled = false;
@@ -1590,7 +1589,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         else
             return size;
     }
-
+    //getWindow().setRefreshMode();
     private void initPage() {
         mEditPrePageBtn.setBackgroundResource(R.drawable.pre_page_grey);
         if (nPageCount == 1) {

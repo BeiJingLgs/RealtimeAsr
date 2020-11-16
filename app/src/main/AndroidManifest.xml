@@ -38,7 +38,8 @@
         android:supportsRtl="true"
         android:theme="@style/ContentOverlay"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.hanvon.speech.realtime.ui.LocalSearchActivity"></activity>
+        <activity android:name="com.hanvon.speech.realtime.ui.LocalSearchActivity"
+            android:hardwareAccelerated="false"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -59,6 +60,7 @@
         <activity
             android:name="com.hanvon.speech.realtime.ui.IatListActivity"
             android:launchMode="singleTask"
+            android:hardwareAccelerated="false"
             android:theme="@style/ContentOverlay"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -71,6 +73,7 @@
             android:name="com.hanvon.speech.realtime.ui.IatActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
+            android:hardwareAccelerated="false"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
         <activity
