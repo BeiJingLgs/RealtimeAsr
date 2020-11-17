@@ -63,7 +63,8 @@ public class ShareUtils {
         stringHtml.append("<p style=\"font-size:50px;border:1px solid black;\">" + txt + "</p>");
 
         for (int i = 0; i < img.size(); i++) {
-            stringHtml.append(img.get(i));//<center>这是被居中的的文本</center>
+            //String p = img.get(i).substring(img.get(i).length() - 5, img.get(i).length());
+            stringHtml.append("<img src=\"").append(img.get(i).substring(img.get(i).length() - 5, img.get(i).length())).append("\">");//<center>这是被居中的的文本</center>
             stringHtml.append("<center>(" + (i+1) + "/" + img.size() + ")</center>");
         }
 

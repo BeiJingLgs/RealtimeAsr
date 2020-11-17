@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -25,12 +24,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -38,7 +35,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -121,6 +117,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 import static com.asr.ai.speech.realtime.ConstBroadStr.ROOT_OCR_BIN_PATH;
@@ -1691,11 +1688,14 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         mMenus.setVisibility(View.VISIBLE);
     }
 
-
+    ArrayList<String> mBase64Img;
     private String generateShareHtml(String str, boolean img) {
 
         showShareDialog();
-        ArrayList<String> mBase64Img = new ArrayList<>();
+        if (mBase64Img == null)
+            mBase64Img = new ArrayList<>();
+        else
+            mBase64Img.clear();
         if (img)
             mBase64Img.addAll(generateBase64Img());
         String ht = ConstBroadStr.AUDIO_ROOT_PATH + mFileBean.getCreatemillis() + ".html";
@@ -1715,14 +1715,17 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 mPathList.add(files[i].getPath());
             }
         }
-        ArrayList<String> mBase64Img = new ArrayList<>();
+
+        return mPathList;
+
+        /*ArrayList<String> mBase64Img = new ArrayList<>();
         StringBuffer sb = new StringBuffer();
         for (String path : mPathList) {
             sb.setLength(0);
             sb.append(Constant.PRE_HSUFFIX).append(ShareUtils.imageToBase64(path)).append(Constant.AFTER_HSUFFIX);
             mBase64Img.add(sb.toString());
         }
-        return mBase64Img;
+        return mBase64Img;*/
     }
 
     private void sendToMail(String url){
@@ -1804,6 +1807,13 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         File logFile = new File(path);
         if (logFile != null && logFile.length() > 0) {
             map.put(parseMapKey("file", logFile.getName()), parseRequestBody(logFile));
+        }
+
+        for (String name : mBase64Img) {
+            File file = new File(name);
+            String pa = file.getName().substring(0, file.getName().length()- 4);
+            map.put("image" + pa + "\";filename=\"" + file.getName()
+                    , RequestBody.create(MediaType.parse("multipart/form-data"), file));
         }
         RetrofitManager.getInstance(this).upLoadFile(map, new RetrofitManager.ICallBack() {
             @Override
