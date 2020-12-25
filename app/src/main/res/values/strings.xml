@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">语音记录</string>
+    <string name="app_name">Voice Recording</string>
 
 
     <!-- 听写 -->
@@ -126,7 +126,7 @@
     <string name="tips">Tips</string>
 
     <string name="recog_recordtxt">/我的文档/录音记事/</string>
-    <string name="tips7">服务器返回错误代码2</string>
+    <string name="tips7">Server returned error code 2</string>
 
     <string name="tips6">Failed to obtain validation information, please exit and try again</string>
     <string name="timeOut">Network exception, please check and try again</string>
@@ -140,4 +140,7 @@
     <string name="no_search_result">No relevant content was found...</string>
     <string name="select_file">Please choose to rename the file</string>
     <string name="only_one_file">Renaming only supports one file, please re select</string>
+    <string name="chose_app">Please select Mail Application</string>
+    <string name="unConfigure">The system mail client is not configured and will be sent using a third-party mail application</string>
+
 </resources>

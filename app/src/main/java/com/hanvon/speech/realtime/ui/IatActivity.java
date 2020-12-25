@@ -1767,9 +1767,9 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             ToastUtils.showLong(this,  getString( R.string.unmailsetting));
             return;
         }else if(!bHasK9){
-            ToastUtils.showLong(this,  "系统邮件客户端未进行配置，将用第三方邮件类应用发送");
+            ToastUtils.showLong(this,  getString(R.string.unConfigure));
         }
-        Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "请选择邮件类应用");
+        Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), getResources().getString(R.string.chose_app));
         if (chooserIntent == null) {
             return;
         }
