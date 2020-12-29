@@ -160,7 +160,7 @@ public class CommonDialog {
 		// ��Ļ������ʾ
 		if (view == null)
 			return;
-		popup.showAtLocation(view, Gravity.CENTER, 0, 0);
+		popup.showAtLocation(view, Gravity.TOP, 0, 200);
 	}
 	
 	public void show(PopupWindow.OnDismissListener onDismissListener){

@@ -8,8 +8,8 @@ android {
         applicationId "com.asr.ai.speech.realtime"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 55
-        versionName "1.55"
+        versionCode 56
+        versionName "1.56"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -63,7 +63,7 @@ gradle.projectsEvaluated {
     }
 }
 
-preBuild {
+/*preBuild {
     doLast {
         def imlFile = file(project.name + ".iml")
         println 'Change ' + project.name + '.iml order'
@@ -79,7 +79,7 @@ preBuild {
             // nop, iml not found
         }
     }
-}
+}*/
 repositories {
     mavenCentral()
 }

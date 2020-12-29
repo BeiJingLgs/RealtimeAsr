@@ -5,18 +5,21 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/editTextInfor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="180dp"
         android:layout_margin="@dimen/dialog_margin_mid"
-        android:gravity="center_vertical"
         android:hint="编辑"
+        android:maxLines="5"
+        android:scrollbars="vertical"
+        android:gravity="top"
         android:paddingTop="@dimen/margin_s"
         android:paddingBottom="@dimen/margin_s"
         android:paddingLeft="@dimen/dialog_margin_mini"
         android:paddingRight="@dimen/dialog_margin_mini"
         android:background="@drawable/edit_edge"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/mydialog_button_font">
+        android:textSize="@dimen/Third_Title_Font_Size">
         <requestFocus />
     </EditText>
 

@@ -501,11 +501,11 @@ public class IatListActivity extends BaseActivity implements AdapterView.OnItemC
                 setCheckGone();
                 dialog.dismiss();
             }
-        });
+});
 
         CommonUtils.showIME();
         dialog.show();
-    }
+        }
 
 
 }

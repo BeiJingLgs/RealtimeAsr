@@ -82,7 +82,7 @@
             android:textSize="@dimen/textSizeM"
             android:layout_marginLeft="@dimen/flippager_H"
             android:layout_marginBottom="@dimen/Margin_XXS"/>
-
+        <!--style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
         <ProgressBar
 
             android:id="@+id/progesss"

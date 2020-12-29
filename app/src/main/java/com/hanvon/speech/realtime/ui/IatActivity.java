@@ -1,6 +1,5 @@
 package com.hanvon.speech.realtime.ui;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,7 +23,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -602,13 +600,15 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if (CommonUtils.isNoFastClick())
-            showEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
+            showConvertEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
+            //showEditDialog(((TextView)view.findViewById(R.id.sentence_edit)).getText().toString(), position);
     }
 
     @Override
     public void setOnEditClick(int position) {
         LogUtils.printErrorLog(TAG, "setOnEditClick");
-        showEditDialog(mTempResultList.get(position).getContent(), position);
+        showConvertEditDialog(mTempResultList.get(position).getContent(), position);
+        //showEditDialog(mTempResultList.get(position).getContent(), position);
     }
 
     protected class RecordReceiver extends BroadcastReceiver {
@@ -2398,7 +2398,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         //Log.e(TAG, "**enterHandwrite, " + isEnter);
 
     }
-    EditText mRenameEd;
+    /*EditText mRenameEd;
     private void showEditDialog(String title, int index) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this.getBaseContext()).inflate(R.layout.dialog_edit,null,false);
@@ -2436,11 +2436,45 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         lp.gravity = Gravity.CENTER;
         lp.width = ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth() * 5 / 6;
         dialog.getWindow().setAttributes(lp);
-    }
+    }*/
 
     @Override
     public void finish() {
         super.finish();
         CommonUtils.showStatusBar(IatActivity.this);
+    }
+
+
+    private void showConvertEditDialog(String title, int index) {
+        final CommonDialog dialog = new CommonDialog(this, R.id.viewstub_dialog_recog_text_edit);
+        EditText mRenameEd = (EditText) dialog.getView().findViewById(R.id.editTextInfor);
+        String oldName = mFileBean.title;
+        mRenameEd.getPaint().setAntiAlias(false);
+        mRenameEd.setText(title);
+        mRenameEd.setSelection(title.length());
+
+
+        dialog.setTitle(R.string.text_edit);
+        dialog.setPositiveButton(R.string.ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.printErrorLog(TAG, "setPositiveButton");
+                CommonUtils.hideIME();
+                mTempResultList.get(index).setContent(mRenameEd.getText().toString());
+                dialog.dismiss();
+                freshSentenceList(nPageIsx);
+            }
+        });
+        dialog.setNegativeButton(R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.printErrorLog(TAG, "setNegativeButton");
+                CommonUtils.hideIME();
+                dialog.dismiss();
+                mSequenceAdapter.notifyDataSetChanged();
+            }
+        });
+
+        dialog.show();
     }
 }

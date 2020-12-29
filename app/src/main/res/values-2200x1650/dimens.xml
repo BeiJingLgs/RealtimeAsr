@@ -1,49 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="dialog_separator_H">4dp</dimen>
-    <dimen name="dialog_margin_mid">73dp</dimen>
-    <dimen name="dialog_margin_small">54dp</dimen>
+    <dimen name="Button_H2">87.5dp</dimen>
+    <dimen name="Margin_XXXL">154dp</dimen>
+    <dimen name="Margin_XXL">56dp</dimen>
+    <dimen name="Margin_XSSSSS">17.5dp</dimen>
+    <dimen name="Margin_L">33.2dp</dimen>
+    <dimen name="length_3dp">5.2dp</dimen>
+    <dimen name="dialog_separator_H">3.5dp</dimen>
+    <dimen name="dialog_margin_mid">73.5dp</dimen>
+    <dimen name="dialog_margin_small">52.5dp</dimen>
     <dimen name="dialog_margin_mini">28dp</dimen>
-    <dimen name="dialog_edit_font">36sp</dimen>
-    <dimen name="dialog_button_small">219dp</dimen>
-    <dimen name="dialog_button_mid">291dp</dimen>
-    <dimen name="margin_middle">54dp</dimen>
-	<dimen name="margin_mini">7dp</dimen>
-    <dimen name="link_text_font">43sp</dimen>
-	<dimen name="dialog_button_height">118dp</dimen>
-        
-    
-    <dimen name="mydialog_title_font">36sp</dimen>
-    <dimen name="mydialog_message_font">36sp</dimen>
-    <dimen name="mydialog_button_font">36sp</dimen>
-    <dimen name="mydialog_margin_message">54dp</dimen>
-    <dimen name="mydialog_margin_stubview">18dp</dimen>
-    <dimen name="mydialog_margin_small">29dp</dimen>
-    <dimen name="mydialog_button_width">247dp</dimen>
-    <dimen name="mydialog_button_margin">73dp</dimen>
-    <dimen name="mydialog_button_height">118dp</dimen>
-    <dimen name="mydialog_width">1443dp</dimen>
-    <dimen name="mydialog_title_height">73dp</dimen>
+    <dimen name="dialog_edit_font">42sp</dimen>
+    <dimen name="dialog_button_small">217dp</dimen>
+    <dimen name="dialog_button_mid">290.5dp</dimen>
+    <dimen name="dialog_button_largeX">1365dp</dimen>
+    <dimen name="margin_middle">52.5dp</dimen>
+    <dimen name="padding_s">8.8dp</dimen>
+    <dimen name="margin_mini">7dp</dimen>
+    <dimen name="link_text_font">49sp</dimen>
+    <dimen name="dialog_button_height">175dp</dimen>
 
-    <dimen name="Second_Title_Font_Size">36sp</dimen>
 
-    <!--
-    <dimen name="edit_height">1065dp</dimen>
-    <dimen name="edit_padding">9dp</dimen>
-     -->
-    <dimen name="edit_font">45sp</dimen>
-    
-    <dimen name="toolbar_height">55dp</dimen>
-	<dimen name="toolbar_bin_width">50dp</dimen>
-	
-	   <dimen name="margin_xl">50dp</dimen>
-    <dimen name="margin_m">15dp</dimen>
-    <dimen name="margin_s">5dp</dimen>
-    <dimen name="margin_h">15dp</dimen>
-    <dimen name="margin_other">15dp</dimen>
-    
-    <dimen name="textSizeXL">24sp</dimen>
-    <dimen name="textSizeL">20sp</dimen>
-	<dimen name="textSizeM">16sp</dimen>
+    <dimen name="mydialog_title_font">42sp</dimen>
+    <dimen name="mydialog_message_font">42sp</dimen>
+    <dimen name="mydialog_button_font">42sp</dimen>
+    <dimen name="mydialog_margin_message">52.5dp</dimen>
+    <dimen name="mydialog_margin_stubview">17.5dp</dimen>
+    <dimen name="mydialog_margin_small">28dp</dimen>
+    <dimen name="mydialog_button_width">245dp</dimen>
+    <dimen name="mydialog_button_margin">73.5dp</dimen>
+    <dimen name="mydialog_button_height">115.5dp</dimen>
+    <dimen name="mydialog_width">1431.5dp</dimen>
+    <dimen name="mydialog_title_height">73.5dp</dimen>
 
+    <dimen name="Second_Title_Font_Size">42sp</dimen>
+
+    <dimen name="edit_font">52.5sp</dimen>
+
+    <dimen name="toolbar_height">96.2dp</dimen>
+    <dimen name="toolbar_bin_width">87.5dp</dimen>
+
+    <dimen name="margin_xl">87.5dp</dimen>
+    <dimen name="margin_m">26.2dp</dimen>
+    <dimen name="margin_s">5.2dp</dimen>
+    <dimen name="margin_h">17.5dp</dimen>
+    <dimen name="margin_other">26.2dp</dimen>
+
+    <dimen name="textSizeXL">49sp</dimen>
+    <dimen name="textSizeL">42sp</dimen>
+
+    <dimen name="textSizeM">35sp</dimen>
+    <dimen name="hvtextSizexLSP">42sp</dimen>
+
+    <dimen name="PaddingXXL">0dp</dimen>
+    <dimen name="dialog_margin4">26.2dp</dimen>
+    <dimen name="Third_Title_Font_Size">45.5sp</dimen>
+    <dimen name="flippager_H">175dp</dimen>
+    <dimen name="flippager_btn_size">147dp</dimen>
+    <dimen name="flippager_margin">35dp</dimen>
+    <dimen name="dialog_wide_button_width">245dp</dimen>
+    <dimen name="dialog_high_button_height">140dp</dimen>
+    <dimen name="bar_item_image_height">98dp</dimen>
+    <dimen name="bar_more_width_port">350dp</dimen>
+    <!-- 普通标准 -->
+    <dimen name="Common_Text_Font_Size">38.5sp</dimen>
+    <dimen name="Margin_XXS">14dp</dimen>
+    <dimen name="Margin_S">22.8dp</dimen>
+    <dimen name="Margin_SS">5.2dp</dimen>
+    <dimen name="Margin_XS">26.2dp</dimen>
+    <dimen name="margin_M">35dp</dimen>
+    <dimen name="marginTop">140dp</dimen>
+    <dimen name="content_tv_h">1720.2dp</dimen>
+    <dimen name="listview_h">1750dp</dimen>
+    <dimen name="listview_w">1732.5dp</dimen>
+    <dimen name="edit_w">1050dp</dimen>
+    <dimen name="edit_w2">910dp</dimen>
+    <dimen name="image_w">133dp</dimen>
+    <dimen name="edit_w3">1137.5dp</dimen>
+    <dimen name="edit_w4">525dp</dimen>
+    <dimen name="edit_w5">315dp</dimen>
+    <dimen name="register_ed_w">227.5dp</dimen>
+    <dimen name="navigate_menu_width">817.2dp</dimen>
+    <dimen name="Button_H">119dp</dimen>
+
+    <dimen name="image_margin_left">350dp</dimen>
+    <dimen name="image_margin_top">87.5dp</dimen>
+    <dimen name="image_margin_left2">262.5dp</dimen>
+
+    <dimen name="textView_w">420dp</dimen>
+    <dimen name="pre_button_w">38.5dp</dimen>
+    <dimen name="pre_button_h">70dp</dimen>
+
+    <dimen name="handwriteTv_h">1295dp</dimen>
+    <dimen name="Margin_sp">26.2dp</dimen>
+    <dimen name="Margin_top">875dp</dimen>
+    <dimen name="Margin_top_left">87.5dp</dimen>
+    <dimen name="Margin_left">490dp</dimen>
+
+    <dimen name="Margin_Top">437.5dp</dimen>
+    <dimen name="record_img_w">542.5dp</dimen>
+    <dimen name="record_img_h">154dp</dimen>
+
+    <dimen name="record_susend">122.5dp</dimen>
+    <dimen name="image_width">350dp</dimen>
+
+    <dimen name="h_player_vol">87.5dp</dimen>
+    <dimen name="w_player_vol">525dp</dimen>
+
+    <dimen name="Margin_top_bottom">0dp</dimen>
+    <dimen name="Margin_bottom">8.8dp</dimen>
+
+    <dimen name="volbar_width">17.5dp</dimen>
+    <dimen name="volbar_height">63dp</dimen>
+    <dimen name="volbar_space">9.8dp</dimen>
+
+
+    <dimen name="button_h">105dp</dimen>
+    <dimen name="button_w">245dp</dimen>
+
+
+    <dimen name="image_h">437.5dp</dimen>
+    <dimen name="marginZ2">70dp</dimen>
+    <dimen name="marginZ">35dp</dimen>
+    <dimen name="button_large">612.5dp</dimen>
+
+    <dimen name="check_h">245dp</dimen>
+
+    <dimen name="Search_Bar_H">140.2dp</dimen>
+    <dimen name="Search_Button_H">111.3dp</dimen>
+    <dimen name="phoneWindow_line">2.6dp</dimen>
+    <dimen name="phoneWindow_marginTop">76.1dp</dimen>
 </resources>

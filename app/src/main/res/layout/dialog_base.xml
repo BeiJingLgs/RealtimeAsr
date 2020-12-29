@@ -42,6 +42,12 @@
         android:layout_margin="@dimen/mydialog_margin_stubview"
         android:layout="@layout/dialog_text_edit" />
     <ViewStub
+        android:id="@+id/viewstub_dialog_recog_text_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mydialog_margin_stubview"
+        android:layout="@layout/dialog_text_edit_recog" />
+    <ViewStub
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/mydialog_margin_stubview"
