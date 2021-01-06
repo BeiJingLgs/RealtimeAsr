@@ -5,6 +5,7 @@
     <dimen name="Margin_XXL">32dp</dimen>
     <dimen name="Margin_XSSSSS">10dp</dimen>
     <dimen name="Margin_L">19dp</dimen>
+    <dimen name="Margin_XL">19dp</dimen>
     <dimen name="length_3dp">3dp</dimen>
     <dimen name="dialog_separator_H">2dp</dimen>
     <dimen name="dialog_margin_mid">42dp</dimen>
@@ -46,6 +47,8 @@
     <dimen name="margin_h">10dp</dimen>
     <dimen name="margin_other">15dp</dimen>
 
+    <dimen name="margin_bottom">8dp</dimen>
+    <dimen name="margin_bottom2">3dp</dimen>
     <dimen name="textSizeXL">28sp</dimen>
     <dimen name="textSizeL">24sp</dimen>
 

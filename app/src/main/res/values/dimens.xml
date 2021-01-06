@@ -4,6 +4,7 @@
     <dimen name="Margin_XXXL">88dp</dimen>
     <dimen name="Margin_XXL">32dp</dimen>
     <dimen name="Margin_L">19dp</dimen>
+    <dimen name="Margin_XL">19dp</dimen>
     <dimen name="Margin_S">15dp</dimen>
     <dimen name="Margin_SS">15dp</dimen>
     <dimen name="Margin_XS">8dp</dimen>
@@ -69,7 +70,10 @@
     <dimen name="margin_m">15dp</dimen>
     <dimen name="margin_s">5dp</dimen>
     <dimen name="margin_h">15dp</dimen>
+    <dimen name="margin_sp">0dp</dimen>
 
+    <dimen name="margin_bottom2">5dp</dimen>
+    <dimen name="margin_bottom">19dp</dimen>
     <dimen name="textSizeXL">28sp</dimen>
     <dimen name="textSizeXS">18sp</dimen>
     <dimen name="textSizeXXS">12sp</dimen>
@@ -141,4 +145,5 @@
     <dimen name="Search_Button_H">43.6dp</dimen>
     <dimen name="phoneWindow_line">1.5dp</dimen>
     <dimen name="phoneWindow_marginTop">43.5dp</dimen>
+    <dimen name="phoneWindow_marginOther">5dp</dimen>
 </resources>

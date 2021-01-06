@@ -212,6 +212,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         bfoOptions.inScaled = false;
         mSearchBtn.setVisibility(View.GONE);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
+        mBitmap = CommonUtils.adjustPictureRotation(mBitmap, 180);
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -2356,7 +2357,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             }
         });
         if (!dialog.isShowing())
-            dialog.show();
+            dialog.show(1000);
     }
 
     @Override

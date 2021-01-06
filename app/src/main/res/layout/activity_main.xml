@@ -13,7 +13,7 @@
             android:layout_height="@dimen/phoneWindow_marginTop"
             android:layout_gravity="right"
             android:id="@+id/pen_or_erase"
-            android:layout_marginRight="@dimen/Margin_S"
+            android:layout_margin="@dimen/phoneWindow_marginOther"
             android:background="@drawable/ic_pen"/>
         <View
             android:layout_width="match_parent"
@@ -35,7 +35,7 @@
         android:layout_marginTop="@dimen/Margin_SS"
         android:layout_marginLeft="@dimen/Margin_XS"
         android:layout_marginRight="@dimen/Margin_XS"
-        android:layout_marginBottom="@dimen/margin_s"
+        android:layout_marginBottom="@dimen/margin_bottom2"
         android:visibility="gone">
 
 
@@ -69,7 +69,7 @@
             android:layout_below="@+id/recording"
             android:layout_marginLeft="@dimen/margin_M"
             android:layout_toRightOf="@+id/suspendImg"
-            android:layout_marginBottom="@dimen/Margin_XXS"
+            android:layout_marginBottom="@dimen/margin_bottom"
             android:background="@drawable/acoustic_wave" />
         <Button
             android:id="@+id/suspendRecord"
@@ -368,6 +368,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/margin_sp"
+            android:layout_marginRight="@dimen/margin_sp"
             android:visibility="gone">
 
             <Button

@@ -38,6 +38,7 @@ public class Constants {
 
     public static final double Scale103 = 0.68;
     public static final double Scale97 = 1.16;
+    public static final double Scale133 = 0.58;
 
 
     public static final int BAIDU_ENGINE = 1;

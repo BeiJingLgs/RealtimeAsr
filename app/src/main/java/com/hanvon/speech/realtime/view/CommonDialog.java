@@ -162,6 +162,20 @@ public class CommonDialog {
 			return;
 		popup.showAtLocation(view, Gravity.TOP, 0, 200);
 	}
+
+	public void show(int position){
+		adjustButtons();
+		// ˢ��һ�½���
+		((Activity)(context)).getWindow().getDecorView().invalidate();
+		popup = new PopupWindow(view, (int)context.getResources().getDimension(R.dimen.mydialog_width), LayoutParams.WRAP_CONTENT, true);
+
+		// ��Ļ������ʾ
+		if (view == null)
+			return;
+		popup.showAtLocation(view, Gravity.TOP, 0, position);
+	}
+
+
 	
 	public void show(PopupWindow.OnDismissListener onDismissListener){
 		adjustButtons();

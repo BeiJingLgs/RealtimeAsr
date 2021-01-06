@@ -108,7 +108,8 @@ public class HandWriteNoteView extends NoteView {
     }
 
     private void init() {
-        if (getResources().getInteger(R.integer.device_inch ) == 10)
+        if (getResources().getInteger(R.integer.device_inch) == 10
+                || getResources().getInteger(R.integer.device_inch) == 13)
             mStrokeWidth = 5;
         else
             mStrokeWidth = 3;
@@ -388,7 +389,7 @@ public class HandWriteNoteView extends NoteView {
         if (bUp) {
             LogUtils.printErrorLog(TAG, "up outside canBeFresh: " + canBeFresh);
             //mHandler.postDelayed(runnable, Constants.REFRESH_DELAY);
-            mHandler.postDelayed(runnable,  Constants.REFRESH_DELAY);
+            mHandler.postDelayed(runnable, Constants.REFRESH_DELAY);
             if (timer != null) {
                 timer.cancel();
                 timer = null;
@@ -650,12 +651,19 @@ public class HandWriteNoteView extends NoteView {
         bitmap.eraseColor(Color.WHITE);
         Canvas canvas = new Canvas(bitmap);
         Matrix matrix = new Matrix();
-        matrix.setRotate(90);
+        if (getResources().getInteger(com.asr.ai.speech.realtime.R.integer.device_inch) == 13) {
+            matrix.setRotate(270);
+        } else {
+            matrix.setRotate(90);
+        }
         if (getResources().getInteger(com.asr.ai.speech.realtime.R.integer.device_inch) == 10) {
             matrix.postScale((float) Constants.Scale103, (float) Constants.Scale103);
+        } else if (getResources().getInteger(com.asr.ai.speech.realtime.R.integer.device_inch) == 13) {
+            matrix.postScale((float) Constants.Scale133, (float) Constants.Scale133);
         } else {
             matrix.postScale((float) Constants.Scale97, (float) Constants.Scale97);
         }
+
         Bitmap bkBitmap = super.getBackgroundBitmap();
         Bitmap bkBitmap1 = super.getHandwrittenBitmap();
         if (null != bkBitmap) {
