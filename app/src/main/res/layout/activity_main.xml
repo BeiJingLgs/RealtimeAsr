@@ -538,7 +538,7 @@
             android:id="@+id/close_largeTv"
             android:textColor="@color/black"
             android:textSize="@dimen/hvtextSizexLSP"
-            android:layout_margin="@dimen/margin_m"
+            android:layout_margin="@dimen/margin_special"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:text="收起全文"/>

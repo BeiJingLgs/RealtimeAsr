@@ -72,6 +72,7 @@
     <dimen name="margin_h">15dp</dimen>
     <dimen name="margin_sp">0dp</dimen>
 
+    <dimen name="margin_special">15dp</dimen>
     <dimen name="margin_bottom2">5dp</dimen>
     <dimen name="margin_bottom">19dp</dimen>
     <dimen name="textSizeXL">28sp</dimen>

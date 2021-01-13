@@ -47,6 +47,8 @@
     <dimen name="margin_other">10dp</dimen>
     <dimen name="margin_sp">0dp</dimen>
 
+    <dimen name="margin_special">10dp</dimen>
+
     <dimen name="margin_bottom">5.3dp</dimen>
     <dimen name="margin_bottom2">3.3dp</dimen>
     <dimen name="textSizeXL">18.7sp</dimen>

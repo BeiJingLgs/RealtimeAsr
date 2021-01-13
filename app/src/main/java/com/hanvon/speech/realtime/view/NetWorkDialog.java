@@ -71,6 +71,9 @@ public class NetWorkDialog extends Dialog implements View.OnClickListener {
         if (getContext().getResources().getInteger(R.integer.device_inch) == 9) {
             width = 0.7;
             height = 0.22;
+        } else if (getContext().getResources().getInteger(R.integer.device_inch) == 13) {
+            width = 0.6;
+            height = 0.22;
         }
         p.width = (int)(size.x * width);//是dialog的宽度为app界面的80%
         p.height = (int)(size.y * height);

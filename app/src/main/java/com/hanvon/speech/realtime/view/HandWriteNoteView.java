@@ -339,6 +339,8 @@ public class HandWriteNoteView extends NoteView {
                     setPen(pencil);
                     getPen();
                     setPenType(TP_PEN);
+                } else {
+                    setModified(true);
                 }
             }
         }
@@ -356,6 +358,8 @@ public class HandWriteNoteView extends NoteView {
                     RectF rect = eraseTrace(prevPoint.getX(), prevPoint.getY(),
                             lastPoint.getX(), lastPoint.getY());
 
+                    setModified(true);
+                    LogUtils.printErrorLog(TAG, "rect: " + (rect == null));
                     if (rect != null && rect.height() > 0 && rect.width() > 0) {
                         canvases[0].drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                         drawPostil(canvases[0]);
@@ -479,6 +483,7 @@ public class HandWriteNoteView extends NoteView {
     public void drawPostil(Canvas canvas) {
         Path path;
         int nTracecount = mTracePage.size();
+        LogUtils.printErrorLog(TAG, "drawPostil nTracecount: " + nTracecount);
         for (int i = 0; i < nTracecount; i++) {
             Trace trace = mTracePage.get(i);
             if (trace == null || trace.getCount() == 0)
@@ -561,7 +566,9 @@ public class HandWriteNoteView extends NoteView {
                 if (delIdx < mTracePage.size()) {
                     rtBorder = mTracePage.get(delIdx).getBorderRectF();
                     rtDirty.union(rtBorder);
+                    LogUtils.printErrorLog(TAG, "mTracePage.remove: " );
                     mTracePage.remove(delIdx);
+                    LogUtils.printErrorLog(TAG, "mTracePage.size(): " + mTracePage.size());
                     berase = true;
                 }
             }
@@ -582,6 +589,7 @@ public class HandWriteNoteView extends NoteView {
 
         Path path;
         int nTracecount = mTracePage.size();
+        LogUtils.printErrorLog(TAG, "nTracecount: " + nTracecount);
         for (int i = 0; i < nTracecount; i++) {
             Trace trace = mTracePage.get(i);
             if (trace == null || trace.getCount() == 0)
@@ -632,6 +640,7 @@ public class HandWriteNoteView extends NoteView {
             mTracePage = new ArrayList<Trace>();
         }
         if (traces != null) {
+            LogUtils.printErrorLog(TAG, "traces.size(): " + traces.size());
             for (Trace trace : traces) {
                 Trace newTrace = trace.deepClone();
                 mTracePage.add(newTrace);

@@ -46,6 +46,7 @@
     <dimen name="margin_s">3dp</dimen>
     <dimen name="margin_h">10dp</dimen>
     <dimen name="margin_other">15dp</dimen>
+    <dimen name="margin_special">10dp</dimen>
 
     <dimen name="margin_bottom">8dp</dimen>
     <dimen name="margin_bottom2">3dp</dimen>
@@ -132,5 +133,5 @@
     <dimen name="Search_Bar_H">80.1dp</dimen>
     <dimen name="Search_Button_H">63.6dp</dimen>
     <dimen name="phoneWindow_line">1.5dp</dimen>
-    <dimen name="phoneWindow_marginTop">43.5dp</dimen>
+    <dimen name="phoneWindow_marginTop">33dp</dimen>
 </resources>

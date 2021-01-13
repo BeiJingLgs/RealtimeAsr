@@ -212,7 +212,8 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         bfoOptions.inScaled = false;
         mSearchBtn.setVisibility(View.GONE);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back2, bfoOptions);
-        mBitmap = CommonUtils.adjustPictureRotation(mBitmap, 180);
+        if (getResources().getInteger(R.integer.device_inch ) == 13)
+            mBitmap = CommonUtils.adjustPictureRotation(mBitmap, 180);
         mTextBegin = (Button) findViewById(R.id.text_begin);
         mTimeTv = (TextView) findViewById(R.id.time_tv);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -386,11 +387,12 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 ToastUtils.show(this, getString(R.string.destroy_file));
                 return;
             }
-
+            LogUtils.printErrorLog(TAG, "NoteBaseData.gTraFile.pages.size(): " + NoteBaseData.gTraFile.pages.size());
             if (NoteBaseData.gTraFile.pages.size() > 0) {
                 updateNoteCurPage();
             } else {
                 AddNoteNewEmptyPage(mNotePageIndex);
+                LogUtils.printErrorLog(TAG, "NoteBaseData.gTraFile.pages.size(): " + NoteBaseData.gTraFile.getPage(mNotePageIndex).traces.size());
                 mNoteView.initialize((NoteBaseData.gTraFile.getPage(mNotePageIndex)).traces);
                 updateNotePageInfo(mNotePageIndex, NoteBaseData.gTraFile.getCount());
             }
@@ -411,6 +413,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             IatResults.addAllAsrEditResult(new Gson().fromJson(mFileBean.getJson(), new TypeToken<ArrayList<AsrEditSentence>>() {
             }.getType()));
         }
+
 
         mRecogResultTv.setText(mFileBean.getContent());
         if (TextUtils.isEmpty(mFileBean.getContent())) {
@@ -839,7 +842,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
     }
 
     private void saveAndExitActivity() {
-        if (!HvApplication.ISDEBUG)
+        if (!HvApplication.ISDEBUG && getResources().getInteger(R.integer.device_inch) != 13)
             hv_ebk.ASRVolumeEnable(0);
         DatabaseUtils databaseUtils = DatabaseUtils.getInstance(this);
         String con = mRecogResultTv.getText() == null ? "" : mRecogResultTv.getText().toString();
@@ -1071,7 +1074,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                 if (TextUtils.equals(mAudioPlayBtn.getText(), getResources().getString(R.string.iat_stop))) {
                     if (mTimer != null)
                         mTimer.cancel();
-                    if (!HvApplication.ISDEBUG)
+                    if (!HvApplication.ISDEBUG && getResources().getInteger(R.integer.device_inch) != 13)
                         hv_ebk.ASRVolumeEnable(0);
                     CommonUtils.setOnValidate(true, this);
                     MediaPlayerManager.getInstance().stop();
@@ -1082,7 +1085,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
                         ToastUtils.show(getApplicationContext(), getResources().getString(R.string.tips3));
                         return;
                     }
-                    if (!HvApplication.ISDEBUG)
+                    if (!HvApplication.ISDEBUG && getResources().getInteger(R.integer.device_inch) != 13)
                         hv_ebk.ASRVolumeEnable(1);
                     CommonUtils.setOnValidate(false, this);
                     mStartPlayTime = System.currentTimeMillis();
@@ -1272,7 +1275,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             MediaPlayerManager.getInstance().play(mRecordFilePath, mAudioOffset, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    if (!HvApplication.ISDEBUG)
+                    if (!HvApplication.ISDEBUG && getResources().getInteger(R.integer.device_inch) != 13)
                         hv_ebk.ASRVolumeEnable(0);
                     mFileBean.setTime(System.currentTimeMillis() - mStartPlayTime + mUsagePlayTime);
                     stopPlayRecord();
@@ -1673,7 +1676,11 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
             menuItem3.setText(getString(R.string.pen));
         }
         popupWindow.setContentView(view);
-        popupWindow.setWidth((int) (CommonUtils.getScreenWidth(this) / 5.8));
+        if (getResources().getInteger(R.integer.device_inch) == 10)
+            popupWindow.setWidth((int) (CommonUtils.getScreenWidth(this) / 8));
+        else
+            popupWindow.setWidth((int) (CommonUtils.getScreenWidth(this) / 5.8));
+
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setBackgroundDrawable(new ColorDrawable(0xffffffff));
         popupWindow.setTouchable(true);
@@ -2150,6 +2157,7 @@ public class IatActivity extends BaseActivity implements DialogUtil.NoteChanged,
         // 构建便笺页信息
         TraPage page = (TraPage) NoteBaseData.gTraFile.getPage(mNotePageIndex);
         // 笔迹数据
+        LogUtils.printErrorLog(TAG, "mNoteView.getTraces(): " + mNoteView.getTraces().size());
         page.copyTraces(mNoteView.getTraces());
         // 保存以后设置笔迹没有修改
 

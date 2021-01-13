@@ -47,6 +47,7 @@
     <dimen name="margin_h">6.4dp</dimen>
     <dimen name="margin_other">9.6dp</dimen>
     <dimen name="margin_bottom">11.5dp</dimen>
+    <dimen name="margin_special">4.8dp</dimen>
 
     <dimen name="margin_bottom2">3.5dp</dimen>
 
@@ -91,7 +92,7 @@
     <dimen name="image_margin_top">32.2dp</dimen>
     <dimen name="image_margin_left2">96.5dp</dimen>
 
-    <dimen name="textView_w">168dp</dimen>
+    <dimen name="textView_w">169dp</dimen>
     <dimen name="pre_button_w">14.1dp</dimen>
     <dimen name="pre_button_h">25.7dp</dimen>
 
